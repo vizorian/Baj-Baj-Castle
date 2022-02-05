@@ -7,13 +7,49 @@ TextureImporter:
     second: Floor_0
   - first:
       213: 6875313188632250476
-    second: Player_0
+    second: Player_S
   - first:
       213: 7234583761468912955
     second: Wall_0
   - first:
       213: -8262991748867391410
-    second: Goblin_0
+    second: Goblin_S
+  - first:
+      213: -3018825789789838114
+    second: Player_F
+  - first:
+      213: 2172585217110231533
+    second: Player_B
+  - first:
+      213: -8815059205600961907
+    second: Goblin_F
+  - first:
+      213: -7444576064390506996
+    second: Goblin_B
+  - first:
+      213: 1207821204664722783
+    second: TableV
+  - first:
+      213: -7482595089818226769
+    second: TableV_S
+  - first:
+      213: -7263881698557325647
+    second: TableV_B
+  - first:
+      213: -4821192350811027162
+    second: TableV_F
+  - first:
+      213: -3869741216246091411
+    second: TableH
+  - first:
+      213: -6913147202214430748
+    second: TableH_B
+  - first:
+      213: 2559887565751971924
+    second: TableH_F
+  - first:
+      213: 673160796689557253
+    second: TableH_S
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -79,7 +115,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -91,7 +127,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -103,7 +139,7 @@ TextureImporter:
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -115,12 +151,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player_0
+      name: Player_S
       rect:
         serializedVersion: 2
-        x: 160
-        y: 16
-        width: 16
+        x: 258
+        y: 493
+        width: 10
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -140,7 +176,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 128
+        y: 384
         width: 16
         height: 16
       alignment: 0
@@ -161,7 +197,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 144
+        y: 400
         width: 16
         height: 16
       alignment: 0
@@ -178,15 +214,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Goblin_0
+      name: Goblin_S
       rect:
         serializedVersion: 2
-        x: 2
-        y: 80
+        x: 258
+        y: 479
         width: 10
         height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,6 +230,258 @@ TextureImporter:
       bones: []
       spriteID: e4086ca98c4f35d80800000000000000
       internalID: -8262991748867391410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Player_F
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 493
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed4e9c840f9fa16d0800000000000000
+      internalID: -3018825789789838114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Player_B
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 493
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de9ce1e7eb2962e10800000000000000
+      internalID: 2172585217110231533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_F
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 479
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8a1e105b5e9aa580800000000000000
+      internalID: -8815059205600961907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_B
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 479
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c06d0a2338d8fa890800000000000000
+      internalID: -7444576064390506996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableV
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 400
+        width: 16
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f55a9308cfa03c010800000000000000
+      internalID: 1207821204664722783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableV_S
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 400
+        width: 7
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: faf6d49096b782890800000000000000
+      internalID: -7482595089818226769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableV_B
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 400
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1be8703b412813b90800000000000000
+      internalID: -7263881698557325647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableV_F
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 400
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6290418c91fa71db0800000000000000
+      internalID: -4821192350811027162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableH
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 357
+        width: 26
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d61b6f8dddaeb4ac0800000000000000
+      internalID: -3869741216246091411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableH_B
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 357
+        width: 26
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e7f50c3f319f00a0800000000000000
+      internalID: -6913147202214430748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableH_F
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 357
+        width: 26
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 450f59d9d2c868320800000000000000
+      internalID: 2559887565751971924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TableH_S
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 357
+        width: 7
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50766639d2c875900800000000000000
+      internalID: 673160796689557253
       vertices: []
       indices: 
       edges: []
