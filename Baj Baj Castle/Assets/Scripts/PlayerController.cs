@@ -2,77 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : Actor
 {
-    private BoxCollider2D _boxCollider;
-    private SpriteRenderer _spriteRenderer;
-
-    private Vector3 moveDelta;
     private RaycastHit2D raycastHit;
     private GameObject interactionObject;
 
-    public float MovementSpeed = 0.5f;
-    public float InteractionRange = 0.05f;
-
-    public Sprite FrontSprite;
-    public Sprite BackSprite;
-    public Sprite SideSprite;
-
-    void Start()
-    {
-        _boxCollider = GetComponent<BoxCollider2D>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    private void Update()
+    protected override void Update()
     {
         ProcessInputs();
         LookAtMouse();
-        FindAndSetInteractableObject();
+        FindAndSetInteractable();
         if (interactionObject != null)
-            interactionObject.SendMessage("ShowHighlight", gameObject);
-    }
-
-    private void FindAndSetInteractableObject()
-    {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("Object");
-
-        List<GameObject> interactableObjects = new List<GameObject>();
-
-        foreach (GameObject obj in objects)
-        {
-            if(Vector3.Distance(transform.position, obj.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
-            {
-                interactableObjects.Add(obj);
-            }
-            else
-            {
-                interactableObjects.Remove(obj);
-            }
-        }
-
-        if(interactableObjects.Count == 0)
-        {
-            interactionObject = null;
-            return;
-        }
-
-        foreach (GameObject obj in interactableObjects)
-        {
-            
-            if(interactionObject != null)
-            {
-                if (Vector3.Distance(transform.position, obj.transform.position) < Vector3.Distance(transform.position, interactionObject.transform.position))
-                {
-                    interactionObject = obj;
-                }
-            }
-            else
-            {
-                interactionObject = obj;
-            }
-        }
+            interactionObject.SendMessage("OnCollide", _boxCollider);
     }
 
     void FixedUpdate()
@@ -115,8 +56,22 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
+
         // Recalculating the movement direction
         moveDelta = new Vector2(x, y).normalized;
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+
+        }
+        if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
+        {
+            interactionObject.SendMessage("OnInteraction");
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+
+        }
     }
 
     /// <summary>
@@ -152,7 +107,48 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void FindAndSetInteractable()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Interactable");
+
+        List<GameObject> interactableObjects = new List<GameObject>();
+
+        foreach (GameObject obj in objects)
+        {
+            if (Vector3.Distance(transform.position, obj.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
+            {
+                interactableObjects.Add(obj);
+            }
+            else
+            {
+                interactableObjects.Remove(obj);
+            }
+        }
+
+        if (interactableObjects.Count == 0)
+        {
+            interactionObject = null;
+            return;
+        }
+
+        foreach (GameObject obj in interactableObjects)
+        {
+
+            if (interactionObject != null)
+            {
+                if (Vector3.Distance(transform.position, obj.transform.position) < Vector3.Distance(transform.position, interactionObject.transform.position))
+                {
+                    interactionObject = obj;
+                }
+            }
+            else
+            {
+                interactionObject = obj;
+            }
+        }
+    }
+
+    protected override void OnDrawGizmos()
     {
         if (interactionObject == null) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;

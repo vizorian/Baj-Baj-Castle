@@ -3,31 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+public class EnemyAI : Actor
 {
-    private BoxCollider2D _boxCollider;
-    private SpriteRenderer _spriteRenderer;
-
-    private Vector3 moveDelta;
     private RaycastHit2D raycastHit;
     private GameObject target;
 
-    public float MovementSpeed = 0.5f;
-    public float ViewRange = 0.2f;
-
-    public Sprite FrontSprite;
-    public Sprite BackSprite;
-    public Sprite SideSprite;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _boxCollider = GetComponent<BoxCollider2D>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         if(target == null)
             FindAndSetTarget();
@@ -86,7 +67,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (target == null) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;

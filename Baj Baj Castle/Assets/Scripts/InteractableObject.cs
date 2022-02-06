@@ -13,7 +13,6 @@ public class InteractableObject : MonoBehaviour
     public Sprite DownSprite;
     public Sprite UpSprite;
     public Sprite SideSprite;
-
     void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
@@ -32,20 +31,19 @@ public class InteractableObject : MonoBehaviour
         var forward = Vector3.Dot(direction, transform.up);
         var side = Vector3.Dot(direction, transform.right);
 
-        LineRenderer _lineRenderer = new LineRenderer();
-        var extent = _boxCollider.bounds.extents;
-        Debug.DrawLine(extent, _boxCollider.bounds.center);
-
+        var vertices = GetVertexPositions(this.gameObject);
 
         if (Mathf.Abs(forward) > Mathf.Abs(side))
         {
             if (forward > 0)
             {
                 Debug.Log("Back");
+                Debug.DrawLine(vertices[0], vertices[1]);
             }
             else
             {
                 Debug.Log("Front");
+                Debug.DrawLine(vertices[3], vertices[2]);
             }
         }
         else
@@ -53,10 +51,12 @@ public class InteractableObject : MonoBehaviour
             if (side > 0)
             {
                 Debug.Log("Right");
+                Debug.DrawLine(vertices[1], vertices[3]);
             }
             else
             {
                 Debug.Log("Left");
+                Debug.DrawLine(vertices[0], vertices[2]);
             }
         }
 
@@ -81,23 +81,21 @@ public class InteractableObject : MonoBehaviour
         //}
     }
 
-    private Vector3[] GetColliderVertexPositions(GameObject gameObject){
-    var vertices = new Vector3[8];
-    var thisMatrix = gameObject.transform.localToWorldMatrix;
-    var storedRotation = gameObject.transform.rotation;
+    private Vector3[] GetVertexPositions(GameObject gameObject)
+    {
+        var vertices = new Vector3[4];
+        var thisMatrix = gameObject.transform.localToWorldMatrix;
+        var storedRotation = gameObject.transform.rotation;
         gameObject.transform.rotation = Quaternion.identity;
-   
-    var extents = gameObject.GetComponent<Collider2D>().bounds.extents;
-    vertices[0] = thisMatrix.MultiplyPoint3x4(extents);
-    vertices[1] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, extents.z));
-    vertices[2] = thisMatrix.MultiplyPoint3x4(new Vector3(extents.x, extents.y, -extents.z));
-    vertices[3] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, -extents.z));
-    vertices[4] = thisMatrix.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, extents.z));
-    vertices[5] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, -extents.y, extents.z));
-    vertices[6] = thisMatrix.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, -extents.z));
-    vertices[7] = thisMatrix.MultiplyPoint3x4(-extents);
 
-    gameObject.transform.rotation = storedRotation;
-    return vertices;
-}
+        var extents = _spriteRenderer.bounds.extents;
+
+        vertices[0] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, 0));
+        vertices[1] = thisMatrix.MultiplyPoint3x4(extents);
+        vertices[2] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, -extents.y, 0));
+        vertices[3] = thisMatrix.MultiplyPoint3x4(new Vector3(extents.x, -extents.y, 0));
+
+        gameObject.transform.rotation = storedRotation;
+        return vertices;
+    }
 }

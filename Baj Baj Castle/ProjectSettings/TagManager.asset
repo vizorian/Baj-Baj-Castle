@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Object
+  - Actor
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -42,6 +44,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Floor
+    uniqueID: 1417502681
+    locked: 0
   - name: Actor
     uniqueID: 102775839
+    locked: 0
+  - name: Object
+    uniqueID: 2091862571
+    locked: 0
+  - name: Render
+    uniqueID: 2300588701
     locked: 0
