@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : Actor
 {
-    protected override void Update()
+    private protected void Update()
     {
         ProcessInputs();
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), actorType);
@@ -13,7 +13,7 @@ public class PlayerController : Actor
             interactionObject.SendMessage("OnCollide", _boxCollider);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Move();
     }
@@ -26,14 +26,17 @@ public class PlayerController : Actor
         // Getting inputs
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-
+        float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
 
         // Recalculating the movement direction
         moveDelta = new Vector2(x, y).normalized;
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-
+            if(InventorySystem.Instance.selectedItem != null)
+            {
+                Debug.Log($"You just used {InventorySystem.Instance.selectedItem.Data.DisplayName}");
+            }
         }
         if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
         {
@@ -42,6 +45,17 @@ public class PlayerController : Actor
         if (Input.GetKeyDown(KeyCode.R))
         {
 
+        }
+        if (scrollWheelDelta != 0)
+        {
+            if(scrollWheelDelta > 0)
+            {
+                InventorySystem.Instance.Next();
+            }
+            else
+            {
+                InventorySystem.Instance.Previous();
+            }
         }
     }
 
@@ -86,7 +100,7 @@ public class PlayerController : Actor
         }
     }
 
-    protected override void OnDrawGizmos()
+    private protected void OnDrawGizmos()
     {
         if (interactionObject == null) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;

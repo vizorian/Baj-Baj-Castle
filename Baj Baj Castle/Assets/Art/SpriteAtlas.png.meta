@@ -179,6 +179,30 @@ TextureImporter:
   - first:
       213: 2903714021680835994
     second: Knife_Iron
+  - first:
+      213: -6665930254976882886
+    second: Knife_Steel
+  - first:
+      213: 3122454164943141577
+    second: Knife_Golden
+  - first:
+      213: 3588716527794228634
+    second: Dagger_Wooden
+  - first:
+      213: 5861898171080709434
+    second: Dagger_Iron
+  - first:
+      213: -2724787491003435303
+    second: Dagger_Steel
+  - first:
+      213: -2937574088463651223
+    second: Dagger_Golden
+  - first:
+      213: 9066584806833873983
+    second: Potion_Healing_M
+  - first:
+      213: 3346775860221651040
+    second: Potion_Healing_L
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -1480,8 +1504,8 @@ TextureImporter:
       name: Knife_Wooden
       rect:
         serializedVersion: 2
-        x: 118
-        y: 404
+        x: 163
+        y: 433
         width: 6
         height: 10
       alignment: 0
@@ -1501,8 +1525,8 @@ TextureImporter:
       name: Knife_Iron
       rect:
         serializedVersion: 2
-        x: 129
-        y: 401
+        x: 171
+        y: 433
         width: 6
         height: 10
       alignment: 0
@@ -1514,6 +1538,174 @@ TextureImporter:
       bones: []
       spriteID: a9d6b97a4801c4820800000000000000
       internalID: 2903714021680835994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knife_Steel
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 433
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a37e29e20cbdd73a0800000000000000
+      internalID: -6665930254976882886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Knife_Golden
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 433
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9caffd0058f255b20800000000000000
+      internalID: 3122454164943141577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dagger_Wooden
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 416
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9d8fbe0baeadc130800000000000000
+      internalID: 3588716527794228634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dagger_Iron
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 416
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3517c43455a95150800000000000000
+      internalID: 5861898171080709434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dagger_Steel
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 416
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d6ff46a63c9f2ad0800000000000000
+      internalID: -2724787491003435303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dagger_Golden
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 416
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96e6bb33ee3ab37d0800000000000000
+      internalID: -2937574088463651223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_Healing_M
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 289
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f34694158daf2dd70800000000000000
+      internalID: 9066584806833873983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_Healing_L
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 321
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0682d53b9e2227e20800000000000000
+      internalID: 3346775860221651040
       vertices: []
       indices: 
       edges: []

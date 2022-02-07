@@ -11,7 +11,7 @@ public class Table : Interactable
     public Sprite UpSprite;
     public Sprite DownSprite;
 
-    protected override void OnInteraction()
+    private protected override void OnInteraction()
     {
         if (!isFlipped)
         {

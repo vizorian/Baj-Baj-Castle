@@ -7,7 +7,7 @@ public class EnemyAI : Actor
 {
     private bool isAngered = false;
 
-    protected override void Update()
+    private protected void Update()
     {
         if(target == null)
             FindAndSetTarget();
@@ -50,7 +50,7 @@ public class EnemyAI : Actor
         }
     }
 
-    protected override void OnDrawGizmos()
+    private protected void OnDrawGizmos()
     {
         if (target == null) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;

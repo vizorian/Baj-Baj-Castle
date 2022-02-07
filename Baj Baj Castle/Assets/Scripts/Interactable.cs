@@ -14,13 +14,13 @@ public class Interactable : Collidable
     private protected bool isActive = true;
     private protected bool up, right, down, left = false;
 
-    protected override void Start()
+    private protected override void Start()
     {
         base.Start();
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    protected override void Update()
+    private protected override void Update()
     {
         if (_lineRenderer != null && !drawHighlights && !cleared)
         {
@@ -29,7 +29,7 @@ public class Interactable : Collidable
         }
     }
 
-    protected override void OnCollide(Collider2D collider)
+    private protected override void OnCollide(Collider2D collider)
     {
         if (collider.tag == "Player" && isActive)
             drawHighlights = true;
@@ -141,7 +141,7 @@ public class Interactable : Collidable
         _lineRenderer.sortingLayerName = "Render";
     }
 
-    protected virtual void OnInteraction()
+    private protected virtual void OnInteraction()
     {
         Debug.Log("Interacted with object");
     }

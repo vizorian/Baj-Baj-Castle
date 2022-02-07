@@ -7,7 +7,7 @@ public class Actor : MonoBehaviour
     private protected BoxCollider2D _boxCollider;
     private protected SpriteRenderer _spriteRenderer;
     private protected RaycastHit2D raycastHit;
-    private protected Inventory inventory;
+    private protected InventorySystem inventory;
 
     public enum ActorType
     {
@@ -30,20 +30,10 @@ public class Actor : MonoBehaviour
     public Sprite BackSprite;
     public Sprite SideSprite;
 
-    protected virtual void Start()
+    private protected virtual void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    protected virtual void Update()
-    {
-        
-    }
-
-    protected virtual void OnDrawGizmos()
-    {
-        
     }
 
     /// <summary>

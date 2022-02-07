@@ -12,7 +12,7 @@ public class Chest : Interactable
     public Sprite OpenSprite;
     public Sprite EmptySprite;
 
-    protected override void OnInteraction()
+    private protected override void OnInteraction()
     {
         if (!isOpen)
         {

@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Pickupable : Interactable
 {
+    public InventoryItemData ItemData;
     private protected bool isPickedup = false;
 
-    protected override void OnCollide(Collider2D collider)
+    private protected override void OnCollide(Collider2D collider)
     {
         if (collider.tag == "Player" && !isPickedup)
         {
@@ -23,13 +24,15 @@ public class Pickupable : Interactable
         //    OnCollect();
     }
 
-    protected override void OnInteraction()
+    private protected override void OnInteraction()
     {
         Debug.Log("Picked up item");
-        isPickedup = true;
 
         // pick up behaviour
         // add to collider inventory
         // delete self
+
+        InventorySystem.Instance.Add(ItemData);
+        Destroy(gameObject);
     }
 }
