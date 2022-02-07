@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class PlayerController : Actor
 {
-    private RaycastHit2D raycastHit;
-    private GameObject interactionObject;
-
     protected override void Update()
     {
         ProcessInputs();
-        LookAtMouse();
+        LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), actorType);
         FindAndSetInteractable();
         if (interactionObject != null)
             interactionObject.SendMessage("OnCollide", _boxCollider);
@@ -19,32 +16,6 @@ public class PlayerController : Actor
     void FixedUpdate()
     {
         Move();
-    }
-
-    /// <summary>
-    /// Creates a box cast to check for collisions on both axis and moves the player if there are none
-    /// </summary>
-    private void Move()
-    {
-        // Checking for collision on X axis
-        raycastHit = Physics2D.BoxCast(transform.position, _boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-            0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-        if (raycastHit.collider == null)
-        {
-            // Applying movement on X axis
-            transform.Translate(moveDelta.x * Time.deltaTime * MovementSpeed, 0, 0);
-        }
-
-        // Checking for collision on Y axis
-        raycastHit = Physics2D.BoxCast(transform.position, _boxCollider.size, 0, new Vector2(0, moveDelta.y),
-            0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-        if (raycastHit.collider == null)
-        {
-            // Applying movement on Y axis
-            transform.Translate(0, moveDelta.y * Time.deltaTime * MovementSpeed, 0);
-        }
     }
 
     /// <summary>
@@ -71,39 +42,6 @@ public class PlayerController : Actor
         if (Input.GetKeyDown(KeyCode.R))
         {
 
-        }
-    }
-
-    /// <summary>
-    /// Updates the sprite to face the mouse in 4 directions
-    /// </summary>
-    private void LookAtMouse()
-    {
-        // Getting mouse position in world
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        // Calculating position difference between the mouse and player
-        Vector3 posDif = mousePos - transform.position;
-
-        // Calculating the angle of the mouse relative to the player
-        float z = Mathf.Atan2(posDif.y, posDif.x) * Mathf.Rad2Deg;
-        if (z < 0) z = 180 + (180 - Mathf.Abs(z));
-
-        if (z >= 45 && z < 135)
-        {
-            _spriteRenderer.sprite = BackSprite;
-        }else if(z >= 135 && z < 225)
-        {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = true;
-        }
-        else if (z >= 225 && z < 315)
-        {
-            _spriteRenderer.sprite = FrontSprite;
-        }
-        else
-        {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = false;
         }
     }
 

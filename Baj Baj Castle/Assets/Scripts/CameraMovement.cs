@@ -8,6 +8,14 @@ public class CameraMovement : MonoBehaviour
     public float boundX = 0.1f;
     public float boundY = 0.5f;
 
+    private void Start()
+    {
+        if(target == null)
+        {
+            target = GameObject.Find("Player").transform;
+        }
+    }
+
     void LateUpdate()
     {
         Vector3 delta = Vector3.zero;

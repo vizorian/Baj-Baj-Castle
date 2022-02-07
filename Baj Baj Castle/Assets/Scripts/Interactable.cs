@@ -9,8 +9,8 @@ public class Interactable : Collidable
     private protected SpriteRenderer _spriteRenderer;
     private protected Color _highlightColor = Color.white;
 
-    private bool drawHighlights = false;
-    private bool cleared = false;
+    private protected bool drawHighlights = false;
+    private protected bool cleared = false;
     private protected bool isActive = true;
     private protected bool up, right, down, left = false;
 
@@ -24,7 +24,6 @@ public class Interactable : Collidable
     {
         if (_lineRenderer != null && !drawHighlights && !cleared)
         {
-            Debug.Log("Clearing highlight");
             _lineRenderer.positionCount = 0;
             cleared = true;
         }
@@ -37,7 +36,6 @@ public class Interactable : Collidable
 
         if (drawHighlights)
         {
-            Debug.Log("Calling highlight");
             DrawHighlight(collider.gameObject);
             drawHighlights = false;
         }
@@ -113,6 +111,25 @@ public class Interactable : Collidable
                 left = true;
             }
         }
+    }
+
+    protected virtual void DrawHighlightFull(GameObject obj)
+    {
+        if (_lineRenderer == null)
+            CreateLineRenderer();
+
+        _lineRenderer.positionCount = 5;
+        cleared = false;
+
+        Vector3[] vertices = GetVertexPositions(gameObject);
+        Vector3[] newVertices = new Vector3[vertices.Length+1];
+        newVertices[0] = vertices[0];
+        newVertices[1] = vertices[1];
+        newVertices[2] = vertices[3];
+        newVertices[3] = vertices[2];
+        newVertices[4] = vertices[0];
+
+        _lineRenderer.SetPositions(newVertices);
     }
 
     private void CreateLineRenderer()

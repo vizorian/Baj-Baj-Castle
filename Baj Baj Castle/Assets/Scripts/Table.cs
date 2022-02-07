@@ -25,7 +25,7 @@ public class Table : Interactable
             }else if (right)
             {
                 _spriteRenderer.sprite = SideSprite;
-                
+                _spriteRenderer.flipX = true;
             }
             else if (down)
             {
@@ -34,7 +34,6 @@ public class Table : Interactable
             else
             {
                 _spriteRenderer.sprite = SideSprite;
-                _spriteRenderer.flipX = true;
             }
             return;
         }

@@ -5,65 +5,48 @@ using UnityEngine;
 
 public class EnemyAI : Actor
 {
-    private RaycastHit2D raycastHit;
-    private GameObject target;
+    private bool isAngered = false;
 
     protected override void Update()
     {
         if(target == null)
             FindAndSetTarget();
         else
-            LookAtTarget();
+        {
+            LookAt(target.transform.position, actorType);
+            CalculatePath();
+            Move();
+        }
     }
+
+    private void CalculatePath()
+    {
+    }   
 
     private void FindAndSetTarget()
     {
         var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
 
-        foreach(var t in potentialTargets)
+        foreach (var t in potentialTargets)
         {
             if(Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
+                isAngered = true;
                 return;
             }
         }
-    }
 
-    private void LookAtTarget()
-    {
-        // Getting target position in world
-        Vector3 targetPos = target.transform.position;
-        // Calculating position difference between the target and actor
-        Vector3 posDif = targetPos - transform.position;
+        potentialTargets = GameObject.FindGameObjectsWithTag("Ally");
 
-        if(posDif.magnitude > ViewRange)
+        foreach (var t in potentialTargets)
         {
-            target = null;
-            return;
-        }
-
-        // Calculating the angle of the target relative to the actor
-        float z = Mathf.Atan2(posDif.y, posDif.x) * Mathf.Rad2Deg;
-        if (z < 0) z = 180 + (180 - Mathf.Abs(z));
-
-        if (z >= 45 && z < 135)
-        {
-            _spriteRenderer.sprite = BackSprite;
-        }
-        else if (z >= 135 && z < 225)
-        {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = true;
-        }
-        else if (z >= 225 && z < 315)
-        {
-            _spriteRenderer.sprite = FrontSprite;
-        }
-        else
-        {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = false;
+            if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
+            {
+                target = t;
+                isAngered = true;
+                return;
+            }
         }
     }
 
