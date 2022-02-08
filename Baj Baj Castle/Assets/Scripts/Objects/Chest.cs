@@ -5,7 +5,7 @@ using UnityEngine;
 public class Chest : Interactable
 {
     private bool isOpen = false;
-    private bool isLocked = false;
+    //private bool isLocked = false;
     private bool isLooted = false;
 
     public Sprite ClosedSprite;
@@ -24,7 +24,6 @@ public class Chest : Interactable
         if (!isLooted)
         {
             isLooted = true;
-            isActive = false;
             _spriteRenderer.sprite = EmptySprite;
             gameObject.tag = "Object";
             return;

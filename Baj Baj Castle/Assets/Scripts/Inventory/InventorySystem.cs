@@ -17,7 +17,6 @@ public class InventorySystem : MonoBehaviour
     public InventoryItem selectedItem { get; private set; }
     private int selectedItemIndex;
 
-
     private void Awake()
     {
         Inventory = new List<InventoryItem>();
@@ -65,8 +64,10 @@ public class InventorySystem : MonoBehaviour
             // First pickup is selected automatically
             if (selectedItem == null)
             {
+
                 selectedItem = newItem;
                 selectedItemIndex = 0;
+                gameObject.SendMessage("UpdateHeldItem", selectedItem);
             }
         }
         OnInventoryChanged.Invoke();
@@ -89,15 +90,32 @@ public class InventorySystem : MonoBehaviour
                 {
                     selectedItem = Inventory[0];
                     selectedItemIndex = 0;
+                    gameObject.SendMessage("UpdateHeldItem", selectedItem);
                 }
                 else // If no items remain
                 {
                     selectedItem = null;
                     selectedItemIndex = -1;
+                    gameObject.SendMessage("ClearHeldItem");
                 }
             }
         }
         OnInventoryChanged.Invoke();
+    }
+
+    // Drops an item and calls Remove
+    public void Drop()
+    {
+        if(selectedItem != null)
+        {
+            var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            // Drop the actual item in the world
+            Instantiate(selectedItem.Data.Prefab, new Vector3(mousePos.x, mousePos.y), Quaternion.identity); // FIX THIS to drop towards mouse
+
+            // Remove the item from inventory
+            Remove(selectedItem.Data);
+        }
     }
 
     public void Next()
@@ -112,6 +130,7 @@ public class InventorySystem : MonoBehaviour
         
         selectedItem = Inventory[selectedItemIndex];
 
+        gameObject.SendMessage("UpdateHeldItem", selectedItem);
         OnInventoryChanged.Invoke();
     }
 
@@ -127,6 +146,7 @@ public class InventorySystem : MonoBehaviour
 
         selectedItem = Inventory[selectedItemIndex];
 
+        gameObject.SendMessage("UpdateHeldItem", selectedItem);
         OnInventoryChanged.Invoke();
     }
 }

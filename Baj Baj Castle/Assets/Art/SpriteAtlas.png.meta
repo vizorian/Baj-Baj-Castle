@@ -203,6 +203,12 @@ TextureImporter:
   - first:
       213: 3346775860221651040
     second: Potion_Healing_L
+  - first:
+      213: -1860037876246359274
+    second: Hand_Human
+  - first:
+      213: -4614970689111593040
+    second: Hand_Green
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -1677,7 +1683,7 @@ TextureImporter:
         width: 7
         height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1698,7 +1704,7 @@ TextureImporter:
         width: 9
         height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1706,6 +1712,48 @@ TextureImporter:
       bones: []
       spriteID: 0682d53b9e2227e20800000000000000
       internalID: 3346775860221651040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hand_Human
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 504
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 613509d0861df26e0800000000000000
+      internalID: -1860037876246359274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hand_Green
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 484
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bfe9a20c9454ffb0800000000000000
+      internalID: -4614970689111593040
       vertices: []
       indices: 
       edges: []

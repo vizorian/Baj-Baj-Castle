@@ -122,8 +122,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c75e42bee17153c43b70f430d868d5b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actorType: 0
+  HandPrefab: {fileID: 4685714322924328532, guid: cb75c65099d6642478a215105eb41f1b, type: 3}
   MovementSpeed: 0.5
   InteractionRange: 0.05
+  HandRange: 0.1
   ViewRange: 1
   FrontSprite: {fileID: -8815059205600961907, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: -7444576064390506996, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}

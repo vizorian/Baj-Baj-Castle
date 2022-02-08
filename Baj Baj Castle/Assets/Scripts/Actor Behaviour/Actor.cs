@@ -17,6 +17,10 @@ public class Actor : MonoBehaviour
 
     public ActorType actorType;
 
+    //private protected ActorHand _hand;
+    public GameObject HandPrefab;
+    private protected ActorHand _hand;
+
     private protected GameObject interactionObject;
     private protected GameObject target;
 
@@ -24,6 +28,7 @@ public class Actor : MonoBehaviour
 
     public float MovementSpeed = 0.5f;
     public float InteractionRange = 0.15f;
+    public float HandRange = 0.1f;
     public float ViewRange = 1f;
 
     public Sprite FrontSprite;
@@ -34,12 +39,25 @@ public class Actor : MonoBehaviour
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
+        _hand.Init(HandRange);
+        _hand.UpdateCenterPosition(transform.position);
+    }
+
+    private protected virtual void UpdateHeldItem(InventoryItem item)
+    {
+        _hand.SetHeldItem(item);
+    }
+
+    private protected virtual void ClearHeldItem()
+    {
+        _hand.ClearHeldItem();
     }
 
     /// <summary>
     /// Creates a box cast to check for collisions on both axis and moves the player if there are none
     /// </summary>
-    protected private virtual void Move()
+    private protected virtual void Move()
     {
         // Checking for collision on X axis
         raycastHit = Physics2D.BoxCast(transform.position, _boxCollider.size, 0, new Vector2(moveDelta.x, 0),
@@ -62,13 +80,13 @@ public class Actor : MonoBehaviour
         }
     }
 
-    protected private virtual void LookAt(Vector3 lookTarget, ActorType actorType)
+    private protected virtual void LookAt(Vector3 lookTarget, ActorType actorType)
     {
         // Calculating position difference between the target and actor
         Vector3 posDif = lookTarget - transform.position;
 
         // Out of range
-        if(actorType == ActorType.Enemy)
+        if(actorType != ActorType.Player)
         {
             if (posDif.magnitude > ViewRange)
             {

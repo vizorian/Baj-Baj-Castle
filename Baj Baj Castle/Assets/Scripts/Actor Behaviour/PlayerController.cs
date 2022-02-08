@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : Actor
@@ -8,7 +9,9 @@ public class PlayerController : Actor
     {
         ProcessInputs();
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), actorType);
-        FindAndSetInteractable();
+        
+        
+        FindInteractable();
         if (interactionObject != null)
             interactionObject.SendMessage("OnCollide", _boxCollider);
     }
@@ -16,6 +19,8 @@ public class PlayerController : Actor
     private void FixedUpdate()
     {
         Move();
+        _hand.UpdateCenterPosition(transform.position);
+        _hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     /// <summary>
@@ -31,6 +36,7 @@ public class PlayerController : Actor
         // Recalculating the movement direction
         moveDelta = new Vector2(x, y).normalized;
 
+        // Left click
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             if(InventorySystem.Instance.selectedItem != null)
@@ -38,72 +44,52 @@ public class PlayerController : Actor
                 Debug.Log($"You just used {InventorySystem.Instance.selectedItem.Data.DisplayName}");
             }
         }
+
+        // Interaction button
         if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
         {
             interactionObject.SendMessage("OnInteraction");
         }
+
+        // Drop button
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            InventorySystem.Instance.Drop();
+        }
+
+        // Reload button
         if (Input.GetKeyDown(KeyCode.R))
         {
 
         }
+
+        // Scroll wheel
         if (scrollWheelDelta != 0)
         {
             if(scrollWheelDelta > 0)
-            {
                 InventorySystem.Instance.Next();
-            }
             else
-            {
                 InventorySystem.Instance.Previous();
-            }
         }
     }
 
-    private void FindAndSetInteractable()
+    private void FindInteractable()
     {
         GameObject[] objects = GameObject.FindGameObjectsWithTag("Interactable");
 
-        List<GameObject> interactableObjects = new List<GameObject>();
-
-        foreach (GameObject obj in objects)
-        {
-            if (Vector3.Distance(transform.position, obj.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
-            {
-                interactableObjects.Add(obj);
-            }
-            else
-            {
-                interactableObjects.Remove(obj);
-            }
-        }
-
-        if (interactableObjects.Count == 0)
-        {
-            interactionObject = null;
-            return;
-        }
-
-        foreach (GameObject obj in interactableObjects)
-        {
-
-            if (interactionObject != null)
-            {
-                if (Vector3.Distance(transform.position, obj.transform.position) < Vector3.Distance(transform.position, interactionObject.transform.position))
-                {
-                    interactionObject = obj;
-                }
-            }
-            else
-            {
-                interactionObject = obj;
-            }
-        }
+        // Set interactionObject to first closest or null
+        interactionObject = objects.ToList()
+            .Where(o => Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
+            .OrderBy(o => Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
+            .FirstOrDefault();
     }
 
     private protected void OnDrawGizmos()
     {
-        if (interactionObject == null) Gizmos.color = Color.yellow;
-        else Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, InteractionRange);
+        //if (interactionObject == null) Gizmos.color = Color.yellow;
+        //else Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position, InteractionRange);
+
+        Gizmos.DrawWireSphere(transform.position, HandRange);
     }
 }

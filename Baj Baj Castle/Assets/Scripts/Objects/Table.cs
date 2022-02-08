@@ -15,7 +15,6 @@ public class Table : Interactable
     {
         if (!isFlipped)
         {
-            isActive = false;
             gameObject.tag = "Object";
             _spriteRenderer.flipX = false;
 

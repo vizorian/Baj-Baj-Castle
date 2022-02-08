@@ -13,20 +13,21 @@ public class Collidable : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    private protected virtual void Update()
+    private protected virtual void FixedUpdate()
     {
         // Handling collisions
         _boxCollider.OverlapCollider(ContactFilter, _hits);
         for (int i = 0; i < _hits.Count; i++)
         {
             OnCollide(_hits[i]);
-
             _hits[i] = null;
         }
     }
 
+    // Handles collision
     private protected virtual void OnCollide(Collider2D collider)
     {
         Debug.Log(collider.name);
     }
 }
+
