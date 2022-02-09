@@ -19,6 +19,13 @@ public class EnemyAI : Actor
         }
     }
 
+    private void FixedUpdate()
+    {
+        _hand.UpdateCenterPosition(transform.position);
+        if(target != null)
+            _hand.LookTowards(target.transform.position);
+    }
+
     private void CalculatePath()
     {
     }   
@@ -52,8 +59,8 @@ public class EnemyAI : Actor
 
     private protected void OnDrawGizmos()
     {
-        if (target == null) Gizmos.color = Color.yellow;
-        else Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, ViewRange);
+        //if (target == null) Gizmos.color = Color.yellow;
+        //else Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position, ViewRange);
     }
 }

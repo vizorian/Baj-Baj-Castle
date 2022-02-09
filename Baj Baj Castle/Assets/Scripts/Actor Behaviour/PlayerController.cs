@@ -41,6 +41,7 @@ public class PlayerController : Actor
         {
             if(InventorySystem.Instance.selectedItem != null)
             {
+                // Item usage
                 Debug.Log($"You just used {InventorySystem.Instance.selectedItem.Data.DisplayName}");
             }
         }
@@ -55,6 +56,12 @@ public class PlayerController : Actor
         if (Input.GetKeyDown(KeyCode.G))
         {
             InventorySystem.Instance.Drop();
+        }
+
+        // Flip button
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            TurnHeldItem();
         }
 
         // Reload button

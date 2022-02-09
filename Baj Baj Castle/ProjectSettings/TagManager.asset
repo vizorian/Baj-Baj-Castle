@@ -54,6 +54,9 @@ TagManager:
   - name: Object
     uniqueID: 2091862571
     locked: 0
+  - name: Hand
+    uniqueID: 784040115
+    locked: 0
   - name: Render
     uniqueID: 2300588701
     locked: 0

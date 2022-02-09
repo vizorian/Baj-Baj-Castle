@@ -54,6 +54,11 @@ public class Actor : MonoBehaviour
         _hand.ClearHeldItem();
     }
 
+    private protected virtual void TurnHeldItem()
+    {
+        _hand.TurnHeldItem();
+    }
+
     /// <summary>
     /// Creates a box cast to check for collisions on both axis and moves the player if there are none
     /// </summary>
