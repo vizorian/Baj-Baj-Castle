@@ -37,13 +37,14 @@ public class PlayerController : Actor
         moveDelta = new Vector2(x, y).normalized;
 
         // Left click
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
-            if(InventorySystem.Instance.selectedItem != null)
-            {
-                // Item usage
-                Debug.Log($"You just used {InventorySystem.Instance.selectedItem.Data.DisplayName}");
-            }
+            _hand.isHolding = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            _hand.isHolding = false;
         }
 
         // Interaction button

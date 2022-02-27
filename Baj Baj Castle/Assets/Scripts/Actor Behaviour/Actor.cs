@@ -9,6 +9,10 @@ public class Actor : MonoBehaviour
     private protected RaycastHit2D raycastHit;
     private protected InventorySystem inventory;
 
+    public float Health = 20f;
+    public float Armor = 0f;
+
+
     public enum ActorType
     {
         Enemy,
@@ -44,6 +48,7 @@ public class Actor : MonoBehaviour
         _hand.UpdateCenterPosition(transform.position);
     }
 
+    // ActorHand commands
     private protected virtual void UpdateHeldItem(InventoryItem item)
     {
         _hand.SetHeldItem(item);

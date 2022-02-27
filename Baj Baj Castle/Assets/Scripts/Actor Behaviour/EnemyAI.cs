@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class EnemyAI : Actor
 {
-    private bool isAngered = false;
-
     private protected void Update()
     {
         if(target == null)
@@ -39,7 +37,6 @@ public class EnemyAI : Actor
             if(Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
-                isAngered = true;
                 return;
             }
         }
@@ -51,7 +48,6 @@ public class EnemyAI : Actor
             if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
-                isAngered = true;
                 return;
             }
         }
