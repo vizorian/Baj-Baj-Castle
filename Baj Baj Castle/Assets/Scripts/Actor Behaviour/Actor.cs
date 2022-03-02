@@ -12,13 +12,6 @@ public class Actor : MonoBehaviour
     public float Health = 20f;
     public float Armor = 0f;
 
-
-    public enum ActorType
-    {
-        Enemy,
-        Player
-    };
-
     public ActorType actorType;
 
     //private protected ActorHand _hand;

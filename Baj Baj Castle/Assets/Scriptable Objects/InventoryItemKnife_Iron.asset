@@ -16,3 +16,7 @@ MonoBehaviour:
   DisplayName: Iron Knife
   Icon: {fileID: 2903714021680835994, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
+  itemType: 1
+  ItemProperties:
+    Damage: 4
+    Speed: 1

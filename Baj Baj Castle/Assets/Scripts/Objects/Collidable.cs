@@ -5,8 +5,8 @@ using UnityEngine;
 public class Collidable : MonoBehaviour
 {
     public ContactFilter2D ContactFilter;
-    private protected BoxCollider2D _boxCollider;
-    private List<Collider2D> _hits = new List<Collider2D>();
+    private BoxCollider2D _boxCollider;
+    private protected List<Collider2D> _hits = new List<Collider2D>();
 
     private protected virtual void Start()
     {

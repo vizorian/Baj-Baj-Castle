@@ -14,14 +14,14 @@ public class InventorySystem : MonoBehaviour
     private Dictionary<InventoryItemData, InventoryItem> _itemDictionary;
 
     public List<InventoryItem> Inventory { get; private set; }
-    public InventoryItem selectedItem { get; private set; }
+    public InventoryItem SelectedItem { get; private set; }
     private int selectedItemIndex;
 
     private void Awake()
     {
         Inventory = new List<InventoryItem>();
         _itemDictionary = new Dictionary<InventoryItemData, InventoryItem>();
-        selectedItem = null;
+        SelectedItem = null;
         selectedItemIndex = -1;
 
         if(_instance != null && _instance != this)
@@ -62,12 +62,12 @@ public class InventorySystem : MonoBehaviour
             _itemDictionary.Add(itemData, newItem);
 
             // First pickup is selected automatically
-            if (selectedItem == null)
+            if (SelectedItem == null)
             {
 
-                selectedItem = newItem;
+                SelectedItem = newItem;
                 selectedItemIndex = 0;
-                gameObject.SendMessage("UpdateHeldItem", selectedItem);
+                gameObject.SendMessage("UpdateHeldItem", SelectedItem);
             }
         }
         OnInventoryChanged.Invoke();
@@ -86,15 +86,15 @@ public class InventorySystem : MonoBehaviour
                 _itemDictionary.Remove(itemData);
 
                 // If removed item was selected
-                if (value == selectedItem && Inventory.Count != 0) // If more items remain
+                if (value == SelectedItem && Inventory.Count != 0) // If more items remain
                 {
-                    selectedItem = Inventory[0];
+                    SelectedItem = Inventory[0];
                     selectedItemIndex = 0;
-                    gameObject.SendMessage("UpdateHeldItem", selectedItem);
+                    gameObject.SendMessage("UpdateHeldItem", SelectedItem);
                 }
                 else // If no items remain
                 {
-                    selectedItem = null;
+                    SelectedItem = null;
                     selectedItemIndex = -1;
                     gameObject.SendMessage("ClearHeldItem");
                 }
@@ -106,15 +106,15 @@ public class InventorySystem : MonoBehaviour
     // Drops an item and calls Remove
     public void Drop()
     {
-        if(selectedItem != null)
+        if(SelectedItem != null)
         {
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             // Drop the actual item in the world
-            Instantiate(selectedItem.Data.Prefab, new Vector3(mousePos.x, mousePos.y), Quaternion.identity); // FIX THIS to drop towards mouse
+            Instantiate(SelectedItem.Data.Prefab, new Vector3(mousePos.x, mousePos.y), Quaternion.identity); // FIX THIS to drop towards mouse
 
             // Remove the item from inventory
-            Remove(selectedItem.Data);
+            Remove(SelectedItem.Data);
         }
     }
 
@@ -128,9 +128,9 @@ public class InventorySystem : MonoBehaviour
         if(selectedItemIndex + 1 < Inventory.Count)
             selectedItemIndex++;
         
-        selectedItem = Inventory[selectedItemIndex];
+        SelectedItem = Inventory[selectedItemIndex];
 
-        gameObject.SendMessage("UpdateHeldItem", selectedItem);
+        gameObject.SendMessage("UpdateHeldItem", SelectedItem);
         OnInventoryChanged.Invoke();
     }
 
@@ -144,9 +144,9 @@ public class InventorySystem : MonoBehaviour
         if (selectedItemIndex - 1 >= 0)
             selectedItemIndex--;
 
-        selectedItem = Inventory[selectedItemIndex];
+        SelectedItem = Inventory[selectedItemIndex];
 
-        gameObject.SendMessage("UpdateHeldItem", selectedItem);
+        gameObject.SendMessage("UpdateHeldItem", SelectedItem);
         OnInventoryChanged.Invoke();
     }
 }

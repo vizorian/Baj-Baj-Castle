@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3942133072837529199}
   - component: {fileID: 3942133072837529200}
   - component: {fileID: 3942133072837529197}
+  - component: {fileID: 8421213954941824591}
   m_Layer: 6
   m_Name: Player
   m_TagString: Ally
@@ -98,12 +99,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 20
   Armor: 0
-  actorType: 1
+  actorType: 2
   HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}
   MovementSpeed: 0.5
   InteractionRange: 0.15
   HandRange: 0.1
-  ViewRange: 0.2
+  ViewRange: 0.5
   FrontSprite: {fileID: -3018825789789838114, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: 2172585217110231533, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: 6875313188632250476, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
@@ -133,3 +134,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.16}
   m_EdgeRadius: 0
+--- !u!114 &8421213954941824591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3942133072837529201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf139f5fcd12f04e92cccbbf4a6ebed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []

@@ -120,14 +120,21 @@ public class ActorHand : MonoBehaviour
 
     private void InstantiateHeldItem()
     {
-        // Removes unneeded components from prefab
+        // Prefab preparation for actor use
         _item = Instantiate(_heldItem.Data.Prefab, transform);
         _item.tag = "Untagged";
         Destroy(_item.GetComponent<Pickupable>());
         Destroy(_item.GetComponent<Collider2D>());
+        
         _item.GetComponent<SpriteRenderer>().sortingLayerName = "Hand";
         _item.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
+        Item item = _item.AddComponent<Item>();
+        ItemProperties props = _heldItem.Data.ItemProperties;
+        item.itemType = _heldItem.Data.itemType;
+        item.Damage = props.Damage;
+        item.Speed = props.Speed;
+        
         AlignHeldItem();
 
         newSelection = false;

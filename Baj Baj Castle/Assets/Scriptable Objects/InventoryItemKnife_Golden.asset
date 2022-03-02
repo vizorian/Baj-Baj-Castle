@@ -16,3 +16,7 @@ MonoBehaviour:
   DisplayName: Golden Knife
   Icon: {fileID: 3122454164943141577, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: 209e48458c6a419458dc49b364e07518, type: 3}
+  itemType: 1
+  ItemProperties:
+    Damage: 8
+    Speed: 1
