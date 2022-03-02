@@ -9,7 +9,7 @@ public class ActorHand : MonoBehaviour
     
     private bool newSelection = false;
     private bool isTurned = false;
-    
+
     private float _handSpeed = 1f;
     private float _range;
     
@@ -23,8 +23,6 @@ public class ActorHand : MonoBehaviour
     private float velocity = 0f;
     private float acceleration = 0f;
 
-
-
     // Hand initialization from Actor
     public void Init(float range)
     {
@@ -34,6 +32,9 @@ public class ActorHand : MonoBehaviour
     private void Update()
     {
         UpdateHeldItem();
+        UpdateVerticalRendering();
+        if (!isHolding)
+            UpdateHorizontalRendering();
         //PrintSpeeds();
     }
 
@@ -51,6 +52,38 @@ public class ActorHand : MonoBehaviour
         velocity = Vector2.Distance(currentPos, oldPos) / Time.deltaTime;
 
         acceleration = (Mathf.Abs(velocity - oldVelocity)) / Time.deltaTime;
+    }
+
+    // Flips the hand and held item based on horizontal position
+    private void UpdateHorizontalRendering()
+    {
+        if (Vector2.Dot(transform.parent.transform.right, transform.position - _bodyPosition) > 0) // If to the right of actor
+            transform.localScale = new Vector2(1, 1);
+        else // If to the left of actor
+            transform.localScale = new Vector2(-1, 1);
+    }
+
+    // Updates rendering for the hand and held item based on vertical position
+    private void UpdateVerticalRendering()
+    {
+        SpriteRenderer handRenderer = transform.GetComponent<SpriteRenderer>();
+        SpriteRenderer itemRenderer = null;
+
+        if (_heldItem != null)
+            itemRenderer = _item.GetComponent<SpriteRenderer>();
+
+        if (Vector2.Dot(transform.parent.transform.up, transform.position - _bodyPosition) > 0) // If above actor
+        {
+            handRenderer.sortingLayerName = "Actor";
+            if (itemRenderer != null)
+                itemRenderer.sortingLayerName = "Actor";
+        }
+        else // If below actor
+        {
+            handRenderer.sortingLayerName = "Hand";
+            if (itemRenderer != null)
+                itemRenderer.sortingLayerName = "Hand";
+        }
     }
 
     // Creates a new instance of the held item if there needs to be one

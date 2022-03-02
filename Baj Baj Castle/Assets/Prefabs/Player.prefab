@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 102775839
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -3018825789789838114, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -96,6 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e798dd8e607910a42ac35c0c9ad3e716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 20
+  Armor: 0
   actorType: 1
   HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}
   MovementSpeed: 0.5
