@@ -33,6 +33,7 @@ public class Item : Collidable
 
     private protected override void OnCollide(Collider2D collider)
     {
-        print($"Weapon collided with: {collider.name}");
+        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Object" || collider.gameObject.tag == "Actor")
+            print($"Weapon collided with: {collider.name}");
     }
 }
