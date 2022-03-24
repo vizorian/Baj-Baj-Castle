@@ -5,7 +5,6 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     public Sprite CellSprite;
-
     public bool allowChange = false;
 
     public static Texture2D texture_cell;
@@ -14,8 +13,6 @@ public class LevelGenerator : MonoBehaviour
     public static GUIStyle style_cellBorder;
 
     private List<Cell> Cells = new List<Cell>();
-    private List<GameObject> CellObjects = new List<GameObject>();
-    private List<GameObject> CellDisplayObjects = new List<GameObject>();
 
     public int TileSize = 16;
     public int Complexity = 50;
@@ -23,162 +20,135 @@ public class LevelGenerator : MonoBehaviour
     public float Height = 10;
     private static int cellSize;
 
-    public bool DisplayCells = false;
+    private bool IsSimulated = false;
+    private int simulationLoops = 0;
 
-    private bool displaysCreated = false;
+    public int LoopCount = 10;
 
     // Start is called before the first frame update
     void Start()
     {
         cellSize = TileSize;
-        CreateTextures();
         CreateCells(Complexity);
-        CreateCellObjects();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.A))
+        while (!IsSimulated && simulationLoops < LoopCount)
         {
-            foreach (var cell in CellObjects)
-            {
-                cell.GetComponent<Rigidbody2D>().WakeUp();
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.D))
-        {
-            if (DisplayCells)
-            {
-                DisplayCells = false;
-                foreach (var cell in CellDisplayObjects)
-                {
-                    cell.SetActive(false);
-                }
-            }
-            else
-            {
-                DisplayCells = true;
-            }
-        }
-
-        if (DisplayCells)
-        {
-            // Draw aligned cells
-            if (!displaysCreated)
-            {
-                CreateCellDisplayObjects();
-                displaysCreated = true;
-            }
-
-            for (int i = 0; i < CellDisplayObjects.Count; i++)
-            {
-                float x = RoundNumber(100f * CellObjects[i].transform.localPosition.x, cellSize);
-                float y = RoundNumber(100f * CellObjects[i].transform.localPosition.y, cellSize);
-                Vector2 position = new Vector2(0.01f * x, 0.01f * y);
-                CellDisplayObjects[i].transform.localPosition = position;
-                CellDisplayObjects[i].SetActive(true);
-            }
-        }
-
-        if (allowChange)
-        {
-            foreach (var cell in CellObjects)
-            {
-            }
-
-            //foreach (var cell in Cells)
-            //{
-            //    print(cell.ToString());
-            //}
-            //print("-----------------");
-
-            //SeparateCells();
-        }
-    }
-
-    private void CreateCellDisplayObjects()
-    {
-        for (int i = 0; i < Cells.Count; i++)
-        {
-            GameObject gameObject = new GameObject($"cell_{i}_display");
-            gameObject.transform.localScale = new Vector2(0.01f * Cells[i].Width, 0.01f * Cells[i].Height);
-
-            SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
-            sprite.sprite = CellSprite;
-            sprite.color = new Color(0, 1, 1, 0.3f);
-
-            gameObject.SetActive(false);
-
-            CellDisplayObjects.Add(gameObject);
+            SimulateCells();
         }
     }
 
 
-
-    //private bool CheckForOverlaps()
-    //{
-    //    for (int currentCell = 0; currentCell < Cells.Count / 2; currentCell++)
-    //    {
-    //        for (int nextCell = Cells.Count / 2; nextCell < Cells.Count; nextCell++)
-    //        {
-    //            if (Cells[currentCell].IsOverlapping(Cells[nextCell]))
-    //            {
-    //                return true;
-    //            }
-    //        }
-    //    }
-
-    //    return false;
-    //}
-
-    //void OnGUI()
-    //{
-    //    foreach (var cell in Cells)
-    //    {
-    //        GUI.Box(new Rect(Screen.width / 2 + cell.Position.x, Screen.height / 2 + cell.Position.y, cell.Width, cell.Height), GUIContent.none, style_cell);
-    //    }
-    //}
-
-    //private void OnDrawGizmos()
-    //{
-    //    if(Cells.Count > 0)
-    //    {
-    //        foreach (var cell in Cells)
-    //        {
-    //            Vector2 bottomLeft = new Vector2(cell.Position.x - cell.Width / 2, cell.Position.y - cell.Height / 2);
-    //            Vector2 topLeft = new Vector2(cell.Position.x - cell.Width / 2, cell.Position.y + cell.Height / 2);
-    //            Vector2 topRight = new Vector2(cell.Position.x + cell.Width / 2, cell.Position.y + cell.Height / 2);
-    //            Vector2 bottomRight = new Vector2(cell.Position.x + cell.Width / 2, cell.Position.y - cell.Height / 2);
-    //            Gizmos.color = Color.red;
-    //            Gizmos.DrawLine(bottomLeft, topLeft);
-    //            Gizmos.DrawLine(topLeft, topRight);
-    //            Gizmos.DrawLine(topRight, bottomRight);
-    //            Gizmos.DrawLine(bottomRight, bottomLeft);
-    //        }
-    //    }
-    //}
-
-    private void CreateCellObjects()
+    private void SimulateCells()
     {
+        int simulatedCellsCount = 0;
+
         for (int i = 0; i < Cells.Count; i++)
         {
-            GameObject gameObject = new GameObject($"cell_{i}");
-            gameObject.transform.localPosition = new Vector2(0.01f * Cells[i].Position.x, 0.01f * Cells[i].Position.y);
-            gameObject.transform.localScale = new Vector2(0.01f * Cells[i].Width, 0.01f * Cells[i].Height);
+            UpdateDisplayCellPosition(i);
 
-            SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
-            sprite.sprite = CellSprite;
+            BoxCollider2D collider = Cells[i].DisplayCell.GetComponent<BoxCollider2D>();
 
-            BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
+            // Separate cells
+            List<Collider2D> collisions = FindCollisions(collider);
+            if(collisions.Count == 0)
+            {
+                simulatedCellsCount++;
+            }
 
-            Rigidbody2D rigidbody = gameObject.AddComponent<Rigidbody2D>();
-            rigidbody.gravityScale = 0;
-            rigidbody.freezeRotation = true;
-
-            CellObjects.Add(gameObject);
+            foreach (var collision in collisions)
+            {
+                Vector2 direction = (collider.transform.position - collision.transform.position).normalized * 0.01f;
+                Cells[i].SimulationCell.transform.Translate(direction);
+                Cells.Find(x => x.DisplayCollider == collision).SimulationCell.transform.Translate(-direction);
+            }
         }
+
+        simulationLoops++;
+
+        if (simulatedCellsCount == Cells.Count || simulationLoops >= LoopCount)
+        {
+            IsSimulated = true;
+
+            foreach (var cell in Cells)
+            {
+                cell.SimulationCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+                Destroy(cell.SimulationCell, 3f);
+            }
+        }
+    }
+
+    private void UpdateDisplayCellPosition(int i)
+    {
+        float x = RoundNumber(100f * Cells[i].SimulationCell.transform.localPosition.x, cellSize);
+        float y = RoundNumber(100f * Cells[i].SimulationCell.transform.localPosition.y, cellSize);
+        Vector2 position = new Vector2(0.01f * x, 0.01f * y);
+        Cells[i].DisplayCell.transform.localPosition = position;
+    }
+
+    private List<Collider2D> FindCollisions(BoxCollider2D collider)
+    {
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.useTriggers = true;
+        filter.layerMask = LayerMask.NameToLayer("Cell");
+
+        List<Collider2D> collisions = new List<Collider2D>();
+
+        Vector2 originalSize = collider.size;
+        collider.size = new Vector2(originalSize.x - 0.08f, originalSize.y - 0.08f);
+        collider.OverlapCollider(filter, collisions);
+        collider.size = originalSize;
+
+        List<Collider2D> actualCollisions = new List<Collider2D>(collisions);
+
+        foreach (var collision in collisions)
+        {
+            if (collision.gameObject.layer != LayerMask.NameToLayer("Cell"))
+            {
+                actualCollisions.Remove(collision);
+            }
+        }
+
+        return actualCollisions;
+    }
+
+    private void CreateCellObject(Cell cell, int i)
+    {
+        GameObject gameObject = new GameObject($"Cell #{i}");
+        gameObject.transform.localScale = new Vector2(0.01f * cell.Width, 0.01f * cell.Height);
+        gameObject.layer = LayerMask.NameToLayer("Cell");
+
+        SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
+        sprite.sprite = CellSprite;
+        sprite.color = new Color(0, 1, 1, 0.3f);
+        sprite.sortingLayerName = "Render";
+
+        BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+
+        cell.DisplayCell = gameObject;
+        cell.DisplayCollider = collider;
+    }
+
+    private void CreateSimulationCellObject(Cell cell, int i)
+    {
+        GameObject gameObject = new GameObject($"Simulation cell #{i}");
+        gameObject.transform.localPosition = new Vector2(0.01f * cell.Position.x, 0.01f * cell.Position.y);
+        gameObject.transform.localScale = new Vector2(0.01f * cell.Width, 0.01f * cell.Height);
+
+        SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
+        sprite.sprite = CellSprite;
+
+        gameObject.AddComponent<BoxCollider2D>();
+
+        Rigidbody2D rigidbody = gameObject.AddComponent<Rigidbody2D>();
+        rigidbody.gravityScale = 0;
+        rigidbody.freezeRotation = true;
+
+        cell.SimulationCell = gameObject;
     }
 
     public static float RoundNumber(float x, float tileSize)
@@ -186,69 +156,34 @@ public class LevelGenerator : MonoBehaviour
         return Mathf.Floor((x + tileSize - 1) / tileSize) * tileSize;
     }
 
-    //private void SeparateCells()
-    //{
-    //    for (int currentCell = 0; currentCell < Cells.Count; currentCell++)
-    //    {
-    //        for (int nextCell = 0; nextCell < Cells.Count; nextCell++)
-    //        {
-    //            if (currentCell == nextCell || !Cells[currentCell].IsOverlapping(Cells[nextCell])) continue;
-
-    //            Vector2 direction = (Cells[nextCell].Position - Cells[currentCell].Position).normalized;
-
-    //            Cells[currentCell].Move(-direction, 1);
-    //            Cells[nextCell].Move(direction, 1);
-    //        }
-    //    }
-    //}
-
-    private void CreateTextures()
-    {
-        texture_cell = new Texture2D(1, 1);
-        texture_cell.SetPixel(1, 1, Color.red);
-        texture_cell.wrapMode = TextureWrapMode.Repeat;
-        texture_cell.Apply();
-
-        style_cell = new GUIStyle();
-        style_cell.normal.background = texture_cell;
-
-
-        texture_cellBorder = new Texture2D(1, 1);
-        texture_cellBorder.SetPixel(1, 1, Color.black);
-        texture_cellBorder.wrapMode = TextureWrapMode.Repeat;
-        texture_cellBorder.Apply();
-
-        style_cellBorder = new GUIStyle();
-        style_cellBorder.normal.background = texture_cellBorder;
-    }
-
+    // Creates cells for simulation
     private void CreateCells(int cellCount)
     {
         int genWidth;
         int genHeight;
-        Vector2 position;
 
         for (int i = 0; i < cellCount; i++)
         {
-            // Generate random width/height
-            genWidth = (int)Mathf.Round(RandomGauss(5, 15));
-            genHeight = (int)Mathf.Round(RandomGauss(4, 12));
-
-            // Ratio
-            //while (genWidth/genHeight > 1)
-            //{
-            //    genWidth = (int)Mathf.Round(RandomGauss(5, 15));
-            //    genHeight = (int)Mathf.Round(RandomGauss(4, 12));
-            //}
+            // Generate random width/height within ratio
+            do
+            {
+                genWidth = Mathf.RoundToInt(RandomGauss(5, 15));
+                genHeight = Mathf.RoundToInt(RandomGauss(4, 12));
+            }
+            while (genWidth / genHeight > 2);
 
             // Give random position
-            //position = GetRandomPointInCircle(radius);
-            position = GetRandomPointInElipse(Width, Height);
+            Vector2 position = GetRandomPointInElipse(Width, Height);
+            Cell cell = new Cell(position, genWidth * cellSize, genHeight * cellSize);
 
-            Cells.Add(new Cell(position, genWidth * cellSize, genHeight * cellSize));
+            CreateSimulationCellObject(cell, i);
+            CreateCellObject(cell, i);
+
+            Cells.Add(cell);
         }
     }
 
+    // Returns a random number
     public static float RandomGauss(float minValue, float maxValue)
     {
         float x, y, S;
@@ -269,6 +204,7 @@ public class LevelGenerator : MonoBehaviour
         return Mathf.Clamp(stdDist * sigma + mean, minValue, maxValue);
     }
 
+    // Returns a random point in an elipse
     public static Vector2 GetRandomPointInElipse(float width, float height)
     {
         float t = 2 * Mathf.PI * Random.value;
@@ -284,7 +220,6 @@ public class LevelGenerator : MonoBehaviour
             r = u;
         }
 
-        //return new Vector2(RoundNumber(width * r * Mathf.Cos(t), cellSize), RoundNumber(height * r * Mathf.Sin(t), cellSize));
         return new Vector2(Mathf.Round(width * r * Mathf.Cos(t)), Mathf.Round(height * r * Mathf.Sin(t)));
     }
 }
