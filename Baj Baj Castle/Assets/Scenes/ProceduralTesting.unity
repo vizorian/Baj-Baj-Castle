@@ -166,13 +166,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 473bea1badeaf4048a2814ff593a371d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CellSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  allowChange: 0
+  SimulationDelay: 3
+  CycleCount: 2000
   TileSize: 16
   Complexity: 50
-  Width: 300
-  Height: 10
-  LoopCount: 1000
+  GenerationRegionWidth: 350
+  GenerationRegionHeight: 10
+  RoomWidthMinimum: 6
+  RoomWidthMaximum: 30
+  RoomHeightMinimum: 6
+  RoomHeightMaximum: 20
+  DebugInfo: 0
+  CellSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
 --- !u!1 &1187491617
 GameObject:
   m_ObjectHideFlags: 0

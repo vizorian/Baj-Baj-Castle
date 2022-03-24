@@ -5,7 +5,7 @@ public class Cell
 {
     public GameObject SimulationCell;
     public GameObject DisplayCell;
-    public Collider2D DisplayCollider;
+    public BoxCollider2D DisplayCollider;
 
     public Vector2 Position = new Vector2 (0, 0);
     public float Width;

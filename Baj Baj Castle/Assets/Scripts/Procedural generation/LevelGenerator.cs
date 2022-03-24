@@ -4,76 +4,98 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    public Sprite CellSprite;
-    public bool allowChange = false;
 
-    public static Texture2D texture_cell;
-    public static Texture2D texture_cellBorder;
-    public static GUIStyle style_cell;
-    public static GUIStyle style_cellBorder;
-
-    private List<Cell> Cells = new List<Cell>();
+    public float SimulationDelay = 3f;
+    public int CycleCount = 2000;
 
     public int TileSize = 16;
     public int Complexity = 50;
-    public float Width = 200;
-    public float Height = 10;
+    public float GenerationRegionWidth = 200;
+    public float GenerationRegionHeight = 10;
+
+    public int RoomWidthMinimum = 6;
+    public int RoomWidthMaximum = 30;
+
+    public int RoomHeightMinimum = 6;
+    public int RoomHeightMaximum = 20;
+
+    public bool DebugInfo = false;
+    public Sprite CellSprite;
+
+    private readonly List<Cell> cells = new List<Cell>();
+
     private static int cellSize;
 
-    private bool IsSimulated = false;
+    private bool startSimulation = false;
     private int simulationLoops = 0;
+    private bool isSimulated = false;
 
-    public int LoopCount = 10;
 
     // Start is called before the first frame update
     void Start()
     {
         cellSize = TileSize;
         CreateCells(Complexity);
+        StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
     // Update is called once per frame
     void Update()
     {
-        while (!IsSimulated && simulationLoops < LoopCount)
+        while (!isSimulated && simulationLoops < CycleCount && startSimulation)
         {
             SimulateCells();
         }
+
+        while (DebugInfo)
+        {
+            for (int i = 0; i < cells.Count; i++)
+            {
+                print($"Cell #{i} has {FindCollisions(cells[i].DisplayCollider).Count} collisions");
+            }
+            DebugInfo = false;
+        }
     }
 
+    IEnumerator DelaySimulation(float time)
+    {
+        yield return new WaitForSeconds(time);
+        startSimulation = true;
+    }
 
     private void SimulateCells()
     {
         int simulatedCellsCount = 0;
 
-        for (int i = 0; i < Cells.Count; i++)
+        for (int i = 0; i < cells.Count; i++)
         {
             UpdateDisplayCellPosition(i);
 
-            BoxCollider2D collider = Cells[i].DisplayCell.GetComponent<BoxCollider2D>();
+            BoxCollider2D collider = cells[i].DisplayCollider;
 
-            // Separate cells
             List<Collider2D> collisions = FindCollisions(collider);
             if(collisions.Count == 0)
             {
                 simulatedCellsCount++;
             }
 
+            // Separate colliding cells
             foreach (var collision in collisions)
             {
-                Vector2 direction = (collider.transform.position - collision.transform.position).normalized * 0.01f;
-                Cells[i].SimulationCell.transform.Translate(direction);
-                Cells.Find(x => x.DisplayCollider == collision).SimulationCell.transform.Translate(-direction);
+                Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
+                Vector2 direction = (cells[i].SimulationCell.transform.position - collisionCell.SimulationCell.transform.position).normalized * 0.01f;
+                cells[i].SimulationCell.transform.Translate(direction);
+                collisionCell.SimulationCell.transform.Translate(-direction);
             }
         }
 
         simulationLoops++;
 
-        if (simulatedCellsCount == Cells.Count || simulationLoops >= LoopCount)
+        if (simulatedCellsCount == cells.Count || simulationLoops >= CycleCount)
         {
-            IsSimulated = true;
-
-            foreach (var cell in Cells)
+            isSimulated = true;
+            print($"Simulation took {simulationLoops} cycles");
+            foreach (var cell in cells)
             {
                 cell.SimulationCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
                 Destroy(cell.SimulationCell, 3f);
@@ -83,10 +105,10 @@ public class LevelGenerator : MonoBehaviour
 
     private void UpdateDisplayCellPosition(int i)
     {
-        float x = RoundNumber(100f * Cells[i].SimulationCell.transform.localPosition.x, cellSize);
-        float y = RoundNumber(100f * Cells[i].SimulationCell.transform.localPosition.y, cellSize);
+        float x = RoundNumber(100f * cells[i].SimulationCell.transform.localPosition.x, cellSize);
+        float y = RoundNumber(100f * cells[i].SimulationCell.transform.localPosition.y, cellSize);
         Vector2 position = new Vector2(0.01f * x, 0.01f * y);
-        Cells[i].DisplayCell.transform.localPosition = position;
+        cells[i].DisplayCell.transform.localPosition = position;
     }
 
     private List<Collider2D> FindCollisions(BoxCollider2D collider)
@@ -98,7 +120,7 @@ public class LevelGenerator : MonoBehaviour
         List<Collider2D> collisions = new List<Collider2D>();
 
         Vector2 originalSize = collider.size;
-        collider.size = new Vector2(originalSize.x - 0.08f, originalSize.y - 0.08f);
+        collider.size = new Vector2(originalSize.x - 0.02f, originalSize.y - 0.02f);
         collider.OverlapCollider(filter, collisions);
         collider.size = originalSize;
 
@@ -167,19 +189,19 @@ public class LevelGenerator : MonoBehaviour
             // Generate random width/height within ratio
             do
             {
-                genWidth = Mathf.RoundToInt(RandomGauss(5, 15));
-                genHeight = Mathf.RoundToInt(RandomGauss(4, 12));
+                genWidth = Mathf.RoundToInt(RandomGauss(RoomWidthMinimum, RoomWidthMaximum));
+                genHeight = Mathf.RoundToInt(RandomGauss(RoomHeightMinimum, RoomHeightMaximum));
             }
             while (genWidth / genHeight > 2);
 
             // Give random position
-            Vector2 position = GetRandomPointInElipse(Width, Height);
+            Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
             Cell cell = new Cell(position, genWidth * cellSize, genHeight * cellSize);
 
             CreateSimulationCellObject(cell, i);
             CreateCellObject(cell, i);
 
-            Cells.Add(cell);
+            cells.Add(cell);
         }
     }
 
