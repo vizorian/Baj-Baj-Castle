@@ -170,12 +170,13 @@ MonoBehaviour:
   CycleCount: 2000
   TileSize: 16
   Complexity: 50
-  GenerationRegionWidth: 350
+  GenerationRegionWidth: 400
   GenerationRegionHeight: 10
   RoomWidthMinimum: 6
   RoomWidthMaximum: 30
   RoomHeightMinimum: 6
   RoomHeightMaximum: 20
+  FilteringCriteria: 1
   DebugInfo: 0
   CellSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
 --- !u!1 &1187491617

@@ -19,19 +19,23 @@ public class LevelGenerator : MonoBehaviour
     public int RoomHeightMinimum = 6;
     public int RoomHeightMaximum = 20;
 
+    public float FilteringCriteria = 1.25f;
+
     public bool DebugInfo = false;
     public Sprite CellSprite;
 
     private readonly List<Cell> cells = new List<Cell>();
+    private readonly List<Cell> suitableCells = new List<Cell>();
 
     private static int cellSize;
 
-    private bool startSimulation = false;
     private int simulationLoops = 0;
+
+    private bool startSimulation = false;
+    private bool startFiltering = false;
     private bool isSimulated = false;
+    private bool isFiltered = false;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         cellSize = TileSize;
@@ -39,12 +43,16 @@ public class LevelGenerator : MonoBehaviour
         StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
-    // Update is called once per frame
     void Update()
     {
         while (!isSimulated && simulationLoops < CycleCount && startSimulation)
         {
             SimulateCells();
+        }
+
+        while (isSimulated && !isFiltered && startFiltering)
+        {
+            FilterCells();
         }
 
         while (DebugInfo)
@@ -57,11 +65,32 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator DelaySimulation(float time)
+    private void FilterCells()
     {
-        yield return new WaitForSeconds(time);
-        startSimulation = true;
+        float widthAverage = 0;
+        float heightAverage = 0;
+
+        foreach (var cell in cells)
+        {
+            widthAverage += cell.Width;
+            heightAverage += cell.Height;
+        }
+
+        widthAverage /= cells.Count;
+        heightAverage /= cells.Count;
+
+        foreach (var cell in cells)
+        {
+            if(cell.Width >= widthAverage * FilteringCriteria && cell.Height >= heightAverage * FilteringCriteria)
+            {
+                cell.DisplayCell.GetComponent<SpriteRenderer>().color = Color.red;
+                suitableCells.Add(cell);
+            }
+        }
+
+        isFiltered = true;
     }
+
 
     private void SimulateCells()
     {
@@ -91,15 +120,19 @@ public class LevelGenerator : MonoBehaviour
 
         simulationLoops++;
 
+        // Simulation ending
         if (simulatedCellsCount == cells.Count || simulationLoops >= CycleCount)
         {
             isSimulated = true;
-            print($"Simulation took {simulationLoops} cycles");
+
             foreach (var cell in cells)
             {
                 cell.SimulationCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
                 Destroy(cell.SimulationCell, 3f);
             }
+
+            print($"Simulation took {simulationLoops} cycles");
+            StartCoroutine(DelayFiltering(SimulationDelay));
         }
     }
 
@@ -244,4 +277,21 @@ public class LevelGenerator : MonoBehaviour
 
         return new Vector2(Mathf.Round(width * r * Mathf.Cos(t)), Mathf.Round(height * r * Mathf.Sin(t)));
     }
+
+    // Used for delaying simulation
+    IEnumerator DelaySimulation(float time)
+    {
+        yield return new WaitForSeconds(time);
+        print("Starting simulation.");
+        startSimulation = true;
+    }
+
+    // Used for delaying filtering
+    IEnumerator DelayFiltering(float time)
+    {
+        yield return new WaitForSeconds(time);
+        print("Starting filtering.");
+        startFiltering = true;
+    }
 }
+
