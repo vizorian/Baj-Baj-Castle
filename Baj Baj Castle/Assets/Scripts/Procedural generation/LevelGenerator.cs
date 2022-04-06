@@ -33,8 +33,10 @@ public class LevelGenerator : MonoBehaviour
 
     private bool startSimulation = false;
     private bool startFiltering = false;
+    private bool startTriangulation = false;
     private bool isSimulated = false;
     private bool isFiltered = false;
+    private bool isTriangulated = false;
 
     void Start()
     {
@@ -55,13 +57,44 @@ public class LevelGenerator : MonoBehaviour
             FilterCells();
         }
 
+        while (isFiltered && !isTriangulated && startTriangulation)
+        {
+            Triangulate();
+        }
+
         while (DebugInfo)
         {
-            for (int i = 0; i < cells.Count; i++)
-            {
-                print($"Cell #{i} has {FindCollisions(cells[i].DisplayCollider).Count} collisions");
-            }
             DebugInfo = false;
+        }
+    }
+
+    private void Triangulate()
+    {
+        DelaunayTriangulator triangulator = new DelaunayTriangulator();
+        triangulator.CreateSupraTriangle(suitableCells);
+        
+        HashSet<Point> points = new HashSet<Point>();
+        foreach (var cell in suitableCells)
+        {
+            points.Add(new Point(cell.DisplayCell.transform.position.x, cell.DisplayCell.transform.position.y));
+        }
+
+        var test = triangulator.BowyerWatson(points);
+        isTriangulated = true;
+
+        print("Triangulation complete");
+        print($"Triangles: {test.Count}");
+
+        //Do drawing
+        foreach (var triangle in test)
+        {
+            var p1 = new Vector3((float)triangle.Vertices[0].X, (float)triangle.Vertices[0].Y, 0);
+            var p2 = new Vector3((float)triangle.Vertices[1].X, (float)triangle.Vertices[1].Y, 0);
+            var p3 = new Vector3((float)triangle.Vertices[2].X, (float)triangle.Vertices[2].Y, 0);
+
+            Debug.DrawLine(p1, p2, Color.green, 100f, false);
+            Debug.DrawLine(p2, p3, Color.green, 100f, false);
+            Debug.DrawLine(p3, p1, Color.green, 100f, false);
         }
     }
 
@@ -89,6 +122,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         isFiltered = true;
+        StartCoroutine(DelayTriangulation(SimulationDelay));
     }
 
 
@@ -278,7 +312,7 @@ public class LevelGenerator : MonoBehaviour
         return new Vector2(Mathf.Round(width * r * Mathf.Cos(t)), Mathf.Round(height * r * Mathf.Sin(t)));
     }
 
-    // Used for delaying simulation
+    // Functions below are for organising and delaying various actions
     IEnumerator DelaySimulation(float time)
     {
         yield return new WaitForSeconds(time);
@@ -286,12 +320,18 @@ public class LevelGenerator : MonoBehaviour
         startSimulation = true;
     }
 
-    // Used for delaying filtering
     IEnumerator DelayFiltering(float time)
     {
         yield return new WaitForSeconds(time);
         print("Starting filtering.");
         startFiltering = true;
+    }
+
+    IEnumerator DelayTriangulation(float time)
+    {
+        yield return new WaitForSeconds(time);
+        print("Starting triangulation.");
+        startTriangulation = true;
     }
 }
 

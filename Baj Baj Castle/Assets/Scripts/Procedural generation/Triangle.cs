@@ -8,40 +8,11 @@ public class Triangle
     public Point Circumcenter;
     public double RadiusSq;
 
-    public HashSet<Triangle> TrianglesBordering
-    {
-        get
-        {
-            var neighbours = new HashSet<Triangle>();
-            foreach (Point vertex in Vertices)
-            {
-                var trianglesBordering = vertex.AdjacentTriangles.Where(t =>
-                {
-                    return t != this && BordersWith(t);
-                });
-                neighbours.UnionWith(trianglesBordering);
-            }
-            return neighbours;
-        }
-    }
-
     public Triangle(Point p1, Point p2, Point p3)
     {
         Vertices[0] = p1;
-        if(IsCounterClockwise(p1, p2, p3))
-        {
-            Vertices[1] = p2;
-            Vertices[2] = p3;
-        }
-        else
-        {
-            Vertices[1] = p3;
-            Vertices[2] = p2;
-        }
-
-        Vertices[0].AdjacentTriangles.Add(this);
-        Vertices[1].AdjacentTriangles.Add(this);
-        Vertices[2].AdjacentTriangles.Add(this);
+        Vertices[1] = p2;
+        Vertices[2] = p3;
 
         UpdateCircumcircle();
     }
@@ -61,21 +32,48 @@ public class Triangle
         double div = 2 * (p1.X * (p3.Y - p2.Y) + p2.X * (p1.Y - p3.Y) + p3.X * (p2.Y - p1.Y));
 
         Circumcenter = new Point(aux1 / div, aux2 / div);
-        RadiusSq = Mathf.Pow((float)(Circumcenter.X - p1.X), 2) + Mathf.Pow((float)(Circumcenter.Y - p1.Y), 2);
-    }
-
-    private bool IsCounterClockwise(Point p1, Point p2, Point p3)
-    {
-        return ((p2.X - p1.X) * (p3.Y - p1.Y) - (p3.X - p1.X) * (p2.Y - p1.Y)) > 0;
+        RadiusSq = (Circumcenter.X - p1.X) * (Circumcenter.X - p1.X) + (Circumcenter.Y - p1.Y) * (Circumcenter.Y - p1.Y);
     }
 
     public bool BordersWith(Triangle triangle)
     {
-        return Vertices.Where(v => triangle.Vertices.Contains(v)).Count() == 2;
+        var sharedVertices = Vertices.Where(v => triangle.Vertices.Contains(v)).Count();
+        return sharedVertices == 2;
+    }
+
+    public bool ContainsEdge(Edge edge){
+        return edge.Equals(new Edge(Vertices[0], Vertices[1])) ||
+               edge.Equals(new Edge(Vertices[1], Vertices[2])) ||
+               edge.Equals(new Edge(Vertices[2], Vertices[0]));
     }
 
     public bool IsWithinCircumcircle(Point p)
     {
-        return Mathf.Pow((float)(p.X - Circumcenter.X), 2) + Mathf.Pow((float)(p.Y - Circumcenter.Y), 2) < RadiusSq;
+        var distSq = (p.X - Circumcenter.X) * (p.X - Circumcenter.X) + (p.Y - Circumcenter.Y) * (p.Y - Circumcenter.Y);
+        return distSq < RadiusSq;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("A {0} {1}\nB {2} {3}\nC {4} {5}\n", Vertices[0].X, Vertices[0].Y, Vertices[1].X, Vertices[1].Y, Vertices[2].X, Vertices[2].Y);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        Triangle triangle = (Triangle)obj;
+        return Vertices[0].Equals(triangle.Vertices[0]) &&
+               Vertices[1].Equals(triangle.Vertices[1]) &&
+               Vertices[2].Equals(triangle.Vertices[2]);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = (int)Vertices[0].X ^ (int)Vertices[0].Y ^ (int)Vertices[1].X ^ (int)Vertices[1].Y ^ (int)Vertices[2].X ^ (int)Vertices[2].Y;
+        return hash.GetHashCode();
     }
 }

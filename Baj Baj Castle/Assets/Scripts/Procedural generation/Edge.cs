@@ -15,13 +15,14 @@ public class Edge
 
     public override bool Equals(object obj)
     {
-        if (obj == null) return false;
-        if (obj.GetType() != GetType()) return false;
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
         
         Edge edge = (Edge)obj;
-
-        bool identical = P1 == edge.P1 && P2 == edge.P2;
-        bool identicalReverse = P1 == edge.P2 && P2 == edge.P1;
+        bool identical = P1.Equals(edge.P1) && P2.Equals(edge.P2);
+        bool identicalReverse = P1.Equals(edge.P2) && P2.Equals(edge.P1);
 
         return identical || identicalReverse;
     }
