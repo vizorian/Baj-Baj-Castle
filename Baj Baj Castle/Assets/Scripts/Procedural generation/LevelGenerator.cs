@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -37,16 +38,20 @@ public class LevelGenerator : MonoBehaviour
     private bool isSimulated = false;
     private bool isFiltered = false;
     private bool isTriangulated = false;
+    private float startTime;
+    private float endTime;
 
     void Start()
     {
         cellSize = TileSize;
         CreateCells(Complexity);
+        print("Starting generation process...");
         StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
     void Update()
     {
+        
         while (!isSimulated && simulationLoops < CycleCount && startSimulation)
         {
             SimulateCells();
@@ -59,7 +64,9 @@ public class LevelGenerator : MonoBehaviour
 
         while (isFiltered && !isTriangulated && startTriangulation)
         {
-            Triangulate();
+            TriangulateCells();
+
+            
         }
 
         while (DebugInfo)
@@ -68,34 +75,107 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void Triangulate()
+    private void TriangulateCells()
     {
         DelaunayTriangulator triangulator = new DelaunayTriangulator();
         triangulator.CreateSupraTriangle(suitableCells);
-        
+
         HashSet<Point> points = new HashSet<Point>();
         foreach (var cell in suitableCells)
         {
             points.Add(new Point(cell.DisplayCell.transform.position.x, cell.DisplayCell.transform.position.y));
         }
+        var triangulation = triangulator.BowyerWatson(points);
 
-        var test = triangulator.BowyerWatson(points);
         isTriangulated = true;
 
-        print("Triangulation complete");
-        print($"Triangles: {test.Count}");
+        endTime = Time.realtimeSinceStartup;
+        print("Triangulation took " + (endTime - startTime) + " seconds.");
 
-        //Do drawing
-        foreach (var triangle in test)
+        // Do drawing
+        DrawTriangles(triangulation);
+
+        // Destroy any cells that are not part of the triangulation
+        var cellsToDestroyCount = 0;
+        foreach (var cell in suitableCells)
         {
-            var p1 = new Vector3((float)triangle.Vertices[0].X, (float)triangle.Vertices[0].Y, 0);
-            var p2 = new Vector3((float)triangle.Vertices[1].X, (float)triangle.Vertices[1].Y, 0);
-            var p3 = new Vector3((float)triangle.Vertices[2].X, (float)triangle.Vertices[2].Y, 0);
+            if (!cell.IsPartOf(triangulation))
+            {
+                Destroy(cell.DisplayCell);
+                cellsToDestroyCount++;
+            }
+        }
+        if(cellsToDestroyCount > 0)
+        {
+            print("Destroyed " + cellsToDestroyCount + " cells.");
+        }
+
+        // Get a minimum spanning tree
+        var minimumSpanningTree = MinimumSpanningTree(triangulation, points.ToList());
+
+        DrawEdges(minimumSpanningTree);
+    }
+
+    private static void DrawTriangles(HashSet<Triangle> triangles)
+    {
+        foreach (var triangle in triangles)
+        {
+            var p1 = new Vector2((float)triangle.Vertices[0].X, (float)triangle.Vertices[0].Y);
+            var p2 = new Vector2((float)triangle.Vertices[1].X, (float)triangle.Vertices[1].Y);
+            var p3 = new Vector2((float)triangle.Vertices[2].X, (float)triangle.Vertices[2].Y);
+
+            Debug.DrawLine(p1, p2, Color.magenta, 3f, true);
+            Debug.DrawLine(p2, p3, Color.magenta, 3f, true);
+            Debug.DrawLine(p3, p1, Color.magenta, 3f, true);
+        }
+    }
+
+    private static void DrawEdges(HashSet<Edge> edges)
+    {
+        foreach (var edge in edges)
+        {
+            var p1 = new Vector2((float)edge.P1.X, (float)edge.P1.Y);
+            var p2 = new Vector2((float)edge.P2.X, (float)edge.P2.Y);
 
             Debug.DrawLine(p1, p2, Color.green, 100f, false);
-            Debug.DrawLine(p2, p3, Color.green, 100f, false);
-            Debug.DrawLine(p3, p1, Color.green, 100f, false);
         }
+    }
+
+    private HashSet<Edge> MinimumSpanningTree(HashSet<Triangle> triangles, List<Point> points)
+    {
+        var edges = new HashSet<Edge>();
+        foreach (var triangle in triangles)
+        {
+            var p1 = new Point(triangle.Vertices[0].X, triangle.Vertices[0].Y);
+            var p2 = new Point(triangle.Vertices[1].X, triangle.Vertices[1].Y);
+            var p3 = new Point(triangle.Vertices[2].X, triangle.Vertices[2].Y);
+
+            edges.Add(new Edge(p1, p2));
+            edges.Add(new Edge(p2, p3));
+            edges.Add(new Edge(p3, p1));
+        }
+        var sortedEdges = edges.OrderBy(e => e.Weight).ToList();
+
+        var forest = new DisjointSet(points.Count);
+        for(int i = 0; i < points.Count; i++)
+        {
+            forest.MakeSet(i);
+        }
+
+        var minimumSpanningTree = new HashSet<Edge>();
+
+        foreach (var edge in sortedEdges)
+        {
+            int indexP1 = points.FindIndex(p => p.Equals(edge.P1));
+            int indexP2 = points.FindIndex(p => p.Equals(edge.P2));
+
+            if (forest.Find(indexP1) != forest.Find(indexP2))
+            {
+                minimumSpanningTree.Add(edge);
+                forest.Union(indexP1, indexP2);
+            }
+        }
+        return minimumSpanningTree;
     }
 
     private void FilterCells()
@@ -114,14 +194,18 @@ public class LevelGenerator : MonoBehaviour
 
         foreach (var cell in cells)
         {
-            if(cell.Width >= widthAverage * FilteringCriteria && cell.Height >= heightAverage * FilteringCriteria)
-            {
+            if(cell.Width >= widthAverage * FilteringCriteria && cell.Height >= heightAverage * FilteringCriteria){
                 cell.DisplayCell.GetComponent<SpriteRenderer>().color = Color.red;
                 suitableCells.Add(cell);
+            }else{
+                Destroy(cell.DisplayCell);
             }
         }
-
         isFiltered = true;
+        
+        endTime = Time.realtimeSinceStartup;
+        print("Filtering took " + (endTime - startTime) + " seconds.");
+        
         StartCoroutine(DelayTriangulation(SimulationDelay));
     }
 
@@ -157,15 +241,18 @@ public class LevelGenerator : MonoBehaviour
         // Simulation ending
         if (simulatedCellsCount == cells.Count || simulationLoops >= CycleCount)
         {
-            isSimulated = true;
-
             foreach (var cell in cells)
             {
                 cell.SimulationCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
-                Destroy(cell.SimulationCell, 3f);
+                Destroy(cell.SimulationCell);
             }
 
+            isSimulated = true;
+
+            var endTime = Time.realtimeSinceStartup;
             print($"Simulation took {simulationLoops} cycles");
+            print("Simulation took " + (endTime - startTime) + " seconds.");
+            
             StartCoroutine(DelayFiltering(SimulationDelay));
         }
     }
@@ -207,6 +294,7 @@ public class LevelGenerator : MonoBehaviour
     private void CreateCellObject(Cell cell, int i)
     {
         GameObject gameObject = new GameObject($"Cell #{i}");
+        gameObject.SetActive(false);
         gameObject.transform.localScale = new Vector2(0.01f * cell.Width, 0.01f * cell.Height);
         gameObject.layer = LayerMask.NameToLayer("Cell");
 
@@ -316,21 +404,28 @@ public class LevelGenerator : MonoBehaviour
     IEnumerator DelaySimulation(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting simulation.");
+        print("Starting simulation...");
+        foreach (var cell in cells)
+        {
+            cell.DisplayCell.SetActive(true);
+        }
+        startTime = Time.realtimeSinceStartup;
         startSimulation = true;
     }
 
     IEnumerator DelayFiltering(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting filtering.");
+        print("Starting filtering...");
+        startTime = Time.realtimeSinceStartup;
         startFiltering = true;
     }
 
     IEnumerator DelayTriangulation(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting triangulation.");
+        print("Starting triangulation...");
+        startTime = Time.realtimeSinceStartup;
         startTriangulation = true;
     }
 }

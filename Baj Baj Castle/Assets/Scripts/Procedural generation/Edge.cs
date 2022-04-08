@@ -6,7 +6,10 @@ public class Edge
 {
     public Point P1;
     public Point P2;
-
+    public float Weight
+    {
+        get{ return P1.DistanceTo(P2); }
+    }
     public Edge(Point p1, Point p2)
     {
         P1 = p1;
