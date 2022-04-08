@@ -5,7 +5,7 @@ using System.Linq;
 
 public class LevelGenerator : MonoBehaviour
 {
-
+    private const float PIXEL_SIZE = 0.01f;
     public float SimulationDelay = 3f;
     public int CycleCount = 2000;
 
@@ -26,16 +26,17 @@ public class LevelGenerator : MonoBehaviour
 
     private readonly List<Cell> cells = new List<Cell>();
     private readonly List<Cell> suitableCells = new List<Cell>();
+    private readonly List<GameObject> fillerCells = new List<GameObject>();
 
     private static int cellSize;
 
     private int simulationLoops = 0;
 
     private bool startSimulation = false;
-    private bool startFiltering = false;
+    private bool startProcessing = false;
     private bool startGraphing = false;
     private bool isSimulated = false;
-    private bool isFiltered = false;
+    private bool isProcessed = false;
     private bool isGraphed = false;
     private float startTime;
     private float endTime;
@@ -56,34 +57,100 @@ public class LevelGenerator : MonoBehaviour
             SimulateCells();
         }
 
-        while (isSimulated && !isFiltered && startFiltering)
+        if (isSimulated && !isProcessed && startProcessing)
         {
-            FilterCells();
+            ProcessCells();
         }
 
-        while(isFiltered && !isGraphed && startGraphing)
+        if(isProcessed && !isGraphed && startGraphing)
         {
             Graph();
         }
     }
 
+    private void ProcessCells()
+    {
+        // filter out cells that qualify to be rooms
+        FilterCells();
+        endTime = Time.realtimeSinceStartup;
+        print("Cell filtering took " + (endTime - startTime) + " seconds.");
+
+        // create filler cells to fill in the gaps between cells
+        CreateFillerCells();
+        endTime = Time.realtimeSinceStartup;
+        print("Filler cell creation took " + (endTime - startTime) + " seconds.");
+
+        isProcessed = true;
+        StartCoroutine(DelayGraphing(SimulationDelay));
+    }
+
+    private void CreateFillerCells()
+    {
+        // find extremes of suitable cells
+        var minX = suitableCells.Min(c => c.SimulationCell.transform.position.x);
+        var minY = suitableCells.Min(c => c.SimulationCell.transform.position.y);
+        var maxX = suitableCells.Max(c => c.SimulationCell.transform.position.x);
+        var maxY = suitableCells.Max(c => c.SimulationCell.transform.position.y);
+
+        // find corner positions from extremes
+        var topLeft = new Vector2(minX, maxY);
+        var topRight = new Vector2(maxX, maxY);
+        var bottomLeft = new Vector2(minX, minY);
+        var bottomRight = new Vector2(maxX, minY);
+
+        // TODO align with grid
+        // find all positions between suitable cells every 0.16 units
+        var positions = new List<Vector2>();
+        for (var x = minX; x <= 50; x += cellSize * PIXEL_SIZE)
+        {
+            for (var y = minY; y <= 50; y += cellSize * PIXEL_SIZE)
+            {
+                var position = new Vector2(x, y);
+                // check if position is not in any of the suitable cells area
+                if (!suitableCells.Any(c => c.IsPointInside(new Vector2(x, y))))
+                {
+                    positions.Add(new Vector2(x, y));
+                }
+            }
+        }
+
+        // create filler cells
+        foreach (var position in positions)
+        {
+            var fillerCell = new GameObject("Filler Cell");
+            fillerCell.transform.position = position;
+            fillerCell.AddComponent<SpriteRenderer>().sprite = CellSprite;
+            fillerCell.GetComponent<SpriteRenderer>().color = Color.white;
+            fillerCell.transform.localScale = new Vector2(cellSize * PIXEL_SIZE, cellSize * PIXEL_SIZE);
+            fillerCells.Add(fillerCell);
+        }
+    }
+
     private void Graph()
     {
+        // get all unique vertices
         HashSet<Point> points = new HashSet<Point>();
         foreach (var cell in suitableCells)
         {
             points.Add(new Point(cell.SimulationCell.transform.position.x, cell.SimulationCell.transform.position.y));
         }
 
-        // Perform triangulation
+        // perform triangulation
         var triangulation = Triangulate(points);
+        endTime = Time.realtimeSinceStartup;
+        print("Cell riangulation took " + (endTime - startTime) + " seconds.");
+        startTime = endTime;
         DrawTriangles(triangulation);
 
         Cleanup(triangulation);
 
-        // Get a minimum spanning tree from triangulation results
+        // get a minimum spanning tree from triangulation results
         var minimumSpanningTree = MinimumSpanningTree(triangulation, points.ToList());
+        endTime = Time.realtimeSinceStartup;
+        print("Minimum spanning tree calculation took " + (endTime - startTime) + " seconds.");
         DrawEdges(minimumSpanningTree);
+
+        isGraphed = true;
     }
 
     // Perform Delaunay triangulation on a set of points
@@ -91,15 +158,7 @@ public class LevelGenerator : MonoBehaviour
     {
         var triangulator = new DelaunayTriangulator();
         triangulator.CreateSupraTriangle(suitableCells);
-
-        var triangulation = triangulator.BowyerWatson(points);
-
-        isGraphed = true;
-
-        endTime = Time.realtimeSinceStartup;
-        print("Triangulation took " + (endTime - startTime) + " seconds.");
-
-        return triangulation;
+        return triangulator.BowyerWatson(points);
     }
 
     // Destroy cells that are not part of the triangulation
@@ -205,12 +264,6 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(cell.SimulationCell);
             }
         }
-        isFiltered = true;
-        
-        endTime = Time.realtimeSinceStartup;
-        print("Filtering took " + (endTime - startTime) + " seconds.");
-        
-        StartCoroutine(DelayGraphing(SimulationDelay));
     }
 
 
@@ -220,7 +273,7 @@ public class LevelGenerator : MonoBehaviour
 
         for (int i = 0; i < cells.Count; i++)
         {
-            UpdateDisplayCellPosition(i);
+            UpdateSimulationCellPosition(i);
 
             BoxCollider2D collider = cells[i].DisplayCollider;
 
@@ -234,7 +287,7 @@ public class LevelGenerator : MonoBehaviour
             foreach (var collision in collisions)
             {
                 Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
-                Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * 0.01f;
+                Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
                 cells[i].PhysicsCell.transform.Translate(direction);
                 collisionCell.PhysicsCell.transform.Translate(-direction);
             }
@@ -257,15 +310,15 @@ public class LevelGenerator : MonoBehaviour
             print($"Simulation took {simulationLoops} cycles");
             print("Simulation took " + (endTime - startTime) + " seconds.");
             
-            StartCoroutine(DelayFiltering(SimulationDelay));
+            StartCoroutine(DelayProcessing(SimulationDelay));
         }
     }
 
-    private void UpdateDisplayCellPosition(int i)
+    private void UpdateSimulationCellPosition(int i)
     {
-        float x = RoundNumber(100f * cells[i].PhysicsCell.transform.localPosition.x, cellSize);
-        float y = RoundNumber(100f * cells[i].PhysicsCell.transform.localPosition.y, cellSize);
-        Vector2 position = new Vector2(0.01f * x, 0.01f * y);
+        float x = RoundNumber(cells[i].PhysicsCell.transform.localPosition.x, cellSize);
+        float y = RoundNumber(cells[i].PhysicsCell.transform.localPosition.y, cellSize);
+        Vector2 position = new Vector2(PIXEL_SIZE * x, PIXEL_SIZE * y);
         cells[i].SimulationCell.transform.localPosition = position;
     }
 
@@ -295,11 +348,11 @@ public class LevelGenerator : MonoBehaviour
         return actualCollisions;
     }
 
-    private void CreateCellObject(Cell cell, int i)
+    private void CreateSimulationCellObject(Cell cell, int i)
     {
         GameObject gameObject = new GameObject($"Cell #{i}");
         gameObject.SetActive(false);
-        gameObject.transform.localScale = new Vector2(0.01f * cell.Width, 0.01f * cell.Height);
+        gameObject.transform.localScale = new Vector2(PIXEL_SIZE * cell.Width, PIXEL_SIZE * cell.Height);
         gameObject.layer = LayerMask.NameToLayer("Cell");
 
         SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
@@ -314,11 +367,11 @@ public class LevelGenerator : MonoBehaviour
         cell.DisplayCollider = collider;
     }
 
-    private void CreateSimulationCellObject(Cell cell, int i)
+    private void CreatePhysicsCellObject(Cell cell, int i)
     {
         GameObject gameObject = new GameObject($"Simulation cell #{i}");
-        gameObject.transform.localPosition = new Vector2(0.01f * cell.Position.x, 0.01f * cell.Position.y);
-        gameObject.transform.localScale = new Vector2(0.01f * cell.Width, 0.01f * cell.Height);
+        gameObject.transform.localPosition = new Vector2(PIXEL_SIZE * cell.Position.x, PIXEL_SIZE * cell.Position.y);
+        gameObject.transform.localScale = new Vector2(PIXEL_SIZE * cell.Width, PIXEL_SIZE * cell.Height);
 
         SpriteRenderer sprite = gameObject.AddComponent<SpriteRenderer>();
         sprite.sprite = CellSprite;
@@ -334,6 +387,7 @@ public class LevelGenerator : MonoBehaviour
 
     public static float RoundNumber(float x, float tileSize)
     {
+        x *= 100f;
         return Mathf.Floor((x + tileSize - 1) / tileSize) * tileSize;
     }
 
@@ -357,8 +411,8 @@ public class LevelGenerator : MonoBehaviour
             Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
             Cell cell = new Cell(position, genWidth * cellSize, genHeight * cellSize);
 
+            CreatePhysicsCellObject(cell, i);
             CreateSimulationCellObject(cell, i);
-            CreateCellObject(cell, i);
 
             cells.Add(cell);
         }
@@ -417,12 +471,12 @@ public class LevelGenerator : MonoBehaviour
         startSimulation = true;
     }
 
-    IEnumerator DelayFiltering(float time)
+    IEnumerator DelayProcessing(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting filtering...");
+        print("Starting processing...");
         startTime = Time.realtimeSinceStartup;
-        startFiltering = true;
+        startProcessing = true;
     }
 
     IEnumerator DelayGraphing(float time)

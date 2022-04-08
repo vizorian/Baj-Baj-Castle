@@ -18,6 +18,22 @@ public class Cell
         Position = position;
     }
 
+    // check if point is inside
+    public bool IsPointInside(Vector2 point)
+    {
+        // get cell position in world
+        var worldPosition = SimulationCell.transform.position;
+        var worldPositionX = worldPosition.x;
+        var worldPositionY = worldPosition.y;
+
+        // get rectangle corners
+        var topLeft = new Vector2(worldPositionX - Width * 0.01f / 2, worldPositionY * 0.01f + Height / 2);
+        var bottomRight = new Vector2(worldPositionX + Width * 0.01f / 2, worldPositionY - Height * 0.01f / 2);
+
+        return point.x >= topLeft.x && point.x <= bottomRight.x && point.y <= topLeft.y && point.y >= bottomRight.y;
+
+    }
+
     public bool IsPartOf(HashSet<Triangle> triangles)
     {
         // Get all unique vertices from triangles
