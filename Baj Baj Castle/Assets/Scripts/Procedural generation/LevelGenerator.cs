@@ -22,7 +22,6 @@ public class LevelGenerator : MonoBehaviour
 
     public float FilteringCriteria = 1.25f;
 
-    public bool DebugInfo = false;
     public Sprite CellSprite;
 
     private readonly List<Cell> cells = new List<Cell>();
@@ -34,10 +33,10 @@ public class LevelGenerator : MonoBehaviour
 
     private bool startSimulation = false;
     private bool startFiltering = false;
-    private bool startTriangulation = false;
+    private bool startGraphing = false;
     private bool isSimulated = false;
     private bool isFiltered = false;
-    private bool isTriangulated = false;
+    private bool isGraphed = false;
     private float startTime;
     private float endTime;
 
@@ -62,58 +61,63 @@ public class LevelGenerator : MonoBehaviour
             FilterCells();
         }
 
-        while (isFiltered && !isTriangulated && startTriangulation)
+        while(isFiltered && !isGraphed && startGraphing)
         {
-            TriangulateCells();
-
-            
-        }
-
-        while (DebugInfo)
-        {
-            DebugInfo = false;
+            Graph();
         }
     }
 
-    private void TriangulateCells()
+    private void Graph()
     {
-        DelaunayTriangulator triangulator = new DelaunayTriangulator();
-        triangulator.CreateSupraTriangle(suitableCells);
-
         HashSet<Point> points = new HashSet<Point>();
         foreach (var cell in suitableCells)
         {
-            points.Add(new Point(cell.DisplayCell.transform.position.x, cell.DisplayCell.transform.position.y));
+            points.Add(new Point(cell.SimulationCell.transform.position.x, cell.SimulationCell.transform.position.y));
         }
+
+        // Perform triangulation
+        var triangulation = Triangulate(points);
+        DrawTriangles(triangulation);
+
+        Cleanup(triangulation);
+
+        // Get a minimum spanning tree from triangulation results
+        var minimumSpanningTree = MinimumSpanningTree(triangulation, points.ToList());
+        DrawEdges(minimumSpanningTree);
+    }
+
+    // Perform Delaunay triangulation on a set of points
+    private HashSet<Triangle> Triangulate(HashSet<Point> points)
+    {
+        var triangulator = new DelaunayTriangulator();
+        triangulator.CreateSupraTriangle(suitableCells);
+
         var triangulation = triangulator.BowyerWatson(points);
 
-        isTriangulated = true;
+        isGraphed = true;
 
         endTime = Time.realtimeSinceStartup;
         print("Triangulation took " + (endTime - startTime) + " seconds.");
 
-        // Do drawing
-        DrawTriangles(triangulation);
+        return triangulation;
+    }
 
-        // Destroy any cells that are not part of the triangulation
+    // Destroy cells that are not part of the triangulation
+    private void Cleanup(HashSet<Triangle> triangulation)
+    {
         var cellsToDestroyCount = 0;
         foreach (var cell in suitableCells)
         {
             if (!cell.IsPartOf(triangulation))
             {
-                Destroy(cell.DisplayCell);
+                Destroy(cell.SimulationCell);
                 cellsToDestroyCount++;
             }
         }
-        if(cellsToDestroyCount > 0)
+        if (cellsToDestroyCount > 0)
         {
             print("Destroyed " + cellsToDestroyCount + " cells.");
         }
-
-        // Get a minimum spanning tree
-        var minimumSpanningTree = MinimumSpanningTree(triangulation, points.ToList());
-
-        DrawEdges(minimumSpanningTree);
     }
 
     private static void DrawTriangles(HashSet<Triangle> triangles)
@@ -195,10 +199,10 @@ public class LevelGenerator : MonoBehaviour
         foreach (var cell in cells)
         {
             if(cell.Width >= widthAverage * FilteringCriteria && cell.Height >= heightAverage * FilteringCriteria){
-                cell.DisplayCell.GetComponent<SpriteRenderer>().color = Color.red;
+                cell.SimulationCell.GetComponent<SpriteRenderer>().color = Color.red;
                 suitableCells.Add(cell);
             }else{
-                Destroy(cell.DisplayCell);
+                Destroy(cell.SimulationCell);
             }
         }
         isFiltered = true;
@@ -206,7 +210,7 @@ public class LevelGenerator : MonoBehaviour
         endTime = Time.realtimeSinceStartup;
         print("Filtering took " + (endTime - startTime) + " seconds.");
         
-        StartCoroutine(DelayTriangulation(SimulationDelay));
+        StartCoroutine(DelayGraphing(SimulationDelay));
     }
 
 
@@ -230,9 +234,9 @@ public class LevelGenerator : MonoBehaviour
             foreach (var collision in collisions)
             {
                 Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
-                Vector2 direction = (cells[i].SimulationCell.transform.position - collisionCell.SimulationCell.transform.position).normalized * 0.01f;
-                cells[i].SimulationCell.transform.Translate(direction);
-                collisionCell.SimulationCell.transform.Translate(-direction);
+                Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * 0.01f;
+                cells[i].PhysicsCell.transform.Translate(direction);
+                collisionCell.PhysicsCell.transform.Translate(-direction);
             }
         }
 
@@ -243,8 +247,8 @@ public class LevelGenerator : MonoBehaviour
         {
             foreach (var cell in cells)
             {
-                cell.SimulationCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
-                Destroy(cell.SimulationCell);
+                cell.PhysicsCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+                Destroy(cell.PhysicsCell);
             }
 
             isSimulated = true;
@@ -259,10 +263,10 @@ public class LevelGenerator : MonoBehaviour
 
     private void UpdateDisplayCellPosition(int i)
     {
-        float x = RoundNumber(100f * cells[i].SimulationCell.transform.localPosition.x, cellSize);
-        float y = RoundNumber(100f * cells[i].SimulationCell.transform.localPosition.y, cellSize);
+        float x = RoundNumber(100f * cells[i].PhysicsCell.transform.localPosition.x, cellSize);
+        float y = RoundNumber(100f * cells[i].PhysicsCell.transform.localPosition.y, cellSize);
         Vector2 position = new Vector2(0.01f * x, 0.01f * y);
-        cells[i].DisplayCell.transform.localPosition = position;
+        cells[i].SimulationCell.transform.localPosition = position;
     }
 
     private List<Collider2D> FindCollisions(BoxCollider2D collider)
@@ -306,7 +310,7 @@ public class LevelGenerator : MonoBehaviour
         BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
 
-        cell.DisplayCell = gameObject;
+        cell.SimulationCell = gameObject;
         cell.DisplayCollider = collider;
     }
 
@@ -325,7 +329,7 @@ public class LevelGenerator : MonoBehaviour
         rigidbody.gravityScale = 0;
         rigidbody.freezeRotation = true;
 
-        cell.SimulationCell = gameObject;
+        cell.PhysicsCell = gameObject;
     }
 
     public static float RoundNumber(float x, float tileSize)
@@ -407,7 +411,7 @@ public class LevelGenerator : MonoBehaviour
         print("Starting simulation...");
         foreach (var cell in cells)
         {
-            cell.DisplayCell.SetActive(true);
+            cell.SimulationCell.SetActive(true);
         }
         startTime = Time.realtimeSinceStartup;
         startSimulation = true;
@@ -421,12 +425,12 @@ public class LevelGenerator : MonoBehaviour
         startFiltering = true;
     }
 
-    IEnumerator DelayTriangulation(float time)
+    IEnumerator DelayGraphing(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting triangulation...");
+        print("Starting graphing...");
         startTime = Time.realtimeSinceStartup;
-        startTriangulation = true;
+        startGraphing = true;
     }
 }
 

@@ -65,15 +65,15 @@ public class DelaunayTriangulator
     // Create supra triangle from most spread out points (kind of)
     public void CreateSupraTriangle(List<Cell> cells)
     {
-        var leftCell = cells.OrderBy(c => c.DisplayCell.transform.position.x - c.Width * 0.01f / 2)
-                                  .ThenBy(c => c.DisplayCell.transform.position.y - c.Height * 0.01f / 2).First();
-        var topCell = cells.OrderByDescending(c => c.DisplayCell.transform.position.y + c.Height * 0.01f / 2).First();
-        var rightCell = cells.OrderByDescending(c => c.DisplayCell.transform.position.x + c.Width * 0.01f / 2)
-                                   .ThenBy(c => c.DisplayCell.transform.position.y - c.Height * 0.01f / 2).First();
+        var leftCell = cells.OrderBy(c => c.SimulationCell.transform.position.x - c.Width * 0.01f / 2)
+                                  .ThenBy(c => c.SimulationCell.transform.position.y - c.Height * 0.01f / 2).First();
+        var topCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.y + c.Height * 0.01f / 2).First();
+        var rightCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.x + c.Width * 0.01f / 2)
+                                   .ThenBy(c => c.SimulationCell.transform.position.y - c.Height * 0.01f / 2).First();
 
-        var pointLeft = new Point((float)leftCell.DisplayCell.transform.position.x, (float)leftCell.DisplayCell.transform.position.y);
-        var pointTop = new Point((float)topCell.DisplayCell.transform.position.x, (float)topCell.DisplayCell.transform.position.y);
-        var pointRight = new Point((float)rightCell.DisplayCell.transform.position.x, (float)rightCell.DisplayCell.transform.position.y);
+        var pointLeft = new Point((float)leftCell.SimulationCell.transform.position.x, (float)leftCell.SimulationCell.transform.position.y);
+        var pointTop = new Point((float)topCell.SimulationCell.transform.position.x, (float)topCell.SimulationCell.transform.position.y);
+        var pointRight = new Point((float)rightCell.SimulationCell.transform.position.x, (float)rightCell.SimulationCell.transform.position.y);
 
         Supra = new Triangle(pointLeft, pointTop, pointRight);
     }

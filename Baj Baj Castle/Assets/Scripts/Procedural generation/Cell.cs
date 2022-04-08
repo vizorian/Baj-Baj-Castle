@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Cell
 {
+    public GameObject PhysicsCell;
     public GameObject SimulationCell;
-    public GameObject DisplayCell;
     public BoxCollider2D DisplayCollider;
 
     public Vector2 Position = new Vector2 (0, 0);
@@ -32,7 +32,7 @@ public class Cell
         // Check if the cell is any of the vertices
         foreach (Point vertex in vertices)
         {
-            if (vertex.X == DisplayCell.transform.position.x && vertex.Y == DisplayCell.transform.position.y)
+            if (vertex.X == SimulationCell.transform.position.x && vertex.Y == SimulationCell.transform.position.y)
             {
                 return true;
             }
