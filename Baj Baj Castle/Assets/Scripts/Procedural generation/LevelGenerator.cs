@@ -5,7 +5,7 @@ using System.Linq;
 
 public class LevelGenerator : MonoBehaviour
 {
-    private const float PIXEL_SIZE = 0.01f;
+    public const float PIXEL_SIZE = 0.01f;
     public float SimulationDelay = 3f;
     public int CycleCount = 2000;
 
@@ -28,7 +28,10 @@ public class LevelGenerator : MonoBehaviour
     private readonly List<Cell> suitableCells = new List<Cell>();
     private readonly List<GameObject> fillerCells = new List<GameObject>();
 
-    private static int cellSize;
+    public static float cellSize;
+
+    public ContactFilter2D CollisionFilter = new ContactFilter2D();
+        
 
     private int simulationLoops = 0;
 
@@ -43,28 +46,31 @@ public class LevelGenerator : MonoBehaviour
 
     void Start()
     {
-        cellSize = TileSize;
+        cellSize = TileSize * PIXEL_SIZE;
         CreateCells(Complexity);
+        DrawGrid();
         print("Starting generation process...");
         StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
-    void Update()
+    void FixedUpdate()
     {
         
-        while (!isSimulated && simulationLoops < CycleCount && startSimulation)
+        if (!isSimulated && simulationLoops < CycleCount && startSimulation)
         {
             SimulateCells();
         }
 
         if (isSimulated && !isProcessed && startProcessing)
         {
-            ProcessCells();
+            // ProcessCells();
         }
 
         if(isProcessed && !isGraphed && startGraphing)
         {
-            Graph();
+            // Graph();
+
+            
         }
     }
 
@@ -76,9 +82,9 @@ public class LevelGenerator : MonoBehaviour
         print("Cell filtering took " + (endTime - startTime) + " seconds.");
 
         // create filler cells to fill in the gaps between cells
-        CreateFillerCells();
-        endTime = Time.realtimeSinceStartup;
-        print("Filler cell creation took " + (endTime - startTime) + " seconds.");
+        // CreateFillerCells();
+        // endTime = Time.realtimeSinceStartup;
+        // print("Filler cell creation took " + (endTime - startTime) + " seconds.");
 
         isProcessed = true;
         StartCoroutine(DelayGraphing(SimulationDelay));
@@ -87,29 +93,31 @@ public class LevelGenerator : MonoBehaviour
     private void CreateFillerCells()
     {
         // find extremes of suitable cells
-        var minX = suitableCells.Min(c => c.SimulationCell.transform.position.x);
-        var minY = suitableCells.Min(c => c.SimulationCell.transform.position.y);
-        var maxX = suitableCells.Max(c => c.SimulationCell.transform.position.x);
-        var maxY = suitableCells.Max(c => c.SimulationCell.transform.position.y);
+        var minX = suitableCells.Min(c => c.SimulationCell.transform.position.x - c.Width * PIXEL_SIZE / 2) + cellSize / 2;
+        var minY = suitableCells.Min(c => c.SimulationCell.transform.position.y - c.Height * PIXEL_SIZE / 2) + cellSize / 2;
+        var maxX = suitableCells.Max(c => c.SimulationCell.transform.position.x + c.Width * PIXEL_SIZE / 2) - cellSize / 2;
+        var maxY = suitableCells.Max(c => c.SimulationCell.transform.position.y + c.Height * PIXEL_SIZE / 2) - cellSize / 2;
 
         // find corner positions from extremes
-        var topLeft = new Vector2(minX, maxY);
-        var topRight = new Vector2(maxX, maxY);
-        var bottomLeft = new Vector2(minX, minY);
-        var bottomRight = new Vector2(maxX, minY);
+        // var topLeft = new Vector2(minX, maxY);
+        // var topRight = new Vector2(maxX, maxY);
+        // var bottomLeft = new Vector2(minX, minY);
+        // var bottomRight = new Vector2(maxX, minY);
 
         // TODO align with grid
         // find all positions between suitable cells every 0.16 units
         var positions = new List<Vector2>();
-        for (var x = minX; x <= 50; x += cellSize * PIXEL_SIZE)
+        for (var x = minX; x <= maxX; x += cellSize)
         {
-            for (var y = minY; y <= 50; y += cellSize * PIXEL_SIZE)
+            if(positions.Count > 20000) break;
+            for (var y = minY; y <= maxY; y += cellSize)
             {
+                if(positions.Count > 20000) break;
                 var position = new Vector2(x, y);
                 // check if position is not in any of the suitable cells area
-                if (!suitableCells.Any(c => c.IsPointInside(new Vector2(x, y))))
+                if (!suitableCells.Any(c => c.IsPointInside(position)))
                 {
-                    positions.Add(new Vector2(x, y));
+                    positions.Add(position);
                 }
             }
         }
@@ -120,10 +128,44 @@ public class LevelGenerator : MonoBehaviour
             var fillerCell = new GameObject("Filler Cell");
             fillerCell.transform.position = position;
             fillerCell.AddComponent<SpriteRenderer>().sprite = CellSprite;
-            fillerCell.GetComponent<SpriteRenderer>().color = Color.white;
-            fillerCell.transform.localScale = new Vector2(cellSize * PIXEL_SIZE, cellSize * PIXEL_SIZE);
+            fillerCell.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.3f);
+            fillerCell.transform.localScale = new Vector2(cellSize, cellSize);
             fillerCells.Add(fillerCell);
         }
+    }
+
+    // Draw a grid with 1x1 cells
+    private void DrawGrid(){
+        var minX = -20f;
+        var minY = -20f;
+        var maxX = 20f;
+        var maxY = 20f;
+
+        // Round values to grid
+        minX = Mathf.Round(minX / cellSize) * cellSize;
+        minY = Mathf.Round(minY / cellSize) * cellSize;
+        maxX = Mathf.Round(maxX / cellSize) * cellSize;
+        maxY = Mathf.Round(maxY / cellSize) * cellSize;
+
+        // find corner positions from extremes
+        var topLeft = new Vector2(minX, maxY);
+        var topRight = new Vector2(maxX, maxY);
+        var bottomLeft = new Vector2(minX, minY);
+        var bottomRight = new Vector2(maxX, minY);
+
+        HashSet<Edge> edges = new HashSet<Edge>();
+        // Create edges every cellSize units
+        for (var x = minX; x <= maxX; x += cellSize)
+        {
+            edges.Add(new Edge(new Point(x, minY), new Point(x, maxY)));
+        }
+        for (var y = minY; y <= maxY; y += cellSize)
+        {
+            edges.Add(new Edge(new Point(minX, y), new Point(maxX, y)));
+        }
+
+        // Draw all edges
+        DrawEdges(edges);
     }
 
     private void Graph()
@@ -200,7 +242,7 @@ public class LevelGenerator : MonoBehaviour
             var p1 = new Vector2((float)edge.P1.X, (float)edge.P1.Y);
             var p2 = new Vector2((float)edge.P2.X, (float)edge.P2.Y);
 
-            Debug.DrawLine(p1, p2, Color.green, 100f, false);
+            Debug.DrawLine(p1, p2, new Color(0, 0, 1f, 0.4f), 100f, false);
         }
     }
 
@@ -270,82 +312,174 @@ public class LevelGenerator : MonoBehaviour
     private void SimulateCells()
     {
         int simulatedCellsCount = 0;
+        var centralPosition = new Vector3(0, 0, 0);
+
+        while(simulatedCellsCount < cells.Count && simulationLoops < CycleCount)
+        {   
+            simulatedCellsCount = 0;
+            for (int i = 0; i < cells.Count; i++)
+            {
+                // Run on first loop
+                if(simulationLoops == 0){
+                    AlignSimulationCell(i);
+                    continue;
+                }
+
+                Cell cell = cells[i];
+                var overlappingCellIdList = FindOverlaps(cell);
+
+                if(overlappingCellIdList.Count > 0)
+                {
+                    var firstId = overlappingCellIdList[0];
+                    var overlappingCell = cells[firstId];
+
+                    Vector2 direction = (cell.PhysicsCell.transform.position - overlappingCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
+
+                    overlappingCell.PhysicsCell.transform.Translate(-direction);
+                    cell.PhysicsCell.transform.Translate(direction);
+
+                    AlignSimulationCell(firstId);
+
+                    // // Do something to all collisions
+                    // foreach(var overlappingCellId in overlappingCellIdList){
+                    //     // Calculate the distance between the cell and the overlapping cell
+
+                    //     var overlappingCell = cells[overlappingCellId];
+
+                    //     Vector2 direction = (new Vector3(0, 0, 0) - overlappingCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
+
+                    //     overlappingCell.PhysicsCell.transform.Translate(-direction);
+
+                    //     AlignSimulationCell(overlappingCellId);
+                    // }
+                }else{
+                    simulatedCellsCount++;
+                }
+            }
+            simulationLoops++;
+        }
+
+        // Check for misaligned cells
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if(cells[i].IsAligned()){
+                continue;
+            }
+            UpdateSimulationCellPosition(i);
+        }
+
+        // For all cells, find their collisions
+        // then 
+        // for (int i = 0; i < cells.Count; i++)
+        // {
+        //     List<Collider2D> collisions = FindCollisions(cells[i].DisplayCollider);
+        //     if(collisions.Count == 0)
+        //     {
+        //         simulatedCellsCount++;
+        //     }
+
+        //     // Separate colliding cells
+        //     foreach (var collision in collisions)
+        //     {
+        //         Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
+        //         Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
+        //         cells[i].PhysicsCell.transform.Translate(direction);
+        //         collisionCell.PhysicsCell.transform.Translate(-direction);
+        //     }
+
+        //     UpdateSimulationCellPosition(i);
+        // }
+
+        // simulationLoops++;
+
+        // Simulation ending
+        foreach (var cell in cells)
+        {
+            cell.PhysicsCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+            Destroy(cell.PhysicsCell);
+        }
+
+        isSimulated = true;
+
+        var endTime = Time.realtimeSinceStartup;
+        print($"Simulation took {simulationLoops} cycles");
+        print("Simulation took " + (endTime - startTime) + " seconds.");
+        
+        StartCoroutine(DelayProcessing(SimulationDelay));
+    }
+
+    // Update simulation cell positions while snapping to TileSize grid
+    private void AlignSimulationCell(int i){
+        var cell = cells[i];
+        var position = cell.PhysicsCell.transform.localPosition;
+        var x = RoundNumber(position.x, cellSize);
+        var y = RoundNumber(position.y, cellSize);
+        cell.SimulationCell.transform.localPosition = new Vector2(x, y);
+    }
+
+    private void UpdateSimulationCellPosition(int i){
+        var cell = cells[i];
+        var position = cell.SimulationCell.transform.localPosition;
+        var x = position.x;
+        var y = position.y;
+
+        if(cell.Width % 2 != 0){
+            if(x < 0){
+                x -= cellSize / 2;
+            }
+            else{
+                x += cellSize / 2;
+            }
+        }
+        if(cell.Height % 2 != 0){
+            if(y < 0){
+                y -= cellSize / 2;
+            }
+            else{
+                y += cellSize / 2;
+            }
+        }
+
+        cell.SimulationCell.transform.localPosition = new Vector2(x, y);
+    }
+
+    // private void UpdateSimulationCellPosition(int i)
+    // {
+    //     float x = RoundNumber(cells[i].PhysicsCell.transform.localPosition.x / PIXEL_SIZE, TileSize);
+    //     float y = RoundNumber(cells[i].PhysicsCell.transform.localPosition.y / PIXEL_SIZE, TileSize);
+
+    //     // if cells[i].PhysicsCell.transform.localScale 
+
+    //     // if(cells[i].PhysicsCell.transform.localScale.x % 0.08f != 0)
+    //     // {
+    //     //     x += 8f;
+    //     // }
+    //     // if(cells[i].PhysicsCell.transform.localScale.y % 0.08f != 0)
+    //     // {
+    //     //     y += 8f;
+    //     // }
+        
+
+    //     Vector2 position = new Vector2(PIXEL_SIZE * x, PIXEL_SIZE * y);
+    //     cells[i].SimulationCell.transform.localPosition = position;
+    // }
+
+    private List<int> FindOverlaps(Cell cell)
+    {
+        var overlappingCellIdList = new List<int>();
 
         for (int i = 0; i < cells.Count; i++)
         {
-            UpdateSimulationCellPosition(i);
-
-            BoxCollider2D collider = cells[i].DisplayCollider;
-
-            List<Collider2D> collisions = FindCollisions(collider);
-            if(collisions.Count == 0)
+            if(cells[i] != cell)
             {
-                simulatedCellsCount++;
-            }
-
-            // Separate colliding cells
-            foreach (var collision in collisions)
-            {
-                Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
-                Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
-                cells[i].PhysicsCell.transform.Translate(direction);
-                collisionCell.PhysicsCell.transform.Translate(-direction);
+                if(cell.IsOverlapping(cells[i]))
+                {
+                    overlappingCellIdList.Add(i);
+                }
             }
         }
 
-        simulationLoops++;
-
-        // Simulation ending
-        if (simulatedCellsCount == cells.Count || simulationLoops >= CycleCount)
-        {
-            foreach (var cell in cells)
-            {
-                cell.PhysicsCell.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
-                Destroy(cell.PhysicsCell);
-            }
-
-            isSimulated = true;
-
-            var endTime = Time.realtimeSinceStartup;
-            print($"Simulation took {simulationLoops} cycles");
-            print("Simulation took " + (endTime - startTime) + " seconds.");
-            
-            StartCoroutine(DelayProcessing(SimulationDelay));
-        }
-    }
-
-    private void UpdateSimulationCellPosition(int i)
-    {
-        float x = RoundNumber(cells[i].PhysicsCell.transform.localPosition.x, cellSize);
-        float y = RoundNumber(cells[i].PhysicsCell.transform.localPosition.y, cellSize);
-        Vector2 position = new Vector2(PIXEL_SIZE * x, PIXEL_SIZE * y);
-        cells[i].SimulationCell.transform.localPosition = position;
-    }
-
-    private List<Collider2D> FindCollisions(BoxCollider2D collider)
-    {
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.useTriggers = true;
-        filter.layerMask = LayerMask.NameToLayer("Cell");
-
-        List<Collider2D> collisions = new List<Collider2D>();
-
-        Vector2 originalSize = collider.size;
-        collider.size = new Vector2(originalSize.x - 0.02f, originalSize.y - 0.02f);
-        collider.OverlapCollider(filter, collisions);
-        collider.size = originalSize;
-
-        List<Collider2D> actualCollisions = new List<Collider2D>(collisions);
-
-        foreach (var collision in collisions)
-        {
-            if (collision.gameObject.layer != LayerMask.NameToLayer("Cell"))
-            {
-                actualCollisions.Remove(collision);
-            }
-        }
-
-        return actualCollisions;
+        return overlappingCellIdList;
     }
 
     private void CreateSimulationCellObject(Cell cell, int i)
@@ -360,11 +494,7 @@ public class LevelGenerator : MonoBehaviour
         sprite.color = new Color(0, 1, 1, 0.3f);
         sprite.sortingLayerName = "Render";
 
-        BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
-        collider.isTrigger = true;
-
         cell.SimulationCell = gameObject;
-        cell.DisplayCollider = collider;
     }
 
     private void CreatePhysicsCellObject(Cell cell, int i)
@@ -385,10 +515,9 @@ public class LevelGenerator : MonoBehaviour
         cell.PhysicsCell = gameObject;
     }
 
-    public static float RoundNumber(float x, float tileSize)
+    public static float RoundNumber(float x, float y)
     {
-        x *= 100f;
-        return Mathf.Floor((x + tileSize - 1) / tileSize) * tileSize;
+        return Mathf.Floor((x + y - 1) / y) * y;
     }
 
     // Creates cells for simulation
@@ -409,7 +538,7 @@ public class LevelGenerator : MonoBehaviour
 
             // Give random position
             Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
-            Cell cell = new Cell(position, genWidth * cellSize, genHeight * cellSize);
+            Cell cell = new Cell(position, genWidth * TileSize, genHeight * TileSize);
 
             CreatePhysicsCellObject(cell, i);
             CreateSimulationCellObject(cell, i);

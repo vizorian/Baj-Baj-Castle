@@ -177,8 +177,21 @@ MonoBehaviour:
   RoomHeightMinimum: 6
   RoomHeightMaximum: 20
   FilteringCriteria: 1
-  DebugInfo: 0
   CellSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  CollisionFilter:
+    useTriggers: 1
+    useLayerMask: 1
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 1048576
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!1 &1187491617
 GameObject:
   m_ObjectHideFlags: 0
