@@ -19,18 +19,23 @@ public class Cell
     }
 
     // check if point is inside
-    public bool IsPointInside(Vector2 point)
+    public bool IsPointInside(Point point)
     {
         // get cell position in world
-        var worldPosition = SimulationCell.transform.position;
-        var worldPositionX = worldPosition.x;
-        var worldPositionY = worldPosition.y;
+        var cellX = SimulationCell.transform.position.x;
+        var cellY = SimulationCell.transform.position.y;
+
+        var offsetX = SimulationCell.transform.localScale.x / 2;
+        var offsetY = SimulationCell.transform.localScale.y / 2;
 
         // get rectangle corners
-        var topLeft = new Vector2(worldPositionX - Width * LevelGenerator.PIXEL_SIZE / 2, worldPositionY * LevelGenerator.PIXEL_SIZE + Height / 2);
-        var bottomRight = new Vector2(worldPositionX + Width * LevelGenerator.PIXEL_SIZE / 2, worldPositionY - Height * LevelGenerator.PIXEL_SIZE / 2);
+        var topLeft = new Point(cellX - offsetX, cellY + offsetY);
+        var bottomRight = new Point(cellX + offsetX, cellY - offsetY);
 
-        return point.x > topLeft.x && point.x < bottomRight.x && point.y < topLeft.y && point.y > bottomRight.y;
+        return point.X > topLeft.X
+               && point.X < bottomRight.X
+               && point.Y < topLeft.Y
+               && point.Y > bottomRight.Y;
 
     }
 
@@ -60,14 +65,10 @@ public class Cell
         var otherTopLeft = new Vector2(otherX - otherOffsetX, otherY + otherOffsetY);
         var otherBottomRight = new Vector2(otherX + otherOffsetX, otherY - otherOffsetY);
 
-        // If one rectangle is on left side of other
-        if (topLeft.x > otherBottomRight.x || otherTopLeft.x > bottomRight.x)
-        {
-            return false;
-        }
- 
-        // If one rectangle is above other
-        if (bottomRight.y > otherTopLeft.y || otherBottomRight.y > topLeft.y)
+        if (topLeft.x > otherBottomRight.x
+            || otherTopLeft.x > bottomRight.x
+            || bottomRight.y > otherTopLeft.y
+            || otherBottomRight.y > topLeft.y)
         {
             return false;
         }
