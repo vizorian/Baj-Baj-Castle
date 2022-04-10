@@ -53,9 +53,8 @@ public class LevelGenerator : MonoBehaviour
         StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        
         if (!isSimulated && simulationLoops < CycleCount && startSimulation)
         {
             SimulateCells();
@@ -63,14 +62,12 @@ public class LevelGenerator : MonoBehaviour
 
         if (isSimulated && !isProcessed && startProcessing)
         {
-            // ProcessCells();
+            ProcessCells();
         }
 
         if(isProcessed && !isGraphed && startGraphing)
         {
-            // Graph();
-
-            
+            Graph();
         }
     }
 
@@ -82,9 +79,9 @@ public class LevelGenerator : MonoBehaviour
         print("Cell filtering took " + (endTime - startTime) + " seconds.");
 
         // create filler cells to fill in the gaps between cells
-        // CreateFillerCells();
-        // endTime = Time.realtimeSinceStartup;
-        // print("Filler cell creation took " + (endTime - startTime) + " seconds.");
+        CreateFillerCells();
+        endTime = Time.realtimeSinceStartup;
+        print("Filler cell creation took " + (endTime - startTime) + " seconds.");
 
         isProcessed = true;
         StartCoroutine(DelayGraphing(SimulationDelay));
@@ -165,7 +162,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // Draw all edges
-        DrawEdges(edges);
+        DrawEdges(edges, Color.blue);
     }
 
     private void Graph()
@@ -229,20 +226,20 @@ public class LevelGenerator : MonoBehaviour
             var p2 = new Vector2((float)triangle.Vertices[1].X, (float)triangle.Vertices[1].Y);
             var p3 = new Vector2((float)triangle.Vertices[2].X, (float)triangle.Vertices[2].Y);
 
-            Debug.DrawLine(p1, p2, Color.magenta, 3f, true);
-            Debug.DrawLine(p2, p3, Color.magenta, 3f, true);
-            Debug.DrawLine(p3, p1, Color.magenta, 3f, true);
+            Debug.DrawLine(p1, p2, Color.yellow, 3f, true);
+            Debug.DrawLine(p2, p3, Color.yellow, 3f, true);
+            Debug.DrawLine(p3, p1, Color.yellow, 3f, true);
         }
     }
 
-    private static void DrawEdges(HashSet<Edge> edges)
+    private static void DrawEdges(HashSet<Edge> edges, Color color)
     {
         foreach (var edge in edges)
         {
             var p1 = new Vector2((float)edge.P1.X, (float)edge.P1.Y);
             var p2 = new Vector2((float)edge.P2.X, (float)edge.P2.Y);
 
-            Debug.DrawLine(p1, p2, new Color(0, 0, 1f, 0.4f), 100f, false);
+            Debug.DrawLine(p1, p2, color, 3f, true);
         }
     }
 
@@ -308,7 +305,6 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-
     private void SimulateCells()
     {
         int simulatedCellsCount = 0;
@@ -339,58 +335,12 @@ public class LevelGenerator : MonoBehaviour
                     cell.PhysicsCell.transform.Translate(direction);
 
                     AlignSimulationCell(firstId);
-
-                    // // Do something to all collisions
-                    // foreach(var overlappingCellId in overlappingCellIdList){
-                    //     // Calculate the distance between the cell and the overlapping cell
-
-                    //     var overlappingCell = cells[overlappingCellId];
-
-                    //     Vector2 direction = (new Vector3(0, 0, 0) - overlappingCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
-
-                    //     overlappingCell.PhysicsCell.transform.Translate(-direction);
-
-                    //     AlignSimulationCell(overlappingCellId);
-                    // }
                 }else{
                     simulatedCellsCount++;
                 }
             }
             simulationLoops++;
         }
-
-        // Check for misaligned cells
-        for (int i = 0; i < cells.Count; i++)
-        {
-            if(cells[i].IsAligned()){
-                continue;
-            }
-            UpdateSimulationCellPosition(i);
-        }
-
-        // For all cells, find their collisions
-        // then 
-        // for (int i = 0; i < cells.Count; i++)
-        // {
-        //     List<Collider2D> collisions = FindCollisions(cells[i].DisplayCollider);
-        //     if(collisions.Count == 0)
-        //     {
-        //         simulatedCellsCount++;
-        //     }
-
-        //     // Separate colliding cells
-        //     foreach (var collision in collisions)
-        //     {
-        //         Cell collisionCell = cells.Find(x => x.DisplayCollider == collision);
-        //         Vector2 direction = (cells[i].PhysicsCell.transform.position - collisionCell.PhysicsCell.transform.position).normalized * PIXEL_SIZE;
-        //         cells[i].PhysicsCell.transform.Translate(direction);
-        //         collisionCell.PhysicsCell.transform.Translate(-direction);
-        //     }
-
-        //     UpdateSimulationCellPosition(i);
-        // }
-
-        // simulationLoops++;
 
         // Simulation ending
         foreach (var cell in cells)
@@ -414,55 +364,9 @@ public class LevelGenerator : MonoBehaviour
         var position = cell.PhysicsCell.transform.localPosition;
         var x = RoundNumber(position.x, cellSize);
         var y = RoundNumber(position.y, cellSize);
-        cell.SimulationCell.transform.localPosition = new Vector2(x, y);
-    }
-
-    private void UpdateSimulationCellPosition(int i){
-        var cell = cells[i];
-        var position = cell.SimulationCell.transform.localPosition;
-        var x = position.x;
-        var y = position.y;
-
-        if(cell.Width % 2 != 0){
-            if(x < 0){
-                x -= cellSize / 2;
-            }
-            else{
-                x += cellSize / 2;
-            }
-        }
-        if(cell.Height % 2 != 0){
-            if(y < 0){
-                y -= cellSize / 2;
-            }
-            else{
-                y += cellSize / 2;
-            }
-        }
 
         cell.SimulationCell.transform.localPosition = new Vector2(x, y);
     }
-
-    // private void UpdateSimulationCellPosition(int i)
-    // {
-    //     float x = RoundNumber(cells[i].PhysicsCell.transform.localPosition.x / PIXEL_SIZE, TileSize);
-    //     float y = RoundNumber(cells[i].PhysicsCell.transform.localPosition.y / PIXEL_SIZE, TileSize);
-
-    //     // if cells[i].PhysicsCell.transform.localScale 
-
-    //     // if(cells[i].PhysicsCell.transform.localScale.x % 0.08f != 0)
-    //     // {
-    //     //     x += 8f;
-    //     // }
-    //     // if(cells[i].PhysicsCell.transform.localScale.y % 0.08f != 0)
-    //     // {
-    //     //     y += 8f;
-    //     // }
-        
-
-    //     Vector2 position = new Vector2(PIXEL_SIZE * x, PIXEL_SIZE * y);
-    //     cells[i].SimulationCell.transform.localPosition = position;
-    // }
 
     private List<int> FindOverlaps(Cell cell)
     {
@@ -534,7 +438,9 @@ public class LevelGenerator : MonoBehaviour
                 genWidth = Mathf.RoundToInt(RandomGauss(RoomWidthMinimum, RoomWidthMaximum));
                 genHeight = Mathf.RoundToInt(RandomGauss(RoomHeightMinimum, RoomHeightMaximum));
             }
-            while (genWidth / genHeight > 2);
+            while (genWidth / genHeight > 2
+                   || genWidth % 2 != 0
+                   || genHeight % 2 != 0);
 
             // Give random position
             Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
