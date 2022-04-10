@@ -35,12 +35,6 @@ public class Triangle
         RadiusSq = (Circumcenter.X - p1.X) * (Circumcenter.X - p1.X) + (Circumcenter.Y - p1.Y) * (Circumcenter.Y - p1.Y);
     }
 
-    public bool BordersWith(Triangle triangle)
-    {
-        var sharedVertices = Vertices.Where(v => triangle.Vertices.Contains(v)).Count();
-        return sharedVertices == 2;
-    }
-
     public bool ContainsEdge(Edge edge){
         return edge.Equals(new Edge(Vertices[0], Vertices[1])) ||
                edge.Equals(new Edge(Vertices[1], Vertices[2])) ||

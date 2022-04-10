@@ -27,35 +27,33 @@ public class LevelGenerator : MonoBehaviour
     private readonly List<Cell> cells = new List<Cell>();
     private readonly List<Cell> suitableCells = new List<Cell>();
     private readonly List<GameObject> fillerCells = new List<GameObject>();
+    private readonly HashSet<Edge> delaunayGraph = new HashSet<Edge>();
+    private HashSet<Edge> graph;
+    
 
     public static float cellSize;
-
-    public ContactFilter2D CollisionFilter = new ContactFilter2D();
-        
-
     private int simulationLoops = 0;
 
     private bool startSimulation = false;
     private bool startProcessing = false;
-    private bool startGraphing = false;
     private bool isSimulated = false;
     private bool isProcessed = false;
-    private bool isGraphed = false;
     private float startTime;
     private float endTime;
+    public float EdgePercentage = 0.1f;
 
     void Start()
     {
         cellSize = TileSize * PIXEL_SIZE;
         CreateCells(Complexity);
         DrawGrid();
-        print("Starting generation process...");
+        print("Starting level generation process...");
         StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
     void Update()
     {
-        if (!isSimulated && simulationLoops < CycleCount && startSimulation)
+        if (!isSimulated && startSimulation)
         {
             SimulateCells();
         }
@@ -63,11 +61,6 @@ public class LevelGenerator : MonoBehaviour
         if (isSimulated && !isProcessed && startProcessing)
         {
             ProcessCells();
-        }
-
-        if(isProcessed && !isGraphed && startGraphing)
-        {
-            Graph();
         }
     }
 
@@ -78,13 +71,45 @@ public class LevelGenerator : MonoBehaviour
         endTime = Time.realtimeSinceStartup;
         print("Cell filtering took " + (endTime - startTime) + " seconds.");
 
+        Graph();
+
         // create filler cells to fill in the gaps between cells
         CreateFillerCells();
         endTime = Time.realtimeSinceStartup;
         print("Filler cell creation took " + (endTime - startTime) + " seconds.");
 
+        // create hallways between cells
+        CreateHallways();
+
         isProcessed = true;
-        StartCoroutine(DelayGraphing(SimulationDelay));
+    }
+
+    private void CreateHallways()
+    {
+        var hallways = new HashSet<Edge>();
+        // calculates the midpoint between both nodes' positions and checks to see if that midpoint's x or y attributes are inside the node's boundaries.
+        // If they are then I create the line from that midpoint's position.
+        // If they aren't then I create two lines, both going from the source's midpoint to the target's midpoint but only in one axis.
+        foreach (var edge in graph)
+        {
+            var midpoint = new Point((edge.P1.X + edge.P2.X) / 2, (edge.P1.Y + edge.P2.Y) / 2);
+            if (midpoint.X >= edge.P1.X && midpoint.X <= edge.P2.X)
+            {
+                hallways.Add(new Edge(edge.P1, midpoint));
+                hallways.Add(new Edge(midpoint, edge.P2));
+            }
+            else if (midpoint.Y >= edge.P1.Y && midpoint.Y <= edge.P2.Y)
+            {
+                hallways.Add(new Edge(edge.P1, midpoint));
+                hallways.Add(new Edge(midpoint, edge.P2));
+            }
+            else
+            {
+                hallways.Add(new Edge(edge.P1, edge.P2));
+            }
+        }
+
+        DrawEdges(hallways, Color.yellow, 100f);
     }
 
     private void CreateFillerCells()
@@ -95,24 +120,15 @@ public class LevelGenerator : MonoBehaviour
         var maxX = suitableCells.Max(c => c.SimulationCell.transform.position.x + c.Width * PIXEL_SIZE / 2) - cellSize / 2;
         var maxY = suitableCells.Max(c => c.SimulationCell.transform.position.y + c.Height * PIXEL_SIZE / 2) - cellSize / 2;
 
-        // find corner positions from extremes
-        // var topLeft = new Vector2(minX, maxY);
-        // var topRight = new Vector2(maxX, maxY);
-        // var bottomLeft = new Vector2(minX, minY);
-        // var bottomRight = new Vector2(maxX, minY);
-
-        // TODO align with grid
-        // find all positions between suitable cells every 0.16 units
+        // find all positions between suitable cells every cellSize units
         var positions = new List<Vector2>();
         for (var x = minX; x <= maxX; x += cellSize)
         {
-            if(positions.Count > 20000) break;
             for (var y = minY; y <= maxY; y += cellSize)
             {
-                if(positions.Count > 20000) break;
                 var position = new Vector2(x, y);
                 // check if position is not in any of the suitable cells area
-                if (!suitableCells.Any(c => c.IsPointInside(position)))
+                if (suitableCells.Any(c => !c.IsPointInside(position)))
                 {
                     positions.Add(position);
                 }
@@ -125,7 +141,7 @@ public class LevelGenerator : MonoBehaviour
             var fillerCell = new GameObject("Filler Cell");
             fillerCell.transform.position = position;
             fillerCell.AddComponent<SpriteRenderer>().sprite = CellSprite;
-            fillerCell.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.3f);
+            fillerCell.GetComponent<SpriteRenderer>().color = new Color(0, 0, 1f, 0.15f);
             fillerCell.transform.localScale = new Vector2(cellSize, cellSize);
             fillerCells.Add(fillerCell);
         }
@@ -138,7 +154,7 @@ public class LevelGenerator : MonoBehaviour
         var maxX = 20f;
         var maxY = 20f;
 
-        // Round values to grid
+        // round values to grid
         minX = Mathf.Round(minX / cellSize) * cellSize;
         minY = Mathf.Round(minY / cellSize) * cellSize;
         maxX = Mathf.Round(maxX / cellSize) * cellSize;
@@ -151,7 +167,8 @@ public class LevelGenerator : MonoBehaviour
         var bottomRight = new Vector2(maxX, minY);
 
         HashSet<Edge> edges = new HashSet<Edge>();
-        // Create edges every cellSize units
+
+        // create edges every cellSize units
         for (var x = minX; x <= maxX; x += cellSize)
         {
             edges.Add(new Edge(new Point(x, minY), new Point(x, maxY)));
@@ -162,7 +179,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // Draw all edges
-        DrawEdges(edges, Color.blue);
+        DrawEdges(edges, new Color(0, 0, 1f, 0.3f), 100f);
     }
 
     private void Graph()
@@ -177,19 +194,34 @@ public class LevelGenerator : MonoBehaviour
         // perform triangulation
         var triangulation = Triangulate(points);
         endTime = Time.realtimeSinceStartup;
-        print("Cell riangulation took " + (endTime - startTime) + " seconds.");
-        startTime = endTime;
+        print("Cell triangulation took " + (endTime - startTime) + " seconds.");
         DrawTriangles(triangulation);
+        startTime = endTime;
 
         Cleanup(triangulation);
 
         // get a minimum spanning tree from triangulation results
-        var minimumSpanningTree = MinimumSpanningTree(triangulation, points.ToList());
+        graph = MinimumSpanningTree(triangulation, points.ToList());
         endTime = Time.realtimeSinceStartup;
         print("Minimum spanning tree calculation took " + (endTime - startTime) + " seconds.");
-        DrawEdges(minimumSpanningTree);
+        DrawEdges(graph, Color.green, 3f);
+        startTime = endTime;
 
-        isGraphed = true;
+        // add some edges from delaunay graph back to graph
+        RefillEdges(EdgePercentage);
+        DrawEdges(graph, Color.green, 100f);
+    }
+
+    private void RefillEdges(float edgePercentage)
+    {
+        var remainingEdges = delaunayGraph.Except(graph);
+        foreach (var edge in remainingEdges)
+        {
+            if (Random.value < edgePercentage)
+            {
+                graph.Add(edge);
+            }
+        }
     }
 
     // Perform Delaunay triangulation on a set of points
@@ -197,6 +229,7 @@ public class LevelGenerator : MonoBehaviour
     {
         var triangulator = new DelaunayTriangulator();
         triangulator.CreateSupraTriangle(suitableCells);
+        triangulator.AdjustSupraTriangle(points);
         return triangulator.BowyerWatson(points);
     }
 
@@ -226,37 +259,36 @@ public class LevelGenerator : MonoBehaviour
             var p2 = new Vector2((float)triangle.Vertices[1].X, (float)triangle.Vertices[1].Y);
             var p3 = new Vector2((float)triangle.Vertices[2].X, (float)triangle.Vertices[2].Y);
 
-            Debug.DrawLine(p1, p2, Color.yellow, 3f, true);
-            Debug.DrawLine(p2, p3, Color.yellow, 3f, true);
-            Debug.DrawLine(p3, p1, Color.yellow, 3f, true);
+            Debug.DrawLine(p1, p2, Color.green, 3f, true);
+            Debug.DrawLine(p2, p3, Color.green, 3f, true);
+            Debug.DrawLine(p3, p1, Color.green, 3f, true);
         }
     }
 
-    private static void DrawEdges(HashSet<Edge> edges, Color color)
+    private static void DrawEdges(HashSet<Edge> edges, Color color, float duration)
     {
         foreach (var edge in edges)
         {
             var p1 = new Vector2((float)edge.P1.X, (float)edge.P1.Y);
             var p2 = new Vector2((float)edge.P2.X, (float)edge.P2.Y);
 
-            Debug.DrawLine(p1, p2, color, 3f, true);
+            Debug.DrawLine(p1, p2, color, duration, true);
         }
     }
 
     private HashSet<Edge> MinimumSpanningTree(HashSet<Triangle> triangles, List<Point> points)
     {
-        var edges = new HashSet<Edge>();
         foreach (var triangle in triangles)
         {
             var p1 = new Point(triangle.Vertices[0].X, triangle.Vertices[0].Y);
             var p2 = new Point(triangle.Vertices[1].X, triangle.Vertices[1].Y);
             var p3 = new Point(triangle.Vertices[2].X, triangle.Vertices[2].Y);
 
-            edges.Add(new Edge(p1, p2));
-            edges.Add(new Edge(p2, p3));
-            edges.Add(new Edge(p3, p1));
+            delaunayGraph.Add(new Edge(p1, p2));
+            delaunayGraph.Add(new Edge(p2, p3));
+            delaunayGraph.Add(new Edge(p3, p1));
         }
-        var sortedEdges = edges.OrderBy(e => e.Weight).ToList();
+        var sortedEdges = delaunayGraph.OrderBy(e => e.Weight).ToList();
 
         var forest = new DisjointSet(points.Count);
         for(int i = 0; i < points.Count; i++)
@@ -512,14 +544,6 @@ public class LevelGenerator : MonoBehaviour
         print("Starting processing...");
         startTime = Time.realtimeSinceStartup;
         startProcessing = true;
-    }
-
-    IEnumerator DelayGraphing(float time)
-    {
-        yield return new WaitForSeconds(time);
-        print("Starting graphing...");
-        startTime = Time.realtimeSinceStartup;
-        startGraphing = true;
     }
 }
 

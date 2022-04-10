@@ -30,7 +30,7 @@ public class Cell
         var topLeft = new Vector2(worldPositionX - Width * LevelGenerator.PIXEL_SIZE / 2, worldPositionY * LevelGenerator.PIXEL_SIZE + Height / 2);
         var bottomRight = new Vector2(worldPositionX + Width * LevelGenerator.PIXEL_SIZE / 2, worldPositionY - Height * LevelGenerator.PIXEL_SIZE / 2);
 
-        return point.x >= topLeft.x && point.x <= bottomRight.x && point.y <= topLeft.y && point.y >= bottomRight.y;
+        return point.x > topLeft.x && point.x < bottomRight.x && point.y < topLeft.y && point.y > bottomRight.y;
 
     }
 
@@ -95,26 +95,5 @@ public class Cell
         }
         
         return false;
-    }
-
-    public bool IsAligned()
-    {
-        // Check if the cell is aligned to the grid
-        var x = SimulationCell.transform.position.x;
-        var y = SimulationCell.transform.position.y;
-
-        var offsetX = Width * LevelGenerator.PIXEL_SIZE / 2;
-        var offsetY = Height * LevelGenerator.PIXEL_SIZE / 2;
-
-        // Get SimulationCell corners
-        var topLeft = new Vector2(x - offsetX, y + offsetY);
-        var bottomRight = new Vector2(x + offsetX, y - offsetY);
-
-        // Check if the cell is aligned to the grid
-        if (topLeft.x % LevelGenerator.cellSize != 0 || bottomRight.x % LevelGenerator.cellSize != 0 || topLeft.y % LevelGenerator.cellSize != 0 || bottomRight.y % LevelGenerator.cellSize != 0)
-        {
-            return false;
-        }
-        return true;
     }
 }

@@ -8,8 +8,6 @@ public class DelaunayTriangulator
     private Triangle Supra;
 
     public HashSet<Triangle> BowyerWatson(HashSet<Point> points){
-        AdjustSupraTriangle(points);
-
         var triangulation = new HashSet<Triangle>();
         triangulation.Add(Supra);
 
@@ -71,14 +69,18 @@ public class DelaunayTriangulator
         var rightCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.x + c.Width * 0.01f / 2)
                                    .ThenBy(c => c.SimulationCell.transform.position.y - c.Height * 0.01f / 2).First();
 
-        var pointLeft = new Point((float)leftCell.SimulationCell.transform.position.x, (float)leftCell.SimulationCell.transform.position.y);
-        var pointTop = new Point((float)topCell.SimulationCell.transform.position.x, (float)topCell.SimulationCell.transform.position.y);
-        var pointRight = new Point((float)rightCell.SimulationCell.transform.position.x, (float)rightCell.SimulationCell.transform.position.y);
+        var pointLeft = new Point((float)leftCell.SimulationCell.transform.position.x,
+                                  (float)leftCell.SimulationCell.transform.position.y);
+        var pointTop = new Point((float)topCell.SimulationCell.transform.position.x,
+                                 (float)topCell.SimulationCell.transform.position.y);
+        var pointRight = new Point((float)rightCell.SimulationCell.transform.position.x,
+                                   (float)rightCell.SimulationCell.transform.position.y);
 
         Supra = new Triangle(pointLeft, pointTop, pointRight);
     }
 
-    private void AdjustSupraTriangle(HashSet<Point> points)
+    // Increase supra triangle size to fit all points
+    public void AdjustSupraTriangle(HashSet<Point> points)
     {
         var count = 0;
         while(count < 100){
