@@ -26,9 +26,9 @@ public class LevelGenerator : MonoBehaviour
 
     private readonly List<Cell> cells = new List<Cell>();
     private readonly List<Cell> suitableCells = new List<Cell>();
-    private readonly List<GameObject> fillerCells = new List<GameObject>();
+    private  List<GameObject> hallwayCells;
     private readonly HashSet<Edge> delaunayGraph = new HashSet<Edge>();
-    private HashSet<Edge> graph;
+    private HashSet<Edge> levelGraph;
     
 
     public static float cellSize;
@@ -43,6 +43,8 @@ public class LevelGenerator : MonoBehaviour
     private float startTime;
     private float endTime;
     public float EdgePercentage = 0.1f;
+
+    public int HallwayWidth = 2;
 
     void Start()
     {
@@ -74,6 +76,7 @@ public class LevelGenerator : MonoBehaviour
     private void ProcessCells()
     {
         // filter out cells that qualify to be rooms
+        startTime = Time.realtimeSinceStartup;
         FilterCells();
         endTime = Time.realtimeSinceStartup;
         print("Cell filtering took " + (endTime - startTime) + " seconds.");
@@ -87,131 +90,297 @@ public class LevelGenerator : MonoBehaviour
     private void MapCells()
     {
         // create filler cells to fill in the gaps between cells
-        CreateFillerCells();
+        startTime = Time.realtimeSinceStartup;
+        var fillerCells = CreateFillerCells();
         endTime = Time.realtimeSinceStartup;
         print("Filler cell creation took " + (endTime - startTime) + " seconds.");
-        startTime = endTime;
-        // create hallways between cells
 
-        CreateHallways();
+        // calculate hallways between cells
+        startTime = Time.realtimeSinceStartup;;
+        var hallways = CalculateHallways();
+        endTime = Time.realtimeSinceStartup;
+        print("Hallway calculation took " + (endTime - startTime) + " seconds.");
+        print("Found " + hallways.Count + " hallways.");
+        DrawEdges(hallways, Color.cyan, 100f);
+
+        // carve out hallways
+        startTime = Time.realtimeSinceStartup;;
+        hallwayCells = CreateHallways(hallways, fillerCells);
         endTime = Time.realtimeSinceStartup;
         print("Hallway creation took " + (endTime - startTime) + " seconds.");
 
         isMapped = true;
     }
 
-    private void CreateHallways()
+    // TODO: rework to spawn cells in a grid along the hallway
+    // Creates hallways between rooms based on hallway edges, removing excess ones
+    private List<GameObject> CreateHallways(HashSet<Edge> hallways, List<GameObject> fillerCells)
     {
-        var hallways = new HashSet<Edge>();
-        // calculates the midpoint between both nodes' positions and checks to see if that midpoint's x or y attributes are inside the node's boundaries.
-        // If they are then I create the line from that midpoint's position.
-        // If they aren't then I create two lines, both going from the source's midpoint to the target's midpoint but only in one axis.
+        var suitableFillerCells = new HashSet<GameObject>();
+        foreach (var hallway in hallways)
+        {
+            double from;
+            double to;
+            if(hallway.P1.X == hallway.P2.X) // hallway is vertical
+            {
+                if(hallway.P1.Y < hallway.P2.Y){
+                    from = hallway.P1.Y;
+                    to = hallway.P2.Y;
+                }
+                else{
+                    from = hallway.P2.Y;
+                    to = hallway.P1.Y;
+                }
+
+                for (var y = from; y <= to; y += cellSize)
+                {
+                    var points = new Point[HallwayWidth];
+                    bool isOdd = false;
+                    int odds = 0;
+                    int evens = 0;
+                    for(var i = 0; i < HallwayWidth; i++){
+                        if(isOdd){
+                            points[i] = new Point(hallway.P1.X + ((i - evens + 1) * cellSize), y);
+                            isOdd = false;
+                            odds++;
+                        }
+                        else{
+                            points[i] = new Point(hallway.P1.X - ((i - odds) * cellSize), y);
+                            isOdd = true;
+                            evens++;
+                        }
+                    }
+
+                    foreach (var point in points)
+                    {
+                        var cell = fillerCells.FirstOrDefault(c => point.DistanceTo(new Point(c.transform.position.x, c.transform.position.y)) <= cellSize);
+                        if (cell != null)
+                        {
+                            suitableFillerCells.Add(cell);
+                        }
+                    }
+                }
+            }else // hallway is horizontal
+            { 
+                if (hallway.P1.X < hallway.P2.X)
+                {
+                    from = hallway.P1.X;
+                    to = hallway.P2.X;
+                }
+                else
+                {
+                    from = hallway.P2.X;
+                    to = hallway.P1.X;
+                }
+                
+                for (var x = from; x <= to; x += cellSize)
+                {
+                    var points = new Point[HallwayWidth];
+                    bool isOdd = false;
+                    int odds = 0;
+                    int evens = 0;
+                    for (var i = 0; i < HallwayWidth; i++)
+                    {
+                        if (isOdd)
+                        {
+                            points[i] = new Point(x, hallway.P1.Y + ((i - evens + 1) * cellSize));
+                            isOdd = false;
+                            odds++;
+                        }
+                        else
+                        {
+                            points[i] = new Point(x, hallway.P1.Y - ((i - odds) * cellSize));
+                            isOdd = true;
+                            evens++;
+                        }
+                    }
+
+                    foreach (var point in points)
+                    {
+                        var cell = fillerCells.FirstOrDefault(c => point.DistanceTo(new Point(c.transform.position.x, c.transform.position.y)) <= cellSize);
+                        if (cell != null)
+                        {
+                            suitableFillerCells.Add(cell);
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (var cell in suitableFillerCells)
+        {
+            // highlight all suitable filler cells
+            cell.GetComponent<SpriteRenderer>().color = Color.cyan;
+        }
+
+        // Remove all filler cells that are not in suitableFillerCells
+        foreach (var cell in fillerCells)
+        {
+            if (!suitableFillerCells.Contains(cell))
+            {
+                Destroy(cell);
+            }
+        }
+
+        return suitableFillerCells.ToList();
+    }
+
+    // Converts all graph edges to hallways between rooms
+    private HashSet<Edge> CalculateHallways()
+    {
+        // offset is to ensure all hallway walls are aligned with the room walls
+        var offset = cellSize * (HallwayWidth / 4 + 1);
         
-        foreach (var edge in graph){
-            var x1 = edge.P1.X;
-            var y1 = edge.P1.Y;
-            var x2 = edge.P2.X;
-            var y2 = edge.P2.Y;
+        var hallways = new HashSet<Edge>();
+        foreach (var edge in levelGraph){
 
-            var c1 = suitableCells.First(c => c.SimulationCell.transform.position.x == x1
-                                              && c.SimulationCell.transform.position.y == y1);
-            var c2 = suitableCells.First(c => c.SimulationCell.transform.position.x == x2
-                                              && c.SimulationCell.transform.position.y == y2);
+            // find cells that are connected by an edge
+            var c1 = suitableCells.First(c => c.SimulationCell.transform.position.x == edge.P1.X
+                                              && c.SimulationCell.transform.position.y == edge.P1.Y);
+            var c2 = suitableCells.First(c => c.SimulationCell.transform.position.x == edge.P2.X
+                                              && c.SimulationCell.transform.position.y == edge.P2.Y);
 
-            var midpoint = new Point((x1 + x2) / 2, (y1 + y2) / 2);
+            // calculate midpoint between the two cells
+            var midpoint = new Point((edge.P1.X + edge.P2.X) / 2, (edge.P1.Y + edge.P2.Y) / 2);
 
-            // Draw point
-            // DrawDot(midpoint, Color.magenta);
-
-            var c1Y = c1.SimulationCell.transform.position.y;
-            var c1X = c1.SimulationCell.transform.position.x;
-            var c2Y = c2.SimulationCell.transform.position.y;
-            var c2X = c2.SimulationCell.transform.position.x;
-
+            // calculate various offsets and extremes
             var c1offsetX = c1.SimulationCell.transform.localScale.x / 2;
             var c1offsetY = c1.SimulationCell.transform.localScale.y / 2;
 
             var c2offsetX = c2.SimulationCell.transform.localScale.x / 2;
             var c2offsetY = c2.SimulationCell.transform.localScale.y / 2; 
 
-            var c1XMax = c1X + c1offsetX;
-            var c1XMin = c1X - c1offsetX;
-            var c1YMax = c1Y + c1offsetY;
-            var c1YMin = c1Y - c1offsetY;
+            var c1XMax = c1.SimulationCell.transform.position.x + c1offsetX;
+            var c1XMin = c1.SimulationCell.transform.position.x - c1offsetX;
+            var c1YMax = c1.SimulationCell.transform.position.y + c1offsetY;
+            var c1YMin = c1.SimulationCell.transform.position.y - c1offsetY;
 
-            var c2XMax = c2X + c2offsetX;
-            var c2XMin = c2X - c2offsetX;
-            var c2YMax = c2Y + c2offsetY;
-            var c2YMin = c2Y - c2offsetY;
+            var c2XMax = c2.SimulationCell.transform.position.x + c2offsetX;
+            var c2XMin = c2.SimulationCell.transform.position.x - c2offsetX;
+            var c2YMax = c2.SimulationCell.transform.position.y + c2offsetY;
+            var c2YMin = c2.SimulationCell.transform.position.y - c2offsetY;
 
             var isFound = false;
-            // Check if c1 is right of c2
-            if(c1X > c2X){
-                if(midpoint.X > c1XMin + cellSize
-                   && midpoint.X < c1XMax - cellSize
-                   && midpoint.X > c2XMin + cellSize
-                   && midpoint.X < c2XMax - cellSize){
-                    hallways.Add(new Edge(new Point(midpoint.X, c1Y), new Point(midpoint.X, c2Y)));
+
+            bool isLeft = c1.SimulationCell.transform.position.x > c2.SimulationCell.transform.position.x;
+            bool isUp = c1.SimulationCell.transform.position.y > c2.SimulationCell.transform.position.y;
+
+            if(isLeft)
+            {
+                if(midpoint.X > c1XMin + offset
+                   && midpoint.X < c1XMax - offset
+                   && midpoint.X > c2XMin + offset
+                   && midpoint.X < c2XMax - offset){
+                    if(isUp){
+                        hallways.Add(new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax)));
+                    }else{
+                        hallways.Add(new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
+                    }
                     isFound = true;
                 }
             }
             else{
-                if(midpoint.X > c2XMin
-                   && midpoint.X < c2XMax
-                   && midpoint.X > c1XMin
-                   && midpoint.X < c1XMax){
-                    hallways.Add(new Edge(new Point(midpoint.X, c1Y), new Point(midpoint.X, c2Y)));
+                if(midpoint.X > c2XMin + offset
+                   && midpoint.X < c2XMax - offset
+                   && midpoint.X > c1XMin + offset
+                   && midpoint.X < c1XMax - offset){
+                    if(isUp){
+                        hallways.Add(new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax)));
+                    }else{
+                        hallways.Add(new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
+                    }
                     isFound = true;
                 }
             }
 
-            // Check if c1 is above c2
             if(!isFound){
-                if(c1Y > c2Y){
-                    if(midpoint.Y > c1YMin + cellSize
-                    && midpoint.Y < c1YMax - cellSize
-                    && midpoint.Y > c2YMin + cellSize
-                    && midpoint.Y < c2YMax - cellSize){
-                        hallways.Add(new Edge(new Point(c1X, midpoint.Y), new Point(c2X, midpoint.Y)));
+                if(isUp)
+                {
+                    if(midpoint.Y > c1YMin + offset
+                       && midpoint.Y < c1YMax - offset
+                       && midpoint.Y > c2YMin + offset
+                       && midpoint.Y < c2YMax - offset){
+                        if(isLeft){
+                            hallways.Add(new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y)));
+                        }else{
+                            hallways.Add(new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
+                        }
                         isFound = true;
                     }
                 }
                 else{
-                    if(midpoint.Y > c1YMin
-                    && midpoint.Y < c1YMax
-                    && midpoint.Y > c2YMin
-                    && midpoint.Y < c2YMax){
-                        hallways.Add(new Edge(new Point(c1X, midpoint.Y), new Point(c2X, midpoint.Y)));
+                    if(midpoint.Y > c2YMin + offset
+                       && midpoint.Y < c2YMax - offset
+                       && midpoint.Y > c1YMin + offset
+                       && midpoint.Y < c1YMax - offset){
+                        if(isLeft){
+                            hallways.Add(new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y)));
+                        }else{
+                            hallways.Add(new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
+                        }
                         isFound = true;
                     }
                 }
             }
 
+            // if a straight hallway isn't possible, create a L shaped hallway
             if(!isFound){
-                var c1Point = edge.P1;
-                var c2Point = edge.P2;
+                Point c1Point;
+                Point c2Point;
 
-                var leftPoint = new Point(c1X, c2Y);
-                var rightPoint = new Point(c2X, c1Y);
+                var leftPoint = new Point(c1.SimulationCell.transform.position.x, c2.SimulationCell.transform.position.y);
 
-                // Check if leftPoint is within any of the cells
+                // TODO: improve this
+                // check if point is within any of the cells
                 if(!suitableCells.Any(c => c.IsPointInside(leftPoint))){
+                    if(isLeft && isUp)
+                    {
+                        c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMin);
+                        c2Point = new Point(c2XMax, c2.SimulationCell.transform.position.y);
+                    }else if(!isLeft && isUp)
+                    {
+                        c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMin);
+                        c2Point = new Point(c2XMin, c2.SimulationCell.transform.position.y);
+                    }else if(isLeft && !isUp)
+                    {
+                        c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMax);
+                        c2Point = new Point(c2XMax, c2.SimulationCell.transform.position.y);
+                    }else{
+                        c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMax);
+                        c2Point = new Point(c2XMin, c2.SimulationCell.transform.position.y);
+                    }
                     hallways.Add(new Edge(c1Point, leftPoint));
                     hallways.Add(new Edge(leftPoint, c2Point));
                 }
                 else{
+                    if(isLeft && isUp)
+                    {
+                        c1Point = new Point(c1XMin, c1.SimulationCell.transform.position.y);
+                        c2Point = new Point(c2.SimulationCell.transform.position.x, c2YMax);
+                    }else if(!isLeft && isUp)
+                    {
+                        c1Point = new Point(c1XMax, c1.SimulationCell.transform.position.y);
+                        c2Point = new Point(c2.SimulationCell.transform.position.x, c2YMax);
+                    }else if(isLeft && !isUp)
+                    {
+                        c1Point = new Point(c1XMin, c1.SimulationCell.transform.position.y);
+                        c2Point = new Point(c2.SimulationCell.transform.position.x, c2YMin);
+                    }else
+                    {
+                        c1Point = new Point(c1XMax, c1.SimulationCell.transform.position.y);
+                        c2Point = new Point(c2.SimulationCell.transform.position.x, c2YMin);
+                    }
+
+                    var rightPoint = new Point(c2.SimulationCell.transform.position.x, c1.SimulationCell.transform.position.y);
                     hallways.Add(new Edge(c1Point, rightPoint));
                     hallways.Add(new Edge(rightPoint, c2Point));
                 }
             }
         }
-
-        print("Found " + hallways.Count + " hallways.");
-
-        DrawEdges(hallways, Color.magenta, 100f);
+        return hallways;
     }
 
-    private void CreateFillerCells()
+    private List<GameObject> CreateFillerCells()
     {
         var offset = cellSize / 2;
 
@@ -236,6 +405,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // create filler cells
+        var fillerCells = new List<GameObject>();
         foreach (var position in positions)
         {
             var fillerCell = new GameObject("Filler Cell");
@@ -245,6 +415,7 @@ public class LevelGenerator : MonoBehaviour
             fillerCell.transform.localScale = new Vector2(cellSize, cellSize);
             fillerCells.Add(fillerCell);
         }
+        return fillerCells;
     }
 
     // Draw a grid with 1x1 cells
@@ -292,34 +463,34 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // perform triangulation
+        startTime = Time.realtimeSinceStartup;
         var triangulation = Triangulate(points);
         endTime = Time.realtimeSinceStartup;
         print("Cell triangulation took " + (endTime - startTime) + " seconds.");
         DrawTriangles(triangulation);
-        startTime = endTime;
-
+        
         Cleanup(triangulation);
 
         // get a minimum spanning tree from triangulation results
-        graph = MinimumSpanningTree(triangulation, points.ToList());
+        startTime = Time.realtimeSinceStartup;
+        levelGraph = MinimumSpanningTree(triangulation, points.ToList());
         endTime = Time.realtimeSinceStartup;
         print("Minimum spanning tree calculation took " + (endTime - startTime) + " seconds.");
-        DrawEdges(graph, Color.green, 3f);
-        startTime = endTime;
+        DrawEdges(levelGraph, Color.green, 3f);
 
         // add some edges from delaunay graph back to graph
         RefillEdges(EdgePercentage);
-        DrawEdges(graph, Color.green, 6f);
+        DrawEdges(levelGraph, Color.green, 10f);
     }
 
     private void RefillEdges(float edgePercentage)
     {
-        var remainingEdges = delaunayGraph.Except(graph);
+        var remainingEdges = delaunayGraph.Except(levelGraph);
         foreach (var edge in remainingEdges)
         {
             if (Random.value < edgePercentage)
             {
-                graph.Add(edge);
+                levelGraph.Add(edge);
             }
         }
     }
@@ -336,19 +507,13 @@ public class LevelGenerator : MonoBehaviour
     // Destroy cells that are not part of the triangulation
     private void Cleanup(HashSet<Triangle> triangulation)
     {
-        var cellsToDestroyCount = 0;
         for (int i = suitableCells.Count - 1; i >= 0; i--)
         {
             if (!suitableCells[i].IsPartOf(triangulation))
             {
                 Destroy(suitableCells[i].SimulationCell);
                 suitableCells.RemoveAt(i);
-                cellsToDestroyCount++;
             }
-        }
-        if (cellsToDestroyCount > 0)
-        {
-            print("Destroyed " + cellsToDestroyCount + " cells.");
         }
     }
 
@@ -516,7 +681,7 @@ public class LevelGenerator : MonoBehaviour
         {
             if(cells[i] != cell)
             {
-                if(cell.IsOverlapping(cells[i]))
+                if(cell.IsOverlapping(cells[i].SimulationCell, 0.001f))
                 {
                     overlappingCellIdList.Add(i);
                 }

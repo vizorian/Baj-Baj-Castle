@@ -39,27 +39,23 @@ public class Cell
 
     }
 
-    public bool IsOverlapping(Cell other){
-        var x = SimulationCell.transform.position.x;
-        var y = SimulationCell.transform.position.y;
-        var shrinkage = 0.001f;
-        // var shrinkage = 0f;
+    public bool IsOverlapping(GameObject otherCell, float margin){
 
-        var offsetX = Width * LevelGenerator.PIXEL_SIZE / 2 - shrinkage;
-        var offsetY = Height * LevelGenerator.PIXEL_SIZE / 2 - shrinkage;
+        var offsetX = Width * LevelGenerator.PIXEL_SIZE / 2 - margin;
+        var offsetY = Height * LevelGenerator.PIXEL_SIZE / 2 - margin;
 
         // Get SimulationCell corners
-        var topLeft = new Vector2(x - offsetX, y + offsetY);
-        var bottomRight = new Vector2(x + offsetX, y - offsetY);
-
-        var otherSimulationCell = other.SimulationCell;
+        var topLeft = new Vector2(SimulationCell.transform.position.x - offsetX,
+                                  SimulationCell.transform.position.y + offsetY);
+        var bottomRight = new Vector2(SimulationCell.transform.position.x + offsetX,
+                                      SimulationCell.transform.position.y - offsetY);
 
         // Do same for other cell
-        var otherX = otherSimulationCell.transform.position.x;
-        var otherY = otherSimulationCell.transform.position.y;
+        var otherX = otherCell.transform.position.x;
+        var otherY = otherCell.transform.position.y;
 
-        var otherOffsetX = other.Width * LevelGenerator.PIXEL_SIZE / 2 - shrinkage;
-        var otherOffsetY = other.Height * LevelGenerator.PIXEL_SIZE / 2 - shrinkage;
+        var otherOffsetX = otherCell.transform.localScale.x / 2 - margin;
+        var otherOffsetY = otherCell.transform.localScale.y / 2 - margin;
 
         // Get other cell corners
         var otherTopLeft = new Vector2(otherX - otherOffsetX, otherY + otherOffsetY);
