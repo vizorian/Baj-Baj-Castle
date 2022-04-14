@@ -9,7 +9,7 @@ public class LevelGenerator : MonoBehaviour
     public float SimulationDelay = 3f;
     public int CycleCount = 2000;
 
-    public int TileSize = 16;
+    public const int TILE_SIZE = 16;
     public int Complexity = 50;
     public float GenerationRegionWidth = 200;
     public float GenerationRegionHeight = 10;
@@ -48,7 +48,7 @@ public class LevelGenerator : MonoBehaviour
 
     void Start()
     {
-        cellSize = TileSize * PIXEL_SIZE;
+        cellSize = TILE_SIZE * PIXEL_SIZE;
         CreateCells(Complexity);
         DrawGrid();
         print("Starting level generation process...");
@@ -101,20 +101,27 @@ public class LevelGenerator : MonoBehaviour
         startTime = Time.realtimeSinceStartup;
         var hallwayPoints = GetHallwayPoints(hallways);
 
-        CreateHallways(hallwayPoints);
+        CreateHallways(hallwayPoints, Color.cyan);
         endTime = Time.realtimeSinceStartup;
         print("Hallway creation took " + (endTime - startTime) + " seconds.");
 
         isMapped = true;
     }
 
-    private void CreateHallways(HashSet<Vector2> positions)
+    private void CreateHallways(HashSet<Vector2> positions, Color color)
     {
         foreach(var position in positions)
         {
-            var cell = new Cell(position, 1, 1);
-            cell.CreateDisplayCellObject(CellSprite);
-            hallwayCells.Add(cell);
+            // if(!roomCells.Any(c => c.IsPointInside(new Point(position.x * cellSize, position.y * cellSize))))
+            {
+                var cell = new Cell(position, 1, 1);
+                // check if cell is inside a room
+                if (!roomCells.Any(c => c.IsPointInside(new Point(cell.Position.x * cellSize + cellSize / 2, cell.Position.y * cellSize  + cellSize / 2))))
+                {
+                    cell.CreateDisplayCellObject(CellSprite, color);
+                    hallwayCells.Add(cell);
+                }
+            }
         }
     }
 
@@ -123,86 +130,89 @@ public class LevelGenerator : MonoBehaviour
     {
         HashSet<Vector2> hallwayPoints = new HashSet<Vector2>();
 
-        foreach (var hallway in hallways)
+        for (int i = 0; i < hallways.Count; i++)
         {
-            double from;
-            double to;
+            var hallway = hallways.ElementAt(i);
+            int from;
+            int to;
+            int trueWidth = HallwayWidth - 2;
+            int offsetFrom = 1 - trueWidth;
+            int offsetTo = 1 + trueWidth;
+
             if(hallway.P1.X == hallway.P2.X) // hallway is vertical
             {
-                if(hallway.P1.Y < hallway.P2.Y)
+                if(hallway.P1.Y < hallway.P2.Y) // goes up
                 {
-                    from = hallway.P1.Y;
-                    to = hallway.P2.Y;
-                }else
+                    from = Mathf.RoundToInt((float)hallway.P1.Y / cellSize);
+                    to = Mathf.RoundToInt((float)hallway.P2.Y / cellSize);
+                }else // goes down
                 {
-                    from = hallway.P2.Y;
-                    to = hallway.P1.Y;
+                    from = Mathf.RoundToInt((float)hallway.P2.Y / cellSize);
+                    to = Mathf.RoundToInt((float)hallway.P1.Y / cellSize);
                 }
 
-                for (var y = from; y < to; y += cellSize)
+                for (var y = from + offsetFrom; y < to + offsetTo; y++)
                 {
                     bool isOdd = false;
                     int odds = 0;
                     int evens = 0;
-                    for(var i = 0; i < HallwayWidth; i++)
+                    for(var j = 0; j < HallwayWidth; j++)
                     {
                         int positionX;
-                        var positionY = Mathf.RoundToInt((float)(y / cellSize / PIXEL_SIZE));
                         if(isOdd)
                         {
-                            positionX = Mathf.RoundToInt((float)(hallway.P1.X + ((i - evens + 1) * cellSize)) / cellSize / PIXEL_SIZE);
+                            positionX = Mathf.RoundToInt((float)(hallway.P1.X - ((j - evens) * cellSize)) / cellSize);
                             isOdd = false;
                             odds++;
                         }else
                         {
-                            positionX = Mathf.RoundToInt((float)(hallway.P1.X + ((i - odds) * cellSize)) / cellSize / PIXEL_SIZE);
+                            positionX = Mathf.RoundToInt((float)(hallway.P1.X + ((j - odds + 1) * cellSize)) / cellSize);
                             isOdd = true;
                             evens++;
                         }
-                        hallwayPoints.Add(new Vector2(positionX, positionY));
+                        // check if point is inside any room
+                        hallwayPoints.Add(new Vector2(positionX, y));
                     }
                 }
             }
             else // hallway is horizontal
             {
-                if (hallway.P1.X < hallway.P2.X)
+                if (hallway.P1.X < hallway.P2.X) // goes right
                 {
-                    from = hallway.P1.X;
-                    to = hallway.P2.X;
+                    from = Mathf.RoundToInt((float)hallway.P1.X / cellSize);
+                    to = Mathf.RoundToInt((float)hallway.P2.X / cellSize);
                 }
-                else
+                else // goes left
                 {
-                    from = hallway.P2.X;
-                    to = hallway.P1.X;
+                    from = Mathf.RoundToInt((float)hallway.P2.X / cellSize);
+                    to = Mathf.RoundToInt((float)hallway.P1.X / cellSize);
                 }
                 
-                for (var x = from; x < to; x += cellSize)
+                for (var x = from + offsetFrom; x < to + offsetTo; x++)
                 {
                     bool isOdd = false;
                     int odds = 0;
                     int evens = 0;
-                    for (var i = 0; i < HallwayWidth; i++)
+                    for (var j = 0; j < HallwayWidth; j++)
                     {
-                        var positionX = Mathf.RoundToInt((float)(x / cellSize / PIXEL_SIZE));
                         int positionY;
                         if (isOdd)
                         {
-                            positionY = Mathf.RoundToInt((float)(hallway.P1.Y + ((i - evens + 1) * cellSize)) / cellSize / PIXEL_SIZE);
+                            positionY = Mathf.RoundToInt((float)(hallway.P1.Y - ((j - evens) * cellSize)) / cellSize);
                             isOdd = false;
                             odds++;
                         }
                         else
                         {
-                            positionY = Mathf.RoundToInt((float)(hallway.P1.Y + ((i - odds) * cellSize)) / cellSize / PIXEL_SIZE);
+                            positionY = Mathf.RoundToInt((float)(hallway.P1.Y + ((j - odds + 1) * cellSize)) / cellSize);
                             isOdd = true;
                             evens++;
                         }
-                        hallwayPoints.Add(new Vector2(positionX, positionY));
+                        hallwayPoints.Add(new Vector2(x, positionY));
                     }
                 }
             }
         }
-
         return hallwayPoints;
     }
 
@@ -245,6 +255,20 @@ public class LevelGenerator : MonoBehaviour
 
             bool isLeft = c1.SimulationCell.transform.position.x > c2.SimulationCell.transform.position.x;
             bool isUp = c1.SimulationCell.transform.position.y > c2.SimulationCell.transform.position.y;
+            
+            var cellSizeHalf = cellSize / 2;
+
+            // Alignment checks
+            if(Mathf.RoundToInt(((float)midpoint.X / cellSize)) % 2 == 0){
+                midpoint.X += cellSizeHalf;
+            }
+
+            if(Mathf.RoundToInt(((float)midpoint.Y / cellSize)) % 2 == 0){
+                midpoint.Y += cellSizeHalf;
+            }
+
+            midpoint.X = Mathf.RoundToInt((float)midpoint.X / cellSize) * cellSize;
+            midpoint.Y = Mathf.RoundToInt((float)midpoint.Y / cellSize) * cellSize;
 
             if(isLeft)
             {
@@ -321,7 +345,7 @@ public class LevelGenerator : MonoBehaviour
                     }else if(!isLeft && isUp)
                     {
                         c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMin);
-                        c2Point = new Point(c2XMin, c2.SimulationCell.transform.position.y);
+                        c2Point = new Point(c2XMin, c2.SimulationCell.transform.position.y );
                     }else if(isLeft && !isUp)
                     {
                         c1Point = new Point(c1.SimulationCell.transform.position.x, c1YMax);
@@ -480,7 +504,6 @@ public class LevelGenerator : MonoBehaviour
         {
             var p1 = new Vector2((float)edge.P1.X, (float)edge.P1.Y);
             var p2 = new Vector2((float)edge.P2.X, (float)edge.P2.Y);
-
             Debug.DrawLine(p1, p2, color, duration, true);
         }
     }
@@ -624,7 +647,7 @@ public class LevelGenerator : MonoBehaviour
         {
             if(cells[i] != cell)
             {
-                if(cell.IsOverlapping(cells[i].SimulationCell, 0.001f))
+                if(cell.Overlaps(cells[i].SimulationCell, 0.001f))
                 {
                     overlappingCellIdList.Add(i);
                 }
@@ -658,7 +681,7 @@ public class LevelGenerator : MonoBehaviour
 
             // Give random position
             Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
-            Cell cell = new Cell(position, genWidth * TileSize, genHeight * TileSize);
+            Cell cell = new Cell(position, genWidth * TILE_SIZE, genHeight * TILE_SIZE);
 
             cell.CreatePhysicsCellObject(i, CellSprite);
             cell.CreateSimulationCellObject(i, CellSprite);

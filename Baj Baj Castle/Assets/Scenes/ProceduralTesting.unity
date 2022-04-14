@@ -170,7 +170,7 @@ MonoBehaviour:
   CycleCount: 2000
   TileSize: 16
   Complexity: 50
-  GenerationRegionWidth: 400
+  GenerationRegionWidth: 800
   GenerationRegionHeight: 10
   RoomWidthMinimum: 6
   RoomWidthMaximum: 30

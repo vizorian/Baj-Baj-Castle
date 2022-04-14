@@ -48,4 +48,9 @@ public class Point
         int hash = (int)X ^ (int)Y;
         return hash.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return "(" + X + ", " + Y + ")";
+    }
 }

@@ -54,24 +54,18 @@ public class Cell
     public bool IsPointInside(Point point)
     {
         // get cell position in world
-        var cellX = SimulationCell.transform.position.x;
-        var cellY = SimulationCell.transform.position.y;
-
         var offsetX = SimulationCell.transform.localScale.x / 2;
         var offsetY = SimulationCell.transform.localScale.y / 2;
 
         // get rectangle corners
-        var topLeft = new Point(cellX - offsetX, cellY + offsetY);
-        var bottomRight = new Point(cellX + offsetX, cellY - offsetY);
+        var topLeft = new Point(SimulationCell.transform.position.x - offsetX, SimulationCell.transform.position.y + offsetY);
+        var bottomRight = new Point(SimulationCell.transform.position.x + offsetX, SimulationCell.transform.position.y - offsetY);
 
-        return point.X > topLeft.X
-               && point.X < bottomRight.X
-               && point.Y < topLeft.Y
-               && point.Y > bottomRight.Y;
-
+        // check if point is inside
+        return (point.X >= topLeft.X && point.X <= bottomRight.X && point.Y >= topLeft.Y && point.Y <= bottomRight.Y);
     }
 
-    public bool IsOverlapping(GameObject otherCell, float margin){
+    public bool Overlaps(GameObject otherCell, float margin){
 
         var offsetX = Width * LevelGenerator.PIXEL_SIZE / 2 - margin;
         var offsetY = Height * LevelGenerator.PIXEL_SIZE / 2 - margin;
@@ -103,15 +97,44 @@ public class Cell
         return true;
     }
 
-    public void CreateDisplayCellObject(Sprite cellSprite)
+    public bool Overlaps(Cell otherCell){
+        // get cell position from 
+        var x = (int)(SimulationCell.transform.position.x / LevelGenerator.cellSize);        
+        var y = (int)(SimulationCell.transform.position.y / LevelGenerator.cellSize);
+
+        // get cell size in world converted to int
+        var width = Width / LevelGenerator.TILE_SIZE;
+        var height = Height / LevelGenerator.TILE_SIZE;
+
+        // get cell corner points
+        var topLeft = new Point(x, y);
+        var bottomRight = new Point(x + width, y + height);
+
+        // get other cell size in world converted
+        var otherTopLeft = new Point((int)(otherCell.Position.x), (int)(otherCell.Position.y));
+        var otherBottomRight = new Point((int)(otherCell.Position.x + otherCell.Width), (int)(otherCell.Position.y + otherCell.Height));
+        // print data
+
+        // check if cells overlapp
+        if (topLeft.X > otherBottomRight.X
+            || otherTopLeft.X > bottomRight.X
+            || bottomRight.Y > otherTopLeft.Y
+            || otherBottomRight.Y > topLeft.Y)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public void CreateDisplayCellObject(Sprite cellSprite, Color color)
     {
         DisplayCell = new GameObject("Hallway cell");
         var offset = LevelGenerator.cellSize / 2;
         
-        DisplayCell.transform.position = new Vector2(Position.x * LevelGenerator.cellSize * LevelGenerator.PIXEL_SIZE - offset,
-                                                     Position.y * LevelGenerator.cellSize * LevelGenerator.PIXEL_SIZE - offset);
+        DisplayCell.transform.position = new Vector2(Position.x * LevelGenerator.cellSize - offset,
+                                                     Position.y * LevelGenerator.cellSize - offset);
         DisplayCell.AddComponent<SpriteRenderer>().sprite = cellSprite;
-        DisplayCell.GetComponent<SpriteRenderer>().color = Color.cyan;
+        DisplayCell.GetComponent<SpriteRenderer>().color = color;
         DisplayCell.transform.localScale = new Vector2(Width * LevelGenerator.cellSize, Height * LevelGenerator.cellSize);
     }
 
