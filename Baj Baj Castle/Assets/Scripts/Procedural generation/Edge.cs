@@ -40,39 +40,6 @@ public class Edge
         return (minX <= cellMaxX && maxX >= cellMinX && minY <= cellMaxY && maxY >= cellMinY);
     }
 
-    public bool SharesPoint(Edge other)
-    {
-        // convert points to int
-        var p1X = (int)P1.X;
-        var p1Y = (int)P1.Y;
-        var p2X = (int)P2.X;
-        var p2Y = (int)P2.Y;
-
-        var otherP1X = (int)other.P1.X;
-        var otherP1Y = (int)other.P1.Y;
-        var otherP2X = (int)other.P2.X;
-        var otherP2Y = (int)other.P2.Y;
-
-        // check if points are the same
-        if (p1X == otherP1X && p1Y == otherP1Y)
-        {
-            return true;
-        }
-        if (p1X == otherP2X && p1Y == otherP2Y)
-        {
-            return true;
-        }
-        if (p2X == otherP1X && p2Y == otherP1Y)
-        {
-            return true;
-        }
-        if (p2X == otherP2X && p2Y == otherP2Y)
-        {
-            return true;
-        }
-        return false;
-    }
-
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())

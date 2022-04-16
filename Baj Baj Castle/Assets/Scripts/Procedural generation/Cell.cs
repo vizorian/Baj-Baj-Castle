@@ -22,8 +22,8 @@ public class Cell
     public void CreatePhysicsCellObject(int i, Sprite cellSprite)
     {
         PhysicsCell = new GameObject($"Simulation cell #{i}");
-        PhysicsCell.transform.localPosition = new Vector2(Position.x * LevelGenerator.cellSize * LevelGenerator.PIXEL_SIZE, Position.y * LevelGenerator.cellSize * LevelGenerator.PIXEL_SIZE);
-        PhysicsCell.transform.localScale = new Vector2(LevelGenerator.PIXEL_SIZE * Width, LevelGenerator.PIXEL_SIZE * Height);
+        PhysicsCell.transform.localPosition = new Vector2(Position.x * LevelGenerator.cellSize, Position.y * LevelGenerator.cellSize);
+        PhysicsCell.transform.localScale = new Vector2(LevelGenerator.cellSize * Width, LevelGenerator.cellSize * Height);
 
         SpriteRenderer sprite = PhysicsCell.AddComponent<SpriteRenderer>();
         sprite.sprite = cellSprite;
@@ -40,7 +40,7 @@ public class Cell
     {
         SimulationCell = new GameObject($"Cell #{i}");
         SimulationCell.SetActive(false);
-        SimulationCell.transform.localScale = new Vector2(LevelGenerator.PIXEL_SIZE * Width, LevelGenerator.PIXEL_SIZE * Height);
+        SimulationCell.transform.localScale = new Vector2(LevelGenerator.cellSize * Width, LevelGenerator.cellSize * Height);
         SimulationCell.layer = LayerMask.NameToLayer("Cell");
 
         SpriteRenderer sprite = SimulationCell.AddComponent<SpriteRenderer>();
@@ -50,25 +50,29 @@ public class Cell
 
     }
 
-    // check if point is inside
+    // TODO: Fix this
+    // HOW: probably resort to doing real position (world float) instead of cell position (int)
+    // check if point is inside the cell's bounds
     public bool IsPointInside(Point point)
     {
-        // get cell position in world
-        var offsetX = SimulationCell.transform.localScale.x / 2;
-        var offsetY = SimulationCell.transform.localScale.y / 2;
+        // calculate offsets
+        var offsetX = Width / 2;
+        var offsetY = Height / 2;
 
-        // get rectangle corners
-        var topLeft = new Point(SimulationCell.transform.position.x - offsetX, SimulationCell.transform.position.y + offsetY);
-        var bottomRight = new Point(SimulationCell.transform.position.x + offsetX, SimulationCell.transform.position.y - offsetY);
+        // find cell bounds
+        var minX = (int)Position.x - offsetX;
+        var maxX = (int)Position.x + offsetX;
+        var minY = (int)Position.y - offsetY;
+        var maxY = (int)Position.y + offsetY;
 
-        // check if point is inside
-        return (point.X >= topLeft.X && point.X <= bottomRight.X && point.Y >= topLeft.Y && point.Y <= bottomRight.Y);
+        // check if point is inside the cell's bounds
+        return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY);
     }
 
     public bool Overlaps(GameObject otherCell, float margin){
 
-        var offsetX = Width * LevelGenerator.PIXEL_SIZE / 2 - margin;
-        var offsetY = Height * LevelGenerator.PIXEL_SIZE / 2 - margin;
+        var offsetX = Width * LevelGenerator.cellSize / 2 - margin;
+        var offsetY = Height * LevelGenerator.cellSize / 2 - margin;
 
         // Get SimulationCell corners
         var topLeft = new Vector2(SimulationCell.transform.position.x - offsetX,

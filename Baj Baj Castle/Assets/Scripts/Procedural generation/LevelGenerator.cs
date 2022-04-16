@@ -75,6 +75,13 @@ public class LevelGenerator : MonoBehaviour
 
     private void ProcessCells()
     {
+        // set cell positions
+        foreach (var cell in cells)
+        {
+            cell.Position = new Vector2((int)(cell.SimulationCell.transform.position.x / cellSize),
+                                      (int)(cell.SimulationCell.transform.position.y / cellSize));
+        }
+
         // filter out cells that qualify to be rooms
         startTime = Time.realtimeSinceStartup;
         FilterCells();
@@ -114,13 +121,13 @@ public class LevelGenerator : MonoBehaviour
         {
             // if(!roomCells.Any(c => c.IsPointInside(new Point(position.x * cellSize, position.y * cellSize))))
             {
-                var cell = new Cell(position, 1, 1);
                 // check if cell is inside a room
-                if (!roomCells.Any(c => c.IsPointInside(new Point(cell.Position.x * cellSize + cellSize / 2, cell.Position.y * cellSize  + cellSize / 2))))
-                {
+                // if (!roomCells.Any(c => c.IsPointInside(new Point(position.x, position.y))))
+                // {
+                    var cell = new Cell(position, 1, 1);
                     cell.CreateDisplayCellObject(CellSprite, color);
                     hallwayCells.Add(cell);
-                }
+                // }
             }
         }
     }
@@ -681,7 +688,7 @@ public class LevelGenerator : MonoBehaviour
 
             // Give random position
             Vector2 position = GetRandomPointInElipse(GenerationRegionWidth, GenerationRegionHeight);
-            Cell cell = new Cell(position, genWidth * TILE_SIZE, genHeight * TILE_SIZE);
+            Cell cell = new Cell(position, genWidth, genHeight);
 
             cell.CreatePhysicsCellObject(i, CellSprite);
             cell.CreateSimulationCellObject(i, CellSprite);

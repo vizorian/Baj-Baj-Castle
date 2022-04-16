@@ -168,9 +168,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SimulationDelay: 3
   CycleCount: 2000
-  TileSize: 16
   Complexity: 50
-  GenerationRegionWidth: 800
+  GenerationRegionWidth: 50
   GenerationRegionHeight: 10
   RoomWidthMinimum: 6
   RoomWidthMaximum: 30

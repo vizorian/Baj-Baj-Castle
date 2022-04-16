@@ -63,11 +63,11 @@ public class DelaunayTriangulator
     // Create supra triangle from most spread out points (kind of)
     public void CreateSupraTriangle(List<Cell> cells)
     {
-        var leftCell = cells.OrderBy(c => c.SimulationCell.transform.position.x - c.Width * 0.01f / 2)
-                                  .ThenBy(c => c.SimulationCell.transform.position.y - c.Height * 0.01f / 2).First();
-        var topCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.y + c.Height * 0.01f / 2).First();
-        var rightCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.x + c.Width * 0.01f / 2)
-                                   .ThenBy(c => c.SimulationCell.transform.position.y - c.Height * 0.01f / 2).First();
+        var leftCell = cells.OrderBy(c => c.SimulationCell.transform.position.x - c.Width / 2)
+                                  .ThenBy(c => c.SimulationCell.transform.position.y - c.Height / 2).First();
+        var topCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.y + c.Height / 2).First();
+        var rightCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.x + c.Width / 2)
+                                   .ThenBy(c => c.SimulationCell.transform.position.y - c.Height / 2).First();
 
         var pointLeft = new Point((float)leftCell.SimulationCell.transform.position.x,
                                   (float)leftCell.SimulationCell.transform.position.y);
