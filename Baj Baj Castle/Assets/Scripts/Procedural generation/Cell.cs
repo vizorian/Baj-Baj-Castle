@@ -8,7 +8,7 @@ public class Cell
     public GameObject SimulationCell;
     public GameObject DisplayCell;
 
-    public Vector2 Position = new Vector2 (0, 0);
+    public Vector2 Position = new Vector2(0, 0);
     public int Width;
     public int Height;
 
@@ -22,8 +22,8 @@ public class Cell
     public void CreatePhysicsCellObject(int i, Sprite cellSprite)
     {
         PhysicsCell = new GameObject($"Simulation cell #{i}");
-        PhysicsCell.transform.localPosition = new Vector2(Position.x * LevelGenerator.cellSize, Position.y * LevelGenerator.cellSize);
-        PhysicsCell.transform.localScale = new Vector2(LevelGenerator.cellSize * Width, LevelGenerator.cellSize * Height);
+        PhysicsCell.transform.localPosition = new Vector2(Position.x * LevelGenerator.CELL_SIZE, Position.y * LevelGenerator.CELL_SIZE);
+        PhysicsCell.transform.localScale = new Vector2(LevelGenerator.CELL_SIZE * Width, LevelGenerator.CELL_SIZE * Height);
 
         SpriteRenderer sprite = PhysicsCell.AddComponent<SpriteRenderer>();
         sprite.sprite = cellSprite;
@@ -40,7 +40,7 @@ public class Cell
     {
         SimulationCell = new GameObject($"Cell #{i}");
         SimulationCell.SetActive(false);
-        SimulationCell.transform.localScale = new Vector2(LevelGenerator.cellSize * Width, LevelGenerator.cellSize * Height);
+        SimulationCell.transform.localScale = new Vector2(LevelGenerator.CELL_SIZE * Width, LevelGenerator.CELL_SIZE * Height);
         SimulationCell.layer = LayerMask.NameToLayer("Cell");
 
         SpriteRenderer sprite = SimulationCell.AddComponent<SpriteRenderer>();
@@ -69,10 +69,11 @@ public class Cell
         return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY);
     }
 
-    public bool Overlaps(GameObject otherCell, float margin){
+    public bool Overlaps(GameObject otherCell, float margin)
+    {
 
-        var offsetX = Width * LevelGenerator.cellSize / 2 - margin;
-        var offsetY = Height * LevelGenerator.cellSize / 2 - margin;
+        var offsetX = Width * LevelGenerator.CELL_SIZE / 2 - margin;
+        var offsetY = Height * LevelGenerator.CELL_SIZE / 2 - margin;
 
         // Get SimulationCell corners
         var topLeft = new Vector2(SimulationCell.transform.position.x - offsetX,
@@ -101,10 +102,11 @@ public class Cell
         return true;
     }
 
-    public bool Overlaps(Cell otherCell){
+    public bool Overlaps(Cell otherCell)
+    {
         // get cell position from 
-        var x = (int)(SimulationCell.transform.position.x / LevelGenerator.cellSize);        
-        var y = (int)(SimulationCell.transform.position.y / LevelGenerator.cellSize);
+        var x = (int)(SimulationCell.transform.position.x / LevelGenerator.CELL_SIZE);
+        var y = (int)(SimulationCell.transform.position.y / LevelGenerator.CELL_SIZE);
 
         // get cell size in world converted to int
         var width = Width / LevelGenerator.TILE_SIZE;
@@ -133,13 +135,13 @@ public class Cell
     public void CreateDisplayCellObject(Sprite cellSprite, Color color)
     {
         DisplayCell = new GameObject("Hallway cell");
-        var offset = LevelGenerator.cellSize / 2;
-        
-        DisplayCell.transform.position = new Vector2(Position.x * LevelGenerator.cellSize - offset,
-                                                     Position.y * LevelGenerator.cellSize - offset);
+        var offset = LevelGenerator.CELL_SIZE / 2;
+
+        DisplayCell.transform.position = new Vector2(Position.x * LevelGenerator.CELL_SIZE - offset,
+                                                     Position.y * LevelGenerator.CELL_SIZE - offset);
         DisplayCell.AddComponent<SpriteRenderer>().sprite = cellSprite;
         DisplayCell.GetComponent<SpriteRenderer>().color = color;
-        DisplayCell.transform.localScale = new Vector2(Width * LevelGenerator.cellSize, Height * LevelGenerator.cellSize);
+        DisplayCell.transform.localScale = new Vector2(Width * LevelGenerator.CELL_SIZE, Height * LevelGenerator.CELL_SIZE);
     }
 
     public bool IsPartOf(HashSet<Triangle> triangles)
@@ -161,7 +163,7 @@ public class Cell
                 return true;
             }
         }
-        
+
         return false;
     }
 }

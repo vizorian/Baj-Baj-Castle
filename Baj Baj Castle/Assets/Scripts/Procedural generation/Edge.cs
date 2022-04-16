@@ -8,7 +8,7 @@ public class Edge
     public Point P2;
     public float Weight
     {
-        get{ return P1.DistanceTo(P2); }
+        get { return P1.DistanceTo(P2); }
     }
     public Edge(Point p1, Point p2)
     {
@@ -16,7 +16,8 @@ public class Edge
         P2 = p2;
     }
 
-    public bool Overlaps(Cell cell){
+    public bool Overlaps(Cell cell)
+    {
         var cellX = cell.SimulationCell.transform.position.x;
         var cellY = cell.SimulationCell.transform.position.y;
         var cellWidth = cell.SimulationCell.transform.localScale.x;
@@ -46,7 +47,7 @@ public class Edge
         {
             return false;
         }
-        
+
         Edge edge = (Edge)obj;
         bool identical = P1.Equals(edge.P1) && P2.Equals(edge.P2);
         bool identicalReverse = P1.Equals(edge.P2) && P2.Equals(edge.P1);
