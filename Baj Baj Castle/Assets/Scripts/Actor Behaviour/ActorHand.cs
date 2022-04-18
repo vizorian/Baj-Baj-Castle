@@ -8,7 +8,7 @@ public class ActorHand : MonoBehaviour
     public bool isFreezing = false;
 
     private bool newSelection = false;
-    private bool isTurned = false;
+    public bool IsTurned = false;
 
     private float handSpeed = 1f;
     private float handRange;
@@ -84,15 +84,15 @@ public class ActorHand : MonoBehaviour
         if (heldItem == null)
             return;
 
-        if (!isTurned)
+        if (!IsTurned)
         {
             itemObject.transform.Rotate(0, 0, 90);
-            isTurned = true;
+            IsTurned = true;
         }
         else
         {
             itemObject.transform.Rotate(0, 0, -90);
-            isTurned = false;
+            IsTurned = false;
         }
 
         RealignHeldItem();
@@ -110,10 +110,14 @@ public class ActorHand : MonoBehaviour
         itemObject.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
         var item = itemObject.AddComponent<Item>();
-        ItemProperties props = heldItem.Data.ItemProperties;
+        ItemProperties properties = heldItem.Data.ItemProperties;
         item.Type = heldItem.Data.itemType;
-        item.Damage = props.Damage;
-        item.Speed = props.Speed;
+        item.Damage = properties.Damage;
+        item.Speed = properties.Speed;
+        item.Range = properties.Range;
+        item.Knockback = properties.Knockback;
+        item.Cooldown = properties.Cooldown;
+        item.CooldownTimer = item.Cooldown;
 
         AlignHeldItem();
 
@@ -151,7 +155,7 @@ public class ActorHand : MonoBehaviour
             heldItemHandlePosition = new Vector3(0, 0);
 
         newSelection = true;
-        if (isTurned)
+        if (IsTurned)
             TurnHeldItem();
     }
 

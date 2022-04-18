@@ -8,6 +8,7 @@ public class LevelGenerator : MonoBehaviour
     // Inputs
     public int LevelSize;
     public bool IsDebug;
+    public Sprite CellSprite;
 
     // Outputs
     public List<Cell> Rooms = new List<Cell>();

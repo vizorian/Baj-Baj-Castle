@@ -12,30 +12,14 @@ public class LevelManager : MonoBehaviour
     public Dictionary<string, Tile> TileDictionary;
     private LevelGenerator levelGenerator;
     private TileCreator tileCreator;
-    private bool isGenerated = false;
-    private int level = 1;
+    public int Level = 1;
     private Tilemap floorTilemap;
     private Tilemap decorationTilemap;
     private Tilemap collisionTilemap;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        levelGenerator = gameObject.AddComponent<LevelGenerator>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // if (!isGenerated)
-        // {
-        //     isGenerated = true;
-        //     GenerateLevel(1);
-        // }
-    }
-
     public void GenerateLevel(int i)
     {
+        InstantiateLevelGenerator();
         levelGenerator.GenerateLevel(i, IsDebug, CellSprite);
 
         var rooms = levelGenerator.Rooms;
@@ -47,7 +31,14 @@ public class LevelManager : MonoBehaviour
         }
         tileCreator.CreateTiles(rooms, floorTilemap, collisionTilemap);
 
-        level++;
+        Level++;
+    }
+
+    private void InstantiateLevelGenerator()
+    {
+        levelGenerator = gameObject.AddComponent<LevelGenerator>();
+        levelGenerator.CellSprite = CellSprite;
+        levelGenerator.IsDebug = IsDebug;
     }
 
     private void InstantiateTileCreator()

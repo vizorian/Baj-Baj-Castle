@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8421213954941824591}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Ally
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,16 +98,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 20
-  Armor: 0
-  actorType: 2
-  HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}
+  MaxHealth: 0
   MovementSpeed: 0.5
+  Defense: 0
+  Resistance: 0
+  Strength: 0
+  Agility: 0
+  Intelligence: 0
+  Luck: 0
   InteractionRange: 0.15
-  HandRange: 0.1
+  ReachRange: 0
   ViewRange: 1
+  actorType: 1
+  HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}
   FrontSprite: {fileID: -3018825789789838114, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: 2172585217110231533, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: 6875313188632250476, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Gold: 0
+  StrengthUpgradeLevel: 0
+  AgilityUpgradeLevel: 0
+  IntelligenceUpgradeLevel: 0
+  LuckUpgradeLevel: 0
 --- !u!61 &3942133072837529197
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -123,13 +123,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 20
-  Armor: 0
+  MaxHealth: 0
+  MovementSpeed: 0.5
+  Defense: 0
+  Resistance: 0
+  Strength: 0
+  Agility: 0
+  Intelligence: 0
+  Luck: 0
+  InteractionRange: 0.05
+  ReachRange: 0.1
+  ViewRange: 1
   actorType: 0
   HandPrefab: {fileID: 4685714322924328532, guid: cb75c65099d6642478a215105eb41f1b, type: 3}
-  MovementSpeed: 0.5
-  InteractionRange: 0.05
-  HandRange: 0.1
-  ViewRange: 1
   FrontSprite: {fileID: -8815059205600961907, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: -7444576064390506996, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: -8262991748867391410, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}

@@ -5,8 +5,8 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
     // Attributes
-    public int Health;
-    public int MaxHealth;
+    public float Health;
+    public float MaxHealth;
     public float MovementSpeed;
     public int Defense;
     public int Resistance;
@@ -81,19 +81,78 @@ public class Actor : MonoBehaviour
         _hand.UpdateCenterPosition(transform.position);
     }
 
-    // Take damage, called by other actors on collision
-    private protected virtual void TakeDamage(int damage)
+    // Take damage, called by weapons on collision
+    private protected virtual void TakeDamage(DamageData damageData)
     {
+        var damage = damageData.Amount;
+
+        // Adjust damage based on if the weapon is flipped or not
+        if (damageData.Type == DamageType.Piercing && _hand.IsTurned)
+        {
+            damageData.Type = DamageType.Slashing;
+        }
+        else if (damageData.Type == DamageType.Slashing && _hand.IsTurned)
+        {
+            damageData.Type = DamageType.Piercing;
+        }
+
+        // Damage types
+        if (damageData.Type == DamageType.Piercing)
+        {
+            damage -= Defense / 4;
+        }
+        else if (damageData.Type == DamageType.Bludgeoning)
+        {
+            damage -= Defense / 2;
+        }
+        else if (damageData.Type == DamageType.Slashing)
+        {
+            damage -= Defense;
+        }
+
+        if (damage < 1)
+            damage = 1;
+
+
+        // TODO Resistances of multiple damage types?
+
         Health -= damage;
         if (Health <= 0)
         {
-            Death();
+            Die();
+        }
+
+        Knockback(damageData.Source.transform.position, damageData.Knockback);
+
+    }
+
+    // TODO use this for potions
+    private protected virtual void Heal(float amount)
+    {
+        if (Health + amount > MaxHealth)
+        {
+            Health = MaxHealth;
+        }
+        else
+        {
+            Health += amount;
         }
     }
 
-    // Death, called by TakeDamage
-    private protected virtual void Death()
+    // TODO improve this
+    // HOW: check if new position is in collision
+    private void Knockback(Vector3 from, float distance)
     {
+        var knockbackDirection = transform.position - from;
+        knockbackDirection.Normalize();
+        knockbackDirection *= distance;
+        transform.Translate(knockbackDirection);
+    }
+
+    // Actor death
+    private protected virtual void Die()
+    {
+        Destroy(gameObject);
     }
 
     // ActorHand commands

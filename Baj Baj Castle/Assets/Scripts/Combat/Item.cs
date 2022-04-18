@@ -9,8 +9,10 @@ public class Item : Collidable
 
     public ItemType Type;
     public float Damage;
+    public DamageType DamageType;
     public float Speed;
     public float Cooldown;
+    public float CooldownTimer;
     public float Knockback;
     public float Range;
 
@@ -34,7 +36,27 @@ public class Item : Collidable
 
     private protected override void OnCollide(Collider2D collider)
     {
-        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Object" || collider.gameObject.tag == "Actor")
-            print($"Weapon collided with: {collider.name}");
+        // Do timer
+        if (CooldownTimer > 0)
+        {
+            CooldownTimer -= Time.deltaTime;
+            return;
+        }
+        // If item is weapon and collider is a player or object or actor
+        if (Type == ItemType.Weapon)
+        {
+            if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Object" || collider.gameObject.tag == "Actor")
+            {
+                // get Actor this item is attached to
+                Actor actor = GetComponentInParent<Actor>();
+
+                // If collider is the owner of the item
+                if (collider.gameObject == actor.gameObject) return;
+
+                var damageData = new DamageData(Damage, DamageType, Knockback, actor);
+                collider.gameObject.SendMessage("TakeDamage", damageData);
+            }
+        }
+        CooldownTimer = Cooldown;
     }
 }
