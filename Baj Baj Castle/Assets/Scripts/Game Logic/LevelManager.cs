@@ -5,10 +5,11 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
-    public Dictionary<string, Tile> TileDictionary;
     public GameObject GridObject;
     public Sprite CellSprite;
-    public bool Debug = false;
+    public bool Debug;
+
+    public Dictionary<string, Tile> TileDictionary;
     private LevelGenerator levelGenerator;
     private TileCreator tileCreator;
     private bool isGenerated = false;
@@ -35,7 +36,6 @@ public class LevelManager : MonoBehaviour
 
     private void GenerateLevel(int i)
     {
-        levelGenerator.GenerateLevel(i, Debug, CellSprite);
         var rooms = levelGenerator.Rooms;
         var hallways = levelGenerator.Hallways;
 

@@ -4,17 +4,62 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
+    // Attributes
+    public int Health;
+    public int MaxHealth;
+    public float MovementSpeed;
+    public int Defense;
+    public int Resistance;
+
+
+    // upgradeable attributes
+    public int Strength;
+    public int Agility;
+    public int Intelligence;
+    public int Luck;
+
+    // range attributes
+    public float InteractionRange;
+    public float ReachRange;
+    public float ViewRange;
+
+    public Actor(int health,
+                 int maxHealth,
+                 int movementSpeed,
+                 int defense,
+                 int resistance,
+                 int strength,
+                 int agility,
+                 int intelligence,
+                 int luck,
+                 float interactionRange,
+                 float reachRange,
+                 float viewRange)
+    {
+        Health = health;
+        MaxHealth = maxHealth;
+        MovementSpeed = movementSpeed;
+        Defense = defense;
+        Resistance = resistance;
+        Strength = strength;
+        Agility = agility;
+        Intelligence = intelligence;
+        Luck = luck;
+        InteractionRange = interactionRange;
+        ReachRange = reachRange;
+        ViewRange = viewRange;
+    }
+
+    public Actor()
+    {
+    }
+
     private protected BoxCollider2D _boxCollider;
     private protected SpriteRenderer _spriteRenderer;
     private protected RaycastHit2D raycastHit;
     private protected InventorySystem inventory;
 
-    public float Health = 20f;
-    public float Armor = 0f;
-
     public ActorType actorType;
-
-    //private protected ActorHand _hand;
     public GameObject HandPrefab;
     private protected ActorHand _hand;
 
@@ -22,11 +67,6 @@ public class Actor : MonoBehaviour
     private protected GameObject target;
 
     private protected Vector3 moveDelta;
-
-    public float MovementSpeed = 0.5f;
-    public float InteractionRange = 0.15f;
-    public float HandRange = 0.1f;
-    public float ViewRange = 1f;
 
     public Sprite FrontSprite;
     public Sprite BackSprite;
@@ -37,7 +77,7 @@ public class Actor : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
-        _hand.Init(HandRange);
+        _hand.Init(ReachRange);
         _hand.UpdateCenterPosition(transform.position);
     }
 
@@ -89,7 +129,7 @@ public class Actor : MonoBehaviour
         Vector3 posDif = lookTarget - transform.position;
 
         // Out of range
-        if(actorType != ActorType.Player)
+        if (actorType != ActorType.Player)
         {
             if (posDif.magnitude > ViewRange)
             {

@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3942133072837529201}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e798dd8e607910a42ac35c0c9ad3e716, type: 3}
+  m_Script: {fileID: 11500000, guid: 98e292b67ab6f5949ae8f2fd4da89471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 20
@@ -104,7 +104,7 @@ MonoBehaviour:
   MovementSpeed: 0.5
   InteractionRange: 0.15
   HandRange: 0.1
-  ViewRange: 0.5
+  ViewRange: 1
   FrontSprite: {fileID: -3018825789789838114, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: 2172585217110231533, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: 6875313188632250476, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}

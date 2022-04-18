@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 171677375}
   - component: {fileID: 171677376}
-  - component: {fileID: 171677377}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -164,33 +163,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 171677374}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 473bea1badeaf4048a2814ff593a371d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LevelSize: 0
-  IsDebug: 0
-  SimulationDelay: 3
-  CycleCount: 2000
-  Complexity: 50
-  GenerationRegionWidth: 50
-  GenerationRegionHeight: 10
-  RoomWidthMinimum: 6
-  RoomWidthMaximum: 30
-  RoomHeightMinimum: 6
-  RoomHeightMaximum: 20
-  FilteringCriteria: 1
-  EdgePercentage: 0.1
-  HallwayWidth: 4
---- !u!114 &171677377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 171677374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b216e71dec22e7a40a5c0698040eb07f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7922466276e2eda499dddf2d51c5b6b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   GridObject: {fileID: 684738809}

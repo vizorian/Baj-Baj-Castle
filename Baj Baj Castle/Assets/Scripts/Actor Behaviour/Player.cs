@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerController : Actor
+public class Player : Actor
 {
-    private protected void Update()
+    // Attributes
+    public int Gold;
+    public int StrengthUpgradeLevel;
+    public int AgilityUpgradeLevel;
+    public int IntelligenceUpgradeLevel;
+    public int LuckUpgradeLevel;
+
+
+
+    private void Awake()
+    {
+        Instantiate();
+    }
+
+    private void Update()
     {
         ProcessInputs();
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), actorType);
-        
-        
+
+
         FindInteractable();
         if (interactionObject != null)
             interactionObject.SendMessage("OnCollide", _boxCollider);
@@ -21,6 +35,51 @@ public class PlayerController : Actor
         Move();
         _hand.UpdateCenterPosition(transform.position);
         _hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+    }
+
+    // Get player SaveData
+    public SaveData GetSaveData()
+    {
+        SaveData data = new SaveData();
+        data.Gold = Gold;
+        data.StrengthUpgradeLevel = StrengthUpgradeLevel;
+        data.AgilityUpgradeLevel = AgilityUpgradeLevel;
+        data.IntelligenceUpgradeLevel = IntelligenceUpgradeLevel;
+        data.LuckUpgradeLevel = LuckUpgradeLevel;
+        return data;
+    }
+
+    // Set player SaveData
+    public void SetSaveData(SaveData data)
+    {
+        Gold = data.Gold;
+        StrengthUpgradeLevel = data.StrengthUpgradeLevel;
+        AgilityUpgradeLevel = data.AgilityUpgradeLevel;
+        IntelligenceUpgradeLevel = data.IntelligenceUpgradeLevel;
+        LuckUpgradeLevel = data.LuckUpgradeLevel;
+    }
+
+    private void Instantiate()
+    {
+        Health = 100;
+        MaxHealth = 100;
+        MovementSpeed = 0.5f;
+        Defense = 0;
+        Resistance = 0;
+
+        InteractionRange = 0.15f;
+        ReachRange = 0.1f;
+        ViewRange = 0.5f;
+
+        StrengthUpgradeLevel = 0;
+        AgilityUpgradeLevel = 0;
+        IntelligenceUpgradeLevel = 0;
+        LuckUpgradeLevel = 0;
+
+        Strength = 0;
+        Agility = 0;
+        Intelligence = 0;
+        Luck = 0;
     }
 
     /// <summary>
@@ -74,7 +133,7 @@ public class PlayerController : Actor
         // Scroll wheel
         if (scrollWheelDelta != 0)
         {
-            if(scrollWheelDelta > 0)
+            if (scrollWheelDelta > 0)
                 InventorySystem.Instance.Next();
             else
                 InventorySystem.Instance.Previous();
@@ -92,12 +151,12 @@ public class PlayerController : Actor
             .FirstOrDefault();
     }
 
-    private protected void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         //if (interactionObject == null) Gizmos.color = Color.yellow;
         //else Gizmos.color = Color.red;
         //Gizmos.DrawWireSphere(transform.position, InteractionRange);
 
-        Gizmos.DrawWireSphere(transform.position, HandRange);
+        Gizmos.DrawWireSphere(transform.position, ReachRange);
     }
 }
