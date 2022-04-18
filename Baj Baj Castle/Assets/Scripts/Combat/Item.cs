@@ -7,20 +7,21 @@ public class Item : Collidable
 {
     private EdgeCollider2D _edgeCollider;
 
-    public ItemType itemType;
+    public ItemType Type;
     public float Damage;
     public float Speed;
+    public float Cooldown;
+    public float Knockback;
+    public float Range;
 
-    // Start is called before the first frame update
     private protected override void Start()
     {
         _edgeCollider = GetComponent<EdgeCollider2D>();
     }
 
-    // Update is called once per frame
     private protected override void FixedUpdate()
     {
-        if(itemType == ItemType.Weapon)
+        if (Type == ItemType.Weapon)
         {
             _edgeCollider.OverlapCollider(ContactFilter, _hits);
             for (int i = 0; i < _hits.Count; i++)

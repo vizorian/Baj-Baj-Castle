@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     public GameObject GridObject;
     public Sprite CellSprite;
-    public bool Debug;
+    public bool IsDebug;
 
     public Dictionary<string, Tile> TileDictionary;
     private LevelGenerator levelGenerator;
@@ -27,15 +27,17 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isGenerated)
-        {
-            isGenerated = true;
-            GenerateLevel(1);
-        }
+        // if (!isGenerated)
+        // {
+        //     isGenerated = true;
+        //     GenerateLevel(1);
+        // }
     }
 
-    private void GenerateLevel(int i)
+    public void GenerateLevel(int i)
     {
+        levelGenerator.GenerateLevel(i, IsDebug, CellSprite);
+
         var rooms = levelGenerator.Rooms;
         var hallways = levelGenerator.Hallways;
 

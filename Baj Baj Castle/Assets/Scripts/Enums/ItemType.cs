@@ -4,10 +4,3 @@ public enum ItemType
     Weapon,
     Misc
 }
-
-public enum ActorType
-{
-    Enemy,
-    Ally,
-    Player
-}

@@ -5,59 +5,39 @@ using UnityEngine;
 
 public class ActorHand : MonoBehaviour
 {
-    public bool isHolding = false;
-    
+    public bool isFreezing = false;
+
     private bool newSelection = false;
     private bool isTurned = false;
 
-    private float _handSpeed = 1f;
-    private float _range;
-    
-    private Vector3 _bodyPosition;
-    private InventoryItem _heldItem;
-    private Vector3 _heldItemHandlePosition;
+    private float handSpeed = 1f;
+    private float handRange;
 
-    private GameObject _item;
+    private Vector3 bodyPosition;
+    private InventoryItem heldItem;
+    private Vector3 heldItemHandlePosition;
 
-    private float targetAcceleration = 40f;
-    private float velocity = 0f;
-    private float acceleration = 0f;
+    private GameObject itemObject;
 
     // Hand initialization from Actor
-    public void Init(float range)
+    public void Init(float handRange)
     {
-        _range = range;
+        this.handRange = handRange;
     }
 
     private void Update()
     {
         UpdateHeldItem();
         UpdateVerticalRendering();
-        if (!isHolding)
+        if (!isFreezing)
             UpdateHorizontalRendering();
         //PrintSpeeds();
-    }
-
-    private void PrintSpeeds()
-    {
-        //print($"Current velocity is: {velocity}");
-        //print($"Current Acceleration is: {acceleration}");
-        if(acceleration >= targetAcceleration)
-            print($"FAST ENOUGH!!!  Current Acceleration is: {acceleration}");
-    }
-
-    private void RecalculateSpeeds(Vector3 currentPos, Vector3 oldPos)
-    {
-        var oldVelocity = velocity;
-        velocity = Vector2.Distance(currentPos, oldPos) / Time.deltaTime;
-
-        acceleration = (Mathf.Abs(velocity - oldVelocity)) / Time.deltaTime;
     }
 
     // Flips the hand and held item based on horizontal position
     private void UpdateHorizontalRendering()
     {
-        if (Vector2.Dot(transform.parent.transform.right, transform.position - _bodyPosition) > 0) // If to the right of actor
+        if (Vector2.Dot(transform.parent.transform.right, transform.position - bodyPosition) > 0) // If to the right of actor
             transform.localScale = new Vector2(1, 1);
         else // If to the left of actor
             transform.localScale = new Vector2(-1, 1);
@@ -69,10 +49,10 @@ public class ActorHand : MonoBehaviour
         SpriteRenderer handRenderer = transform.GetComponent<SpriteRenderer>();
         SpriteRenderer itemRenderer = null;
 
-        if (_heldItem != null)
-            itemRenderer = _item.GetComponent<SpriteRenderer>();
+        if (heldItem != null)
+            itemRenderer = itemObject.GetComponent<SpriteRenderer>();
 
-        if (Vector2.Dot(transform.parent.transform.up, transform.position - _bodyPosition) > 0) // If above actor
+        if (Vector2.Dot(transform.parent.transform.up, transform.position - bodyPosition) > 0) // If above actor
         {
             handRenderer.sortingLayerName = "Actor";
             if (itemRenderer != null)
@@ -89,11 +69,11 @@ public class ActorHand : MonoBehaviour
     // Creates a new instance of the held item if there needs to be one
     private void UpdateHeldItem()
     {
-        if (newSelection || _heldItem == null)
+        if (newSelection || heldItem == null)
         {
-            Destroy(_item);
+            Destroy(itemObject);
 
-            if (_heldItem != null && newSelection)
+            if (heldItem != null && newSelection)
                 InstantiateHeldItem();
         }
     }
@@ -101,17 +81,17 @@ public class ActorHand : MonoBehaviour
     // Turns currently held item 90 degrees
     public void TurnHeldItem()
     {
-        if (_heldItem == null)
+        if (heldItem == null)
             return;
 
         if (!isTurned)
         {
-            _item.transform.Rotate(0, 0, 90);
+            itemObject.transform.Rotate(0, 0, 90);
             isTurned = true;
         }
         else
         {
-            _item.transform.Rotate(0, 0, -90);
+            itemObject.transform.Rotate(0, 0, -90);
             isTurned = false;
         }
 
@@ -121,20 +101,20 @@ public class ActorHand : MonoBehaviour
     private void InstantiateHeldItem()
     {
         // Prefab preparation for actor use
-        _item = Instantiate(_heldItem.Data.Prefab, transform);
-        _item.tag = "Untagged";
-        Destroy(_item.GetComponent<Pickupable>());
-        Destroy(_item.GetComponent<Collider2D>());
-        
-        _item.GetComponent<SpriteRenderer>().sortingLayerName = "Hand";
-        _item.GetComponent<SpriteRenderer>().sortingOrder = 0;
+        itemObject = Instantiate(heldItem.Data.Prefab, transform);
+        itemObject.tag = "Untagged";
+        Destroy(itemObject.GetComponent<Pickupable>());
+        Destroy(itemObject.GetComponent<Collider2D>());
 
-        Item item = _item.AddComponent<Item>();
-        ItemProperties props = _heldItem.Data.ItemProperties;
-        item.itemType = _heldItem.Data.itemType;
+        itemObject.GetComponent<SpriteRenderer>().sortingLayerName = "Hand";
+        itemObject.GetComponent<SpriteRenderer>().sortingOrder = 0;
+
+        var item = itemObject.AddComponent<Item>();
+        ItemProperties props = heldItem.Data.ItemProperties;
+        item.Type = heldItem.Data.itemType;
         item.Damage = props.Damage;
         item.Speed = props.Speed;
-        
+
         AlignHeldItem();
 
         newSelection = false;
@@ -144,45 +124,45 @@ public class ActorHand : MonoBehaviour
     private void AlignHeldItem()
     {
         // Works for no flip
-        float offsetX = Mathf.Abs(_heldItemHandlePosition.x);
-        float offsetY = Mathf.Abs(_heldItemHandlePosition.y);
+        float offsetX = Mathf.Abs(heldItemHandlePosition.x);
+        float offsetY = Mathf.Abs(heldItemHandlePosition.y);
 
         var localDestination = new Vector3(offsetX, offsetY);
-        _item.transform.localPosition = localDestination;
+        itemObject.transform.localPosition = localDestination;
     }
 
     // Realigns the item after a flip so that the handle point is on the hand
     private void RealignHeldItem()
     {
-        Vector2 newPos = new Vector2(-_item.transform.localPosition.y, -_item.transform.localPosition.x);
-        _item.transform.localPosition = newPos;
+        Vector2 newPos = new Vector2(-itemObject.transform.localPosition.y, -itemObject.transform.localPosition.x);
+        itemObject.transform.localPosition = newPos;
     }
 
     public void SetHeldItem(InventoryItem item)
     {
-        _heldItem = item;
+        heldItem = item;
 
         if (item.Data.Prefab.transform.childCount != 0)
         {
             Vector3 childPos = item.Data.Prefab.transform.GetChild(0).gameObject.transform.localPosition;
-            _heldItemHandlePosition = new Vector3(childPos.x, childPos.y);
+            heldItemHandlePosition = new Vector3(childPos.x, childPos.y);
         }
         else
-            _heldItemHandlePosition = new Vector3(0, 0);
+            heldItemHandlePosition = new Vector3(0, 0);
 
         newSelection = true;
-        if(isTurned)
+        if (isTurned)
             TurnHeldItem();
     }
 
     public void ClearHeldItem()
     {
-        _heldItem = null;
+        heldItem = null;
     }
 
     public void UpdateCenterPosition(Vector2 position)
     {
-        _bodyPosition = position;
+        bodyPosition = position;
     }
 
     public void LookTowards(Vector3 lookTarget)
@@ -191,7 +171,7 @@ public class ActorHand : MonoBehaviour
         MoveTowards(lookTarget);
 
         //Rotates hand
-        if(!isHolding)
+        if (!isFreezing)
             RotateTowards(lookTarget);
 
         // FAILURE: Interesting effect for menu
@@ -209,13 +189,13 @@ public class ActorHand : MonoBehaviour
         var oldPos = transform.position;
 
         // If mouse is out of range
-        if (Vector2.Distance(_bodyPosition, target) > _range)
+        if (Vector2.Distance(bodyPosition, target) > handRange)
         {
             // Move towards target
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, _handSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, handSpeed * Time.deltaTime);
 
             // Post step position is out of range
-            if (Vector2.Distance(transform.position, _bodyPosition) > _range)
+            if (Vector2.Distance(transform.position, bodyPosition) > handRange)
             {
                 // -------------------------------------------
                 // Reset & Moving to border
@@ -225,10 +205,10 @@ public class ActorHand : MonoBehaviour
                 transform.position = oldPos;
 
                 // Getting step size
-                float step = _handSpeed * Time.deltaTime;
+                float step = handSpeed * Time.deltaTime;
 
                 // Reduce step size by remaining distance to border
-                float distanceToBorder = _range - Vector2.Distance(_bodyPosition, oldPos);
+                float distanceToBorder = handRange - Vector2.Distance(bodyPosition, oldPos);
                 step -= distanceToBorder;
 
                 // Move position the remaining distance to the border
@@ -237,15 +217,15 @@ public class ActorHand : MonoBehaviour
                 // -------------------------------------------
                 // Movement via range boundary
                 // -------------------------------------------
-                
+
                 // Body to current position
-                Vector2 bodyToCurrent = _bodyPosition - transform.position;
+                Vector2 bodyToCurrent = bodyPosition - transform.position;
                 // Body to target position
-                Vector2 bodyToTarget = _bodyPosition - target;
+                Vector2 bodyToTarget = bodyPosition - target;
 
                 // Calculating rotation angle based on remaining step size
                 // Use this to rotate from current position !!!
-                var angleNextPoint = (step / _range) * Mathf.Rad2Deg;
+                var angleNextPoint = (step / handRange) * Mathf.Rad2Deg;
 
                 // Rotation of currentPos
                 Quaternion currentRot = Quaternion.LookRotation(Vector3.forward, bodyToCurrent);
@@ -289,21 +269,19 @@ public class ActorHand : MonoBehaviour
                     bodyToNewTarget = Quaternion.Euler(0, 0, angle) * bodyToCurrent;
 
                 // Apply final movement
-                Vector2 newTargetPos = _bodyPosition - bodyToNewTarget;
+                Vector2 newTargetPos = bodyPosition - bodyToNewTarget;
                 transform.position = Vector2.MoveTowards(transform.position, newTargetPos, Mathf.Infinity);
             }
 
 
         }
         else // Move to mouse within range
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, _handSpeed * Time.deltaTime);
-
-        RecalculateSpeeds(transform.position, oldPos);
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, handSpeed * Time.deltaTime);
     }
 
     private void RotateTowards(Vector3 target)
     {
-        Vector2 direction = target - _bodyPosition;
+        Vector2 direction = target - bodyPosition;
         transform.up = direction;
     }
 }

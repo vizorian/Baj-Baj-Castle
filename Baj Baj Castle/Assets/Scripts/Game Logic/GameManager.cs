@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         levelManager = gameObject.AddComponent<LevelManager>();
         levelManager.CellSprite = CellSprite;
         levelManager.GridObject = GridObject;
-        levelManager.Debug = Debug;
+        levelManager.IsDebug = Debug;
     }
 
     void Awake()
@@ -49,22 +49,40 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (player == null)
+        if (Input.GetKeyDown(KeyCode.G))
         {
-            FindPlayer();
+            print("Generating level");
+            levelManager.GenerateLevel(1);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
-            // Save the game
+            if (player == null)
+            {
+                FindPlayer();
+            }
+            // Save player data
             SaveState();
-
         }
 
         if (Input.GetKeyDown(KeyCode.RightBracket))
         {
-            // Load the game
+            if (player == null)
+            {
+                FindPlayer();
+            }
+            // Load player data
             LoadState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (player == null)
+            {
+                FindPlayer();
+            }
+            LoadState();
+            // Set player data
             player.SetSaveData(saveData);
         }
     }
@@ -88,7 +106,14 @@ public class GameManager : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
 
         // Save player data
-        saveData = player.GetSaveData();
+        if (player != null)
+        {
+            saveData = player.GetSaveData();
+        }
+        else
+        {
+            saveData = new SaveData();
+        }
 
         bf.Serialize(file, saveData);
         file.Close();
@@ -114,22 +139,12 @@ public class GameManager : MonoBehaviour
                 file.Dispose();
                 print("Loaded save data: " + saveData.ToString());
             }
+            else
+            {
+                print("No save data found");
+            }
         }
     }
-
-    public SaveData GetState()
-    {
-        if (saveData == null)
-        {
-            LoadState();
-        }
-        if (saveData == null)
-        {
-            saveData = new SaveData();
-        }
-        return saveData;
-    }
-
 
     // This method is called when the player presses the "Start" button.
     // It changes the game state to "Castle".

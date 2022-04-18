@@ -327,8 +327,69 @@ Transform:
   - {fileID: 2050307667}
   - {fileID: 998147536}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &638744769
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.819
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.616
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754996, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009754998, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: m_Name
+      value: Goblin
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009755002, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: ReachRange
+      value: 0.1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
 --- !u!1 &811232756
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +454,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &998147535
 GameObject:
@@ -1456,7 +1517,7 @@ RectTransform:
   m_Children:
   - {fileID: 1244722834}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -16727,6 +16788,12 @@ MonoBehaviour:
   GridObject: {fileID: 611363254}
   CellSprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   Debug: 1
+  saveData:
+    Gold: 0
+    StrengthUpgradeLevel: 0
+    AgilityUpgradeLevel: 0
+    IntelligenceUpgradeLevel: 0
+    LuckUpgradeLevel: 0
 --- !u!4 &1656378847
 Transform:
   m_ObjectHideFlags: 0
@@ -16739,7 +16806,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2050307666
 GameObject:
@@ -18206,9 +18273,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knife_Iron
       objectReference: {fileID: 0}
+    - target: {fileID: 8010117920037322016, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
+      propertyPath: m_UseAdjacentEndPoint
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8010117920037322016, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
+      propertyPath: m_UseAdjacentStartPoint
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8424245408089618036, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8424245408089618036, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
       propertyPath: m_LocalPosition.x

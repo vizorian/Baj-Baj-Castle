@@ -12,8 +12,6 @@ public class Player : Actor
     public int IntelligenceUpgradeLevel;
     public int LuckUpgradeLevel;
 
-
-
     private void Awake()
     {
         Instantiate();
@@ -98,12 +96,12 @@ public class Player : Actor
         // Left click
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            _hand.isHolding = true;
+            _hand.isFreezing = true;
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            _hand.isHolding = false;
+            _hand.isFreezing = false;
         }
 
         // Interaction button

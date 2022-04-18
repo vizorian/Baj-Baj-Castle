@@ -81,6 +81,21 @@ public class Actor : MonoBehaviour
         _hand.UpdateCenterPosition(transform.position);
     }
 
+    // Take damage, called by other actors on collision
+    private protected virtual void TakeDamage(int damage)
+    {
+        Health -= damage;
+        if (Health <= 0)
+        {
+            Death();
+        }
+    }
+
+    // Death, called by TakeDamage
+    private protected virtual void Death()
+    {
+    }
+
     // ActorHand commands
     private protected virtual void UpdateHeldItem(InventoryItem item)
     {
