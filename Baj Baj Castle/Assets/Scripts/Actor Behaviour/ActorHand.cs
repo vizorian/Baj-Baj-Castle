@@ -10,9 +10,10 @@ public class ActorHand : MonoBehaviour
     private bool newSelection = false;
     public bool IsTurned = false;
 
-    private float handSpeed = 1f;
-    private float handRange;
-
+    private float HandSpeed = 1f;
+    public float HandRange;
+    private float oldHandRange;
+    private bool handRangeSaved = false;
     private Vector3 bodyPosition;
     private InventoryItem heldItem;
     private Vector3 heldItemHandlePosition;
@@ -22,7 +23,7 @@ public class ActorHand : MonoBehaviour
     // Hand initialization from Actor
     public void Init(float handRange)
     {
-        this.handRange = handRange;
+        this.HandRange = handRange;
     }
 
     private void Update()
@@ -74,7 +75,15 @@ public class ActorHand : MonoBehaviour
             Destroy(itemObject);
 
             if (heldItem != null && newSelection)
+            {
                 InstantiateHeldItem();
+                if (!handRangeSaved)
+                {
+                    oldHandRange = HandRange;
+                    handRangeSaved = true;
+                }
+                UpdateHandAttributes(heldItem);
+            }
         }
     }
 
@@ -113,6 +122,7 @@ public class ActorHand : MonoBehaviour
         ItemProperties properties = heldItem.Data.ItemProperties;
         item.Type = heldItem.Data.itemType;
         item.Damage = properties.Damage;
+        item.DamageType = properties.DamageType;
         item.Speed = properties.Speed;
         item.Range = properties.Range;
         item.Knockback = properties.Knockback;
@@ -152,14 +162,31 @@ public class ActorHand : MonoBehaviour
             heldItemHandlePosition = new Vector3(childPos.x, childPos.y);
         }
         else
-            heldItemHandlePosition = new Vector3(0, 0);
+        {
+            heldItemHandlePosition = Vector3.zero;
+        }
 
+        IsTurned = false;
         newSelection = true;
+    }
+
+    private void UpdateHandAttributes(InventoryItem item)
+    {
+        ResetHandAttributes();
+        HandSpeed += item.Data.ItemProperties.Speed;
+        HandRange += item.Data.ItemProperties.Range * 0.01f;
     }
 
     public void ClearHeldItem()
     {
+        ResetHandAttributes();
         heldItem = null;
+    }
+
+    private void ResetHandAttributes()
+    {
+        HandSpeed = 1f;
+        HandRange = oldHandRange;
     }
 
     public void UpdateCenterPosition(Vector2 position)
@@ -191,13 +218,13 @@ public class ActorHand : MonoBehaviour
         var oldPos = transform.position;
 
         // If mouse is out of range
-        if (Vector2.Distance(bodyPosition, target) > handRange)
+        if (Vector2.Distance(bodyPosition, target) > HandRange)
         {
             // Move towards target
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, handSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, HandSpeed * Time.deltaTime);
 
             // Post step position is out of range
-            if (Vector2.Distance(transform.position, bodyPosition) > handRange)
+            if (Vector2.Distance(transform.position, bodyPosition) > HandRange)
             {
                 // -------------------------------------------
                 // Reset & Moving to border
@@ -207,10 +234,10 @@ public class ActorHand : MonoBehaviour
                 transform.position = oldPos;
 
                 // Getting step size
-                float step = handSpeed * Time.deltaTime;
+                float step = HandSpeed * Time.deltaTime;
 
                 // Reduce step size by remaining distance to border
-                float distanceToBorder = handRange - Vector2.Distance(bodyPosition, oldPos);
+                float distanceToBorder = HandRange - Vector2.Distance(bodyPosition, oldPos);
                 step -= distanceToBorder;
 
                 // Move position the remaining distance to the border
@@ -227,7 +254,7 @@ public class ActorHand : MonoBehaviour
 
                 // Calculating rotation angle based on remaining step size
                 // Use this to rotate from current position !!!
-                var angleNextPoint = (step / handRange) * Mathf.Rad2Deg;
+                var angleNextPoint = (step / HandRange) * Mathf.Rad2Deg;
 
                 // Rotation of currentPos
                 Quaternion currentRot = Quaternion.LookRotation(Vector3.forward, bodyToCurrent);
@@ -278,12 +305,17 @@ public class ActorHand : MonoBehaviour
 
         }
         else // Move to mouse within range
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, handSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, HandSpeed * Time.deltaTime);
     }
 
     private void RotateTowards(Vector3 target)
     {
         Vector2 direction = target - bodyPosition;
         transform.up = direction;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(bodyPosition, HandRange);
     }
 }

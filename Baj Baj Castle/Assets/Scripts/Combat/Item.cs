@@ -6,7 +6,6 @@ using UnityEngine;
 public class Item : Collidable
 {
     private EdgeCollider2D _edgeCollider;
-
     public ItemType Type;
     public float Damage;
     public DamageType DamageType;

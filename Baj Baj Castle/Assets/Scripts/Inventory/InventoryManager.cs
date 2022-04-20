@@ -26,7 +26,7 @@ public class InventoryManager : MonoBehaviour
     {
         foreach (InventoryItem item in InventorySystem.Instance.Inventory)
         {
-            if(item == InventorySystem.Instance.SelectedItem)
+            if (item == InventorySystem.Instance.SelectedItem)
                 AddInventorySlot(item, SlotSelectedPrefab);
             else
                 AddInventorySlot(item, SlotPrefab);

@@ -19,7 +19,8 @@ MonoBehaviour:
   itemType: 1
   ItemProperties:
     Damage: 2
+    DamageType: 3
     Speed: 1
     Cooldown: 0.2
     Knockback: 0.1
-    Range: 0
+    Range: 1

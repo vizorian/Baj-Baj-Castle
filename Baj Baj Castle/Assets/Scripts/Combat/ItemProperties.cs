@@ -4,6 +4,7 @@ using System;
 public class ItemProperties
 {
     public float Damage;
+    public DamageType DamageType;
     public float Speed;
     public float Cooldown;
     public float Knockback;

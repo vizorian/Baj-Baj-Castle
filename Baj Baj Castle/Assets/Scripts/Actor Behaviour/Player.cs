@@ -152,7 +152,5 @@ public class Player : Actor
         //if (interactionObject == null) Gizmos.color = Color.yellow;
         //else Gizmos.color = Color.red;
         //Gizmos.DrawWireSphere(transform.position, InteractionRange);
-
-        Gizmos.DrawWireSphere(transform.position, ReachRange);
     }
 }

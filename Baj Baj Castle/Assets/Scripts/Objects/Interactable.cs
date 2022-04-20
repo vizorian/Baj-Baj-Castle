@@ -29,7 +29,10 @@ public class Interactable : Collidable
         base.FixedUpdate();
 
         if (!collisions)
+        {
+            Tooltip.HideTooltip_Static();
             _lineRenderer.positionCount = 0;
+        }
     }
 
     private protected override void OnCollide(Collider2D collider)
