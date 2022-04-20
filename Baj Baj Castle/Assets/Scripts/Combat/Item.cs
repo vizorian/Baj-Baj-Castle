@@ -36,21 +36,24 @@ public class Item : Collidable
 
     private protected override void OnCollide(Collider2D collider)
     {
-        // Do timer
+        // Attack cooldown
         if (CooldownTimer > 0)
         {
             CooldownTimer -= Time.deltaTime;
             return;
         }
-        // If item is weapon and collider is a player or object or actor
+
+        // If item is weapon
         if (Type == ItemType.Weapon)
         {
-            if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Object" || collider.gameObject.tag == "Actor")
+            if (collider.gameObject.tag == "Player"
+                || collider.gameObject.tag == "Actor"
+                || collider.gameObject.tag == "Object")
             {
                 // get Actor this item is attached to
                 Actor actor = GetComponentInParent<Actor>();
 
-                // If collider is the owner of the item
+                // if collider is the owner of the item
                 if (collider.gameObject == actor.gameObject) return;
 
                 var damageData = new DamageData(Damage, DamageType, Knockback, actor);

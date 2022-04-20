@@ -34,6 +34,7 @@ public class Rusher : Actor
     private void FindAndSetTarget()
     {
         target = null;
+        isActive = false;
         var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
 
         foreach (var t in potentialTargets)
@@ -41,6 +42,7 @@ public class Rusher : Actor
             if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
+                isActive = true;
                 return;
             }
         }
@@ -52,9 +54,11 @@ public class Rusher : Actor
             if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
+                isActive = true;
                 return;
             }
         }
+
     }
 
     private protected void OnDrawGizmos()

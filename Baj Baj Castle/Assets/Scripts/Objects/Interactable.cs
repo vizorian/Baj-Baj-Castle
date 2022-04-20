@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Interactable : Collidable
 {
+    // Attributes
+    public float Health;
+
     private protected LineRenderer _lineRenderer;
     private protected SpriteRenderer _spriteRenderer;
     private protected Color _highlightColor = Color.white;
@@ -24,7 +28,7 @@ public class Interactable : Collidable
     {
         base.FixedUpdate();
 
-        if(!collisions)
+        if (!collisions)
             _lineRenderer.positionCount = 0;
     }
 
@@ -102,7 +106,7 @@ public class Interactable : Collidable
     protected virtual void DrawHighlightFull(GameObject obj)
     {
         Vector3[] vertices = GetVertexPositions(gameObject);
-        Vector3[] newVertices = new Vector3[vertices.Length+1];
+        Vector3[] newVertices = new Vector3[vertices.Length + 1];
         newVertices[0] = vertices[0];
         newVertices[1] = vertices[1];
         newVertices[2] = vertices[3];
@@ -144,5 +148,45 @@ public class Interactable : Collidable
 
         obj.transform.rotation = storedRotation;
         return vertices;
+    }
+
+    private protected virtual void TakeDamage(DamageData damageData)
+    {
+        var damage = damageData.Amount;
+
+        // Adjust damage based on if the weapon is flipped or not
+        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsTurned)
+        {
+            damageData.Type = DamageType.Slashing;
+        }
+        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsTurned)
+        {
+            damageData.Type = DamageType.Piercing;
+        }
+
+        // Damage types
+        if (damageData.Type == DamageType.Piercing)
+        {
+            damage /= 4;
+        }
+        else if (damageData.Type == DamageType.Slashing)
+        {
+            damage /= 4;
+        }
+
+        if (damage < 1)
+            damage = 1;
+
+
+        Health -= damage;
+        if (Health <= 0)
+        {
+            Die();
+        }
+    }
+
+    private protected virtual void Die()
+    {
+        Destroy(gameObject);
     }
 }

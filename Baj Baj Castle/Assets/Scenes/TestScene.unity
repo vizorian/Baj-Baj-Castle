@@ -16864,6 +16864,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest_I
       objectReference: {fileID: 0}
+    - target: {fileID: 7180092003562285661, guid: efd0cc4140ed52746b0b44d2da8e29d1, type: 3}
+      propertyPath: Health
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efd0cc4140ed52746b0b44d2da8e29d1, type: 3}
 --- !u!1 &1656378845

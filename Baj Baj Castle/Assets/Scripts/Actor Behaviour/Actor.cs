@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    // Attributes
+    public bool isActive;
+
+    // attributes
     public float Health;
     public float MaxHealth;
     public float MovementSpeed;
@@ -159,8 +161,10 @@ public class Actor : MonoBehaviour
     /// </summary>
     private protected virtual void Move()
     {
-        if (knockbackDirection != null && knockbackDirection != Vector3.zero)
+        if (!isActive)
         {
+            knockbackDirection = Vector3.zero;
+            moveDelta = Vector3.zero;
         }
 
 
