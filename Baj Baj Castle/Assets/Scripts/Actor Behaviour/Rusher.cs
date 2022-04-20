@@ -3,38 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : Actor
+public class Rusher : Actor
 {
-    private protected void Update()
+    private void Update()
     {
-        if(target == null)
+        if (target == null)
+        {
             FindAndSetTarget();
+        }
         else
         {
-            LookAt(target.transform.position, actorType);
-            CalculatePath();
-            Move();
+            CalculateMovement();
         }
     }
 
     private void FixedUpdate()
     {
-        _hand.UpdateCenterPosition(transform.position);
-        if(target != null)
-            _hand.LookTowards(target.transform.position);
-    }
+        Move();
 
-    private void CalculatePath()
-    {
-    }   
+        if (target == null)
+        {
+
+        }
+        else
+        {
+            LookAt(target.transform.position, ActorType);
+        }
+    }
 
     private void FindAndSetTarget()
     {
+        target = null;
         var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
 
         foreach (var t in potentialTargets)
         {
-            if(Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
+            if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
                 return;
@@ -55,8 +59,8 @@ public class EnemyAI : Actor
 
     private protected void OnDrawGizmos()
     {
-        //if (target == null) Gizmos.color = Color.yellow;
-        //else Gizmos.color = Color.red;
-        //Gizmos.DrawWireSphere(transform.position, ViewRange);
+        if (target == null) Gizmos.color = Color.yellow;
+        else Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, ViewRange);
     }
 }

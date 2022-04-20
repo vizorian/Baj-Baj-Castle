@@ -119,12 +119,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3196582786009754998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75e42bee17153c43b70f430d868d5b2, type: 3}
+  m_Script: {fileID: 11500000, guid: ed8651ace46057a4fb1ad372f1ce5951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 20
-  MaxHealth: 0
-  MovementSpeed: 0.5
+  MaxHealth: 20
+  MovementSpeed: 0.4
   Defense: 0
   Resistance: 0
   Strength: 0
@@ -132,10 +132,10 @@ MonoBehaviour:
   Intelligence: 0
   Luck: 0
   InteractionRange: 0.05
-  ReachRange: 0.1
+  ReachRange: 0.15
   ViewRange: 1
   actorType: 0
-  HandPrefab: {fileID: 4685714322924328532, guid: cb75c65099d6642478a215105eb41f1b, type: 3}
+  HandPrefab: {fileID: 0}
   FrontSprite: {fileID: -8815059205600961907, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: -7444576064390506996, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: -8262991748867391410, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}

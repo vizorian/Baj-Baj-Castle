@@ -6,16 +6,14 @@ using UnityEngine.Events;
 public class InventorySystem : MonoBehaviour
 {
     // Singleton for a single system
-    private static InventorySystem _instance;
-    public static InventorySystem Instance { get { return _instance; } }
-
+    private static InventorySystem instance;
+    public static InventorySystem Instance { get { return instance; } }
     public UnityEvent OnInventoryChanged;
-
     private Dictionary<InventoryItemData, InventoryItem> _itemDictionary;
-
     public List<InventoryItem> Inventory { get; private set; }
     public InventoryItem SelectedItem { get; private set; }
     private int selectedItemIndex;
+    private ActorHand hand;
 
     private void Awake()
     {
@@ -24,10 +22,10 @@ public class InventorySystem : MonoBehaviour
         SelectedItem = null;
         selectedItemIndex = -1;
 
-        if(_instance != null && _instance != this)
+        if (instance != null && instance != this)
             Destroy(gameObject);
         else
-            _instance = this;
+            instance = this;
 
         if (OnInventoryChanged == null)
             OnInventoryChanged = new UnityEvent();
@@ -35,6 +33,8 @@ public class InventorySystem : MonoBehaviour
 
     private void Update()
     {
+        if (hand == null)
+            hand = GetComponentInChildren<ActorHand>();
         //PrintInventory();
     }
 
@@ -51,7 +51,7 @@ public class InventorySystem : MonoBehaviour
     // Adds an item to inventory and invokes OnInventoryChanged
     public void Add(InventoryItemData itemData)
     {
-        if(_itemDictionary.TryGetValue(itemData, out InventoryItem value))
+        if (_itemDictionary.TryGetValue(itemData, out InventoryItem value))
         {
             value.AddToStack();
         }
@@ -67,7 +67,8 @@ public class InventorySystem : MonoBehaviour
 
                 SelectedItem = newItem;
                 selectedItemIndex = 0;
-                gameObject.SendMessage("UpdateHeldItem", SelectedItem);
+
+                hand.SetHeldItem(SelectedItem);
             }
         }
         OnInventoryChanged.Invoke();
@@ -80,7 +81,7 @@ public class InventorySystem : MonoBehaviour
         {
             value.RemoveFromStack();
 
-            if(value.StackSize == 0)
+            if (value.StackSize == 0)
             {
                 Inventory.Remove(value);
                 _itemDictionary.Remove(itemData);
@@ -90,13 +91,15 @@ public class InventorySystem : MonoBehaviour
                 {
                     SelectedItem = Inventory[0];
                     selectedItemIndex = 0;
-                    gameObject.SendMessage("UpdateHeldItem", SelectedItem);
+
+                    hand.SetHeldItem(SelectedItem);
                 }
                 else // If no items remain
                 {
                     SelectedItem = null;
                     selectedItemIndex = -1;
-                    gameObject.SendMessage("ClearHeldItem");
+
+                    hand.ClearHeldItem();
                 }
             }
         }
@@ -106,7 +109,7 @@ public class InventorySystem : MonoBehaviour
     // Drops an item and calls Remove
     public void Drop()
     {
-        if(SelectedItem != null)
+        if (SelectedItem != null)
         {
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -125,12 +128,12 @@ public class InventorySystem : MonoBehaviour
         if (Inventory.Count == 1 || selectedItemIndex + 1 == Inventory.Count)
             return;
 
-        if(selectedItemIndex + 1 < Inventory.Count)
+        if (selectedItemIndex + 1 < Inventory.Count)
             selectedItemIndex++;
-        
+
         SelectedItem = Inventory[selectedItemIndex];
 
-        gameObject.SendMessage("UpdateHeldItem", SelectedItem);
+        hand.SetHeldItem(SelectedItem);
         OnInventoryChanged.Invoke();
     }
 
@@ -146,7 +149,7 @@ public class InventorySystem : MonoBehaviour
 
         SelectedItem = Inventory[selectedItemIndex];
 
-        gameObject.SendMessage("UpdateHeldItem", SelectedItem);
+        hand.SetHeldItem(SelectedItem);
         OnInventoryChanged.Invoke();
     }
 }

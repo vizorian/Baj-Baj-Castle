@@ -97,9 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e292b67ab6f5949ae8f2fd4da89471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 20
-  MaxHealth: 0
-  MovementSpeed: 0.5
+  Health: 100
+  MaxHealth: 100
+  MovementSpeed: 1
   Defense: 0
   Resistance: 0
   Strength: 0
@@ -107,7 +107,7 @@ MonoBehaviour:
   Intelligence: 0
   Luck: 0
   InteractionRange: 0.15
-  ReachRange: 0
+  ReachRange: 0.1
   ViewRange: 1
   actorType: 1
   HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}

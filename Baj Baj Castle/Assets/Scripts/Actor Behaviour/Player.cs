@@ -12,27 +12,23 @@ public class Player : Actor
     public int IntelligenceUpgradeLevel;
     public int LuckUpgradeLevel;
 
-    private void Awake()
-    {
-        Instantiate();
-    }
-
     private void Update()
     {
         ProcessInputs();
-        LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), actorType);
+        CalculateMovement();
+        LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), ActorType);
 
 
         FindInteractable();
         if (interactionObject != null)
-            interactionObject.SendMessage("OnCollide", _boxCollider);
+            interactionObject.SendMessage("OnCollide", boxCollider);
     }
 
     private void FixedUpdate()
     {
+        Hand.UpdateCenterPosition(transform.position);
+        Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         Move();
-        _hand.UpdateCenterPosition(transform.position);
-        _hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     // Get player SaveData
@@ -57,51 +53,23 @@ public class Player : Actor
         LuckUpgradeLevel = data.LuckUpgradeLevel;
     }
 
-    private void Instantiate()
-    {
-        Health = 100;
-        MaxHealth = 100;
-        MovementSpeed = 0.5f;
-        Defense = 0;
-        Resistance = 0;
-
-        InteractionRange = 0.15f;
-        ReachRange = 0.1f;
-        ViewRange = 0.5f;
-
-        StrengthUpgradeLevel = 0;
-        AgilityUpgradeLevel = 0;
-        IntelligenceUpgradeLevel = 0;
-        LuckUpgradeLevel = 0;
-
-        Strength = 0;
-        Agility = 0;
-        Intelligence = 0;
-        Luck = 0;
-    }
-
     /// <summary>
     /// Processes the incoming inputs
     /// </summary>
     private void ProcessInputs()
     {
         // Getting inputs
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
         float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
-
-        // Recalculating the movement direction
-        moveDelta = new Vector2(x, y).normalized;
 
         // Left click
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            _hand.isFreezing = true;
+            Hand.isFreezing = true;
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            _hand.isFreezing = false;
+            Hand.isFreezing = false;
         }
 
         // Interaction button
@@ -119,13 +87,7 @@ public class Player : Actor
         // Flip button
         if (Input.GetKeyDown(KeyCode.F))
         {
-            TurnHeldItem();
-        }
-
-        // Reload button
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-
+            Hand.TurnHeldItem();
         }
 
         // Scroll wheel
@@ -135,6 +97,42 @@ public class Player : Actor
                 InventorySystem.Instance.Next();
             else
                 InventorySystem.Instance.Previous();
+        }
+    }
+
+    private protected override void CalculateMovement()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        moveDelta = new Vector2(x, y);
+        moveDelta.Normalize();
+        moveDelta *= MovementSpeed * Time.fixedDeltaTime;
+    }
+
+    private protected override void Move()
+    {
+        if (moveDelta != Vector3.zero)
+        {
+            // Checking for collision on X axis
+            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
+                0.01f, LayerMask.GetMask("Actor", "Blocking"));
+
+            if (raycastHit.collider == null)
+            {
+                // Applying movement on X axis
+                transform.Translate(moveDelta.x, 0, 0);
+            }
+
+            // Checking for collision on Y axis
+            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
+                0.01f, LayerMask.GetMask("Actor", "Blocking"));
+
+            if (raycastHit.collider == null)
+            {
+                // Applying movement on Y axis
+                transform.Translate(0, moveDelta.y, 0);
+            }
         }
     }
 

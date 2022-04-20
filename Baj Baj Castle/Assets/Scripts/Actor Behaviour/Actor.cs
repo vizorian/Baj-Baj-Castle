@@ -54,44 +54,47 @@ public class Actor : MonoBehaviour
     {
     }
 
-    private protected BoxCollider2D _boxCollider;
-    private protected SpriteRenderer _spriteRenderer;
+    private protected BoxCollider2D boxCollider;
+    private protected SpriteRenderer spriteRenderer;
     private protected RaycastHit2D raycastHit;
     private protected InventorySystem inventory;
 
-    public ActorType actorType;
+    public ActorType ActorType;
     public GameObject HandPrefab;
-    private protected ActorHand _hand;
+    public ActorHand Hand;
 
     private protected GameObject interactionObject;
     private protected GameObject target;
-
     private protected Vector3 moveDelta;
-
+    private protected Vector3 knockbackDirection;
     public Sprite FrontSprite;
     public Sprite BackSprite;
     public Sprite SideSprite;
 
     private protected virtual void Start()
     {
-        _boxCollider = GetComponent<BoxCollider2D>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
-        _hand.Init(ReachRange);
-        _hand.UpdateCenterPosition(transform.position);
+        boxCollider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (HandPrefab != null)
+        {
+            Hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
+            Hand.Init(ReachRange);
+            Hand.UpdateCenterPosition(transform.position);
+        }
     }
 
     // Take damage, called by weapons on collision
     private protected virtual void TakeDamage(DamageData damageData)
     {
+        CalculateKnockback(damageData.Source.transform.position, damageData.Knockback);
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Type == DamageType.Piercing && _hand.IsTurned)
+        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsTurned)
         {
             damageData.Type = DamageType.Slashing;
         }
-        else if (damageData.Type == DamageType.Slashing && _hand.IsTurned)
+        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsTurned)
         {
             damageData.Type = DamageType.Piercing;
         }
@@ -121,9 +124,6 @@ public class Actor : MonoBehaviour
         {
             Die();
         }
-
-        Knockback(damageData.Source.transform.position, damageData.Knockback);
-
     }
 
     // TODO use this for potions
@@ -141,12 +141,11 @@ public class Actor : MonoBehaviour
 
     // TODO improve this
     // HOW: check if new position is in collision
-    private void Knockback(Vector3 from, float distance)
+    private void CalculateKnockback(Vector3 from, float distance)
     {
-        var knockbackDirection = transform.position - from;
+        knockbackDirection = transform.position - from;
         knockbackDirection.Normalize();
         knockbackDirection *= distance;
-        transform.Translate(knockbackDirection);
     }
 
     // Actor death
@@ -155,46 +154,56 @@ public class Actor : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // ActorHand commands
-    private protected virtual void UpdateHeldItem(InventoryItem item)
-    {
-        _hand.SetHeldItem(item);
-    }
-
-    private protected virtual void ClearHeldItem()
-    {
-        _hand.ClearHeldItem();
-    }
-
-    private protected virtual void TurnHeldItem()
-    {
-        _hand.TurnHeldItem();
-    }
-
     /// <summary>
     /// Creates a box cast to check for collisions on both axis and moves the player if there are none
     /// </summary>
     private protected virtual void Move()
     {
-        // Checking for collision on X axis
-        raycastHit = Physics2D.BoxCast(transform.position, _boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-            0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-        if (raycastHit.collider == null)
+        if (knockbackDirection != null && knockbackDirection != Vector3.zero)
         {
-            // Applying movement on X axis
-            transform.Translate(moveDelta.x * Time.deltaTime * MovementSpeed, 0, 0);
         }
 
-        // Checking for collision on Y axis
-        raycastHit = Physics2D.BoxCast(transform.position, _boxCollider.size, 0, new Vector2(0, moveDelta.y),
-            0.01f, LayerMask.GetMask("Actor", "Blocking"));
 
-        if (raycastHit.collider == null)
+        var realResistance = 0.1f + Resistance / 100f;
+        if (realResistance > 1)
         {
-            // Applying movement on Y axis
-            transform.Translate(0, moveDelta.y * Time.deltaTime * MovementSpeed, 0);
+            knockbackDirection = Vector3.zero;
         }
+        else
+        {
+            knockbackDirection = Vector3.Lerp(knockbackDirection, Vector3.zero, realResistance);
+        }
+        moveDelta += knockbackDirection;
+
+        if (moveDelta != Vector3.zero)
+        {
+            // Checking for collision on X axis
+            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
+                0.01f, LayerMask.GetMask("Actor", "Blocking"));
+
+            if (raycastHit.collider == null)
+            {
+                // Applying movement on X axis
+                transform.Translate(moveDelta.x, 0, 0);
+            }
+
+            // Checking for collision on Y axis
+            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
+                0.01f, LayerMask.GetMask("Actor", "Blocking"));
+
+            if (raycastHit.collider == null)
+            {
+                // Applying movement on Y axis
+                transform.Translate(0, moveDelta.y, 0);
+            }
+        }
+    }
+
+    private protected virtual void CalculateMovement()
+    {
+        moveDelta = target.transform.position - transform.position;
+        moveDelta.Normalize();
+        moveDelta *= MovementSpeed * Time.fixedDeltaTime;
     }
 
     private protected virtual void LookAt(Vector3 lookTarget, ActorType actorType)
@@ -218,18 +227,18 @@ public class Actor : MonoBehaviour
 
         // Manipulating sprite to look at target
         if (z >= 45 && z < 135)
-            _spriteRenderer.sprite = BackSprite;
+            spriteRenderer.sprite = BackSprite;
         else if (z >= 135 && z < 225)
         {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = true;
+            spriteRenderer.sprite = SideSprite;
+            spriteRenderer.flipX = true;
         }
         else if (z >= 225 && z < 315)
-            _spriteRenderer.sprite = FrontSprite;
+            spriteRenderer.sprite = FrontSprite;
         else
         {
-            _spriteRenderer.sprite = SideSprite;
-            _spriteRenderer.flipX = false;
+            spriteRenderer.sprite = SideSprite;
+            spriteRenderer.flipX = false;
         }
     }
 }

@@ -155,8 +155,6 @@ public class ActorHand : MonoBehaviour
             heldItemHandlePosition = new Vector3(0, 0);
 
         newSelection = true;
-        if (IsTurned)
-            TurnHeldItem();
     }
 
     public void ClearHeldItem()
