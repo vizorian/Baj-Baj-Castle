@@ -118,11 +118,7 @@ public class Actor : MonoBehaviour
         if (damage < 1)
             damage = 1;
 
-
         // TODO Resistances of multiple damage types?
-
-        Health -= damage;
-
         if (damageData.IsCritical)
         {
             damage *= 2;
@@ -133,6 +129,8 @@ public class Actor : MonoBehaviour
         {
             FloatingText.Create(damage.ToString(), Color.red, transform.position, 1f, 0.5f, 0.2f);
         }
+        CalculateKnockback(damageData.Source.transform.position, knockback);
+        Health -= damage;
         if (Health <= 0)
         {
             Die();
@@ -150,6 +148,8 @@ public class Actor : MonoBehaviour
         {
             Health += amount;
         }
+
+        FloatingText.Create(amount.ToString(), Color.green, transform.position, 1f, 0.5f, 0.2f);
     }
 
     // TODO improve this
