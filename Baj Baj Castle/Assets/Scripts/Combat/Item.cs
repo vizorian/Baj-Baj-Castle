@@ -70,12 +70,6 @@ public class Item : Collidable
                 var damage = Damage;
                 var knockback = Knockback;
                 bool isCritical = UnityEngine.Random.Range(0f, 100f) <= CriticalChance;
-                if (isCritical)
-                {
-                    damage *= 2;
-                    knockback *= 2;
-                }
-
                 var damageData = new DamageData(damage, DamageType, knockback, actor, isCritical);
                 collider.gameObject.SendMessage("TakeDamage", damageData);
             }

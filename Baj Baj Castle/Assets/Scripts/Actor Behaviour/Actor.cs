@@ -88,7 +88,7 @@ public class Actor : MonoBehaviour
     // Take damage, called by weapons on collision
     private protected virtual void TakeDamage(DamageData damageData)
     {
-        CalculateKnockback(damageData.Source.transform.position, damageData.Knockback);
+        var knockback = damageData.Knockback;
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
@@ -122,8 +122,11 @@ public class Actor : MonoBehaviour
         // TODO Resistances of multiple damage types?
 
         Health -= damage;
+
         if (damageData.IsCritical)
         {
+            damage *= 2;
+            knockback *= 2;
             FloatingText.Create(damage.ToString(), Color.yellow, transform.position, 1.2f, 0.5f, 0.2f);
         }
         else
