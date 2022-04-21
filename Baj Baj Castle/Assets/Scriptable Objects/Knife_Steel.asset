@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 211b24bc2c2cd6741b3bd21b4216634d, type: 3}
-  m_Name: InventoryItemKnife_Iron
+  m_Name: Knife_Steel
   m_EditorClassIdentifier: 
-  Id: InventoryItem_Knife_Iron
-  DisplayName: Iron Knife
-  Icon: {fileID: 2903714021680835994, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
-  Prefab: {fileID: 3943407365818885243, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
+  Id: Knife_Steel
+  DisplayName: Steel Knife
+  Icon: {fileID: -6665930254976882886, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Prefab: {fileID: 3943407365818885243, guid: c8af5b3413230384c9b16c5c6b4ecfcd, type: 3}
   itemType: 1
   ItemProperties:
-    Damage: 4
+    Damage: 6
     DamageType: 3
+    CriticalChance: 3
     Speed: 1
     Cooldown: 0.2
     Knockback: 0.1

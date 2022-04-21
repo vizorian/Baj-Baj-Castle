@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 211b24bc2c2cd6741b3bd21b4216634d, type: 3}
-  m_Name: InventoryItemKnife_Steel
+  m_Name: Potion_Healing_L
   m_EditorClassIdentifier: 
-  Id: InventoryItem_Knife_Steel
-  DisplayName: Steel Knife
-  Icon: {fileID: -6665930254976882886, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
-  Prefab: {fileID: 3943407365818885243, guid: c8af5b3413230384c9b16c5c6b4ecfcd, type: 3}
-  itemType: 1
+  Id: Potion_Healing_L
+  DisplayName: Large Healing Potion
+  Icon: {fileID: 3346775860221651040, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Prefab: {fileID: 3943407365818885243, guid: 4cb4509f48dc27440ad01f4861b9ce17, type: 3}
+  itemType: 0
   ItemProperties:
-    Damage: 6
-    DamageType: 3
-    Speed: 1
-    Cooldown: 0.2
-    Knockback: 0.1
+    Damage: 50
+    DamageType: 0
+    CriticalChance: 0
+    Speed: 0
+    Cooldown: 0
+    Knockback: 0
     Range: 0

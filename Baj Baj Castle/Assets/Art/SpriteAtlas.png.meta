@@ -166,13 +166,13 @@ TextureImporter:
     second: Collision
   - first:
       213: 7870472087189927950
-    second: Chest_I_F
+    second: Chest_Iron_Treasure
   - first:
       213: 4834028603081184271
-    second: Chest_I_E
+    second: Chest_Iron_Empty
   - first:
       213: -6831849634620629257
-    second: Chest_I
+    second: Chest_Iron
   - first:
       213: -8934060672885858020
     second: Knife_Wooden
@@ -209,6 +209,54 @@ TextureImporter:
   - first:
       213: -4614970689111593040
     second: Hand_Green
+  - first:
+      213: 6910062292031006536
+    second: Viking_S
+  - first:
+      213: -7274016712479325718
+    second: Viking_F
+  - first:
+      213: 1921402865888713703
+    second: Viking_B
+  - first:
+      213: 5404827406725263865
+    second: Hand_Armor
+  - first:
+      213: 7686230718791562498
+    second: Hammer_Wooden
+  - first:
+      213: -5660665752868388824
+    second: Hammer_Iron
+  - first:
+      213: 6381989427501408616
+    second: Hammer_Steel
+  - first:
+      213: -8644425730230267097
+    second: Hammer_Golden
+  - first:
+      213: 6239359830095756937
+    second: Shortsword_Wooden
+  - first:
+      213: 2171751120682267967
+    second: Shortsword_Iron
+  - first:
+      213: -9041300629319226145
+    second: Shortsword_Steel
+  - first:
+      213: -6766105293431114615
+    second: Shortsword_Golden
+  - first:
+      213: 9025275662231225976
+    second: Spear_Wooden
+  - first:
+      213: 6085577203149625780
+    second: Spear_Iron
+  - first:
+      213: -7581564634827056545
+    second: Spear_Steel
+  - first:
+      213: -6082922002079475146
+    second: Spear_Golden
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -1444,7 +1492,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chest_I_F
+      name: Chest_Iron_Treasure
       rect:
         serializedVersion: 2
         x: 224
@@ -1465,7 +1513,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chest_I_E
+      name: Chest_Iron_Empty
       rect:
         serializedVersion: 2
         x: 224
@@ -1486,7 +1534,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chest_I
+      name: Chest_Iron
       rect:
         serializedVersion: 2
         x: 224
@@ -1725,7 +1773,7 @@ TextureImporter:
         width: 5
         height: 5
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1746,7 +1794,7 @@ TextureImporter:
         width: 5
         height: 5
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1754,6 +1802,342 @@ TextureImporter:
       bones: []
       spriteID: 0bfe9a20c9454ffb0800000000000000
       internalID: -4614970689111593040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Viking_S
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 455
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84764542b0975ef50800000000000000
+      internalID: 6910062292031006536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Viking_F
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 455
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae14a62e6508d0b90800000000000000
+      internalID: -7274016712479325718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Viking_B
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 455
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ebd6bbf9b13aaa10800000000000000
+      internalID: 1921402865888713703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hand_Armor
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 471
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f1b722f3edc10b40800000000000000
+      internalID: 5404827406725263865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Wooden
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 394
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20534478d1afaaa60800000000000000
+      internalID: 7686230718791562498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Iron
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 394
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8208f004d764171b0800000000000000
+      internalID: -5660665752868388824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Steel
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 394
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86125823291619850800000000000000
+      internalID: 6381989427501408616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Golden
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 394
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 723d0663994d80880800000000000000
+      internalID: -8644425730230267097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shortsword_Wooden
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 369
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98ef2ba35b8a69650800000000000000
+      internalID: 6239359830095756937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shortsword_Iron
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 369
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f35b2d8432c932e10800000000000000
+      internalID: 2171751120682267967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shortsword_Steel
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 369
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdc69e10bf8d68280800000000000000
+      internalID: -9041300629319226145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shortsword_Golden
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 369
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 984f5208517f912a0800000000000000
+      internalID: -6766105293431114615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Wooden
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 402
+        width: 7
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87645479568304d70800000000000000
+      internalID: 9025275662231225976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Iron
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 402
+        width: 7
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b9d2f63930547450800000000000000
+      internalID: 6085577203149625780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Steel
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 402
+        width: 7
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5a187b222fd8c690800000000000000
+      internalID: -7581564634827056545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Golden
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 402
+        width: 7
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63a15a5faae159ba0800000000000000
+      internalID: -6082922002079475146
       vertices: []
       indices: 
       edges: []
