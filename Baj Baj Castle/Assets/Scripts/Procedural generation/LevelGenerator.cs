@@ -45,6 +45,7 @@ public class LevelGenerator : MonoBehaviour
     private bool isMapped;
     private float startTime;
     private float endTime;
+    public bool IsCompleted { get { return isSimulated && isProcessed && isMapped; } }
 
     public void GenerateLevel(int i, bool isDebug, Sprite sprite)
     {
@@ -236,7 +237,7 @@ public class LevelGenerator : MonoBehaviour
 
         // add some edges from delaunay graph back to graph
         RefillEdges(EdgePercentage);
-        DrawEdges(levelGraph, Color.green, 10f);
+        DrawEdges(levelGraph, Color.green, 6f);
     }
 
     private void MapCells()
@@ -247,7 +248,7 @@ public class LevelGenerator : MonoBehaviour
         endTime = Time.realtimeSinceStartup;
         print("Hallway calculation took " + (endTime - startTime) + " seconds.");
         print("Found " + hallways.Count + " hallways.");
-        DrawEdges(hallways, Color.cyan, 100f);
+        DrawEdges(hallways, Color.cyan, 3f);
 
         // carve out hallways
         startTime = Time.realtimeSinceStartup;

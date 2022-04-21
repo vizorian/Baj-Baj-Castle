@@ -17,20 +17,43 @@ public class LevelManager : MonoBehaviour
     private Tilemap decorationTilemap;
     private Tilemap collisionTilemap;
 
+    public bool IsGeneratingLevel = false;
+    public bool IsGenerated = false;
+
+    private void Update()
+    {
+        if (!IsGenerated && IsGeneratingLevel)
+        {
+            if (levelGenerator.IsCompleted)
+            {
+                IsGenerated = true;
+                IsGeneratingLevel = false;
+                GenerateLevelTiles();
+            }
+        }
+    }
+
     public void GenerateLevel(int i)
     {
+        IsGeneratingLevel = true;
         InstantiateLevelGenerator();
         levelGenerator.GenerateLevel(i, IsDebug, CellSprite);
+    }
 
+    public void GenerateLevelTiles()
+    {
         var rooms = levelGenerator.Rooms;
         var hallways = levelGenerator.Hallways;
+
+        print("Rooms: " + rooms.Count);
+        print("Hallways: " + hallways.Count);
 
         if (tileCreator == null)
         {
             InstantiateTileCreator();
         }
-        tileCreator.CreateTiles(rooms, floorTilemap, collisionTilemap);
-
+        tileCreator.CreateTiles(rooms);
+        tileCreator.CreateTiles(hallways);
         Level++;
     }
 
@@ -51,6 +74,6 @@ public class LevelManager : MonoBehaviour
         decorationTilemap = decorationTileObject.GetComponent<Tilemap>();
         collisionTilemap = collisionTileObject.GetComponent<Tilemap>();
 
-        tileCreator = gameObject.AddComponent<TileCreator>();
+        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap);
     }
 }
