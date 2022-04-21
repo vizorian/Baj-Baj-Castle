@@ -16,7 +16,7 @@ public class DisjointSet
 
     public int Find(int x)
     {
-        while(parent[x] != x)
+        while (parent[x] != x)
         {
             x = parent[x];
         }
@@ -37,7 +37,7 @@ public class DisjointSet
         else
         {
             parent[xRoot] = yRoot;
-            if(rank[xRoot] == rank[yRoot])
+            if (rank[xRoot] == rank[yRoot])
             {
                 rank[yRoot]++;
             }

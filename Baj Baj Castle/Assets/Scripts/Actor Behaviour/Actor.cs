@@ -122,6 +122,14 @@ public class Actor : MonoBehaviour
         // TODO Resistances of multiple damage types?
 
         Health -= damage;
+        if (damageData.IsCritical)
+        {
+            FloatingText.Create(damage.ToString(), Color.yellow, transform.position, 1.2f, 0.5f, 0.2f);
+        }
+        else
+        {
+            FloatingText.Create(damage.ToString(), Color.red, transform.position, 1f, 0.5f, 0.2f);
+        }
         if (Health <= 0)
         {
             Die();

@@ -28,6 +28,15 @@ public class Rusher : Actor
         else
         {
             LookAt(target.transform.position, ActorType);
+            if (Hand != null)
+            {
+                Hand.UpdateCenterPosition(transform.position);
+                if (target != null)
+                {
+                    Hand.LookTowards(target.transform.position);
+
+                }
+            }
         }
     }
 

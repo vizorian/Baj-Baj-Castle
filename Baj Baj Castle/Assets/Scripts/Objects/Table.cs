@@ -21,7 +21,8 @@ public class Table : Interactable
             if (up)
             {
                 _spriteRenderer.sprite = UpSprite;
-            }else if (right)
+            }
+            else if (right)
             {
                 _spriteRenderer.sprite = SideSprite;
                 _spriteRenderer.flipX = true;

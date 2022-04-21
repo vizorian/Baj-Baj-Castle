@@ -7,7 +7,8 @@ public class DelaunayTriangulator
 {
     private Triangle Supra;
 
-    public HashSet<Triangle> BowyerWatson(HashSet<Point> points){
+    public HashSet<Triangle> BowyerWatson(HashSet<Point> points)
+    {
         var triangulation = new HashSet<Triangle>();
         triangulation.Add(Supra);
 
@@ -22,13 +23,13 @@ public class DelaunayTriangulator
                     badTriangles.Add(triangle);
                 }
             }
-            
+
             // Find the boundary of the polygonal hole
             var polygon = new HashSet<Edge>();
             foreach (var triangle in badTriangles)
             {
                 var otherTriangles = badTriangles.Where(t => t != triangle);
-                for(int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     var edge = new Edge(triangle.Vertices[i], triangle.Vertices[(i + 1) % 3]);
                     if (!otherTriangles.Any(t => t.ContainsEdge(edge)))
@@ -83,10 +84,11 @@ public class DelaunayTriangulator
     public void AdjustSupraTriangle(HashSet<Point> points)
     {
         var count = 0;
-        while(count < 100){
+        while (count < 100)
+        {
             var pointsOutside = points.Where(p => !p.IsWithinTriangle(Supra));
 
-            if(pointsOutside.Count() == 0) break;
+            if (pointsOutside.Count() == 0) break;
 
             var furthestPoint = pointsOutside.OrderByDescending(p => p.DistanceTo(Supra.Circumcenter)).First();
             var distance = furthestPoint.DistanceTo(Supra.Circumcenter) * 0.3f;

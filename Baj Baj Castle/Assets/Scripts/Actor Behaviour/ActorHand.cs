@@ -32,7 +32,6 @@ public class ActorHand : MonoBehaviour
         UpdateVerticalRendering();
         if (!isFreezing)
             UpdateHorizontalRendering();
-        //PrintSpeeds();
     }
 
     // Flips the hand and held item based on horizontal position
@@ -123,6 +122,7 @@ public class ActorHand : MonoBehaviour
         item.Type = heldItem.Data.itemType;
         item.Damage = properties.Damage;
         item.DamageType = properties.DamageType;
+        item.CriticalChance = properties.CriticalChance;
         item.Speed = properties.Speed;
         item.Range = properties.Range;
         item.Knockback = properties.Knockback;
@@ -301,8 +301,6 @@ public class ActorHand : MonoBehaviour
                 Vector2 newTargetPos = bodyPosition - bodyToNewTarget;
                 transform.position = Vector2.MoveTowards(transform.position, newTargetPos, Mathf.Infinity);
             }
-
-
         }
         else // Move to mouse within range
             transform.position = Vector2.MoveTowards(transform.position, targetPos, HandSpeed * Time.deltaTime);

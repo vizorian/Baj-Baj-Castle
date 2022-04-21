@@ -20,8 +20,7 @@ public class InventoryItemSlot : MonoBehaviour
     private TextMeshProUGUI stackCount;
 
     private InventoryItem item;
-
-    private void Update()
+    private void FixedUpdate()
     {
         // check if mouse is over the slot
         if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), Input.mousePosition))

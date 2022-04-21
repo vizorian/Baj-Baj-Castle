@@ -4,10 +4,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO rework tooltips as gameobjects that get created when in use and destroyed when not in use
 public class Tooltip : MonoBehaviour
 {
     public static Tooltip Instance { get; private set; }
 
+    // private float timer = 0.1f;
+    // private float currentTimer = 0f;
+    private bool isUsed = false;
     private RectTransform canvasTransform;
     private RectTransform rectTransform;
     private TextMeshProUGUI text;
@@ -51,6 +55,7 @@ public class Tooltip : MonoBehaviour
 
     private void ShowTooltip(string text, Vector2 location, bool useMousePosition)
     {
+        isUsed = true;
         if (useMousePosition)
         {
             position = Input.mousePosition / canvasTransform.localScale.x;
@@ -67,7 +72,12 @@ public class Tooltip : MonoBehaviour
 
     private void HideTooltip()
     {
-        gameObject.SetActive(false);
+        if (!isUsed)
+        {
+            gameObject.SetActive(false);
+        }
+
+        isUsed = false;
     }
 
     private void SetText(string text)

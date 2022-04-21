@@ -19,9 +19,6 @@ public class Pickupable : Interactable
 
         collisions = false;
     }
-
-
-
     private protected override void OnInteraction()
     {
         // Pick up behaviour

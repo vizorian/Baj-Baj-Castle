@@ -9,6 +9,7 @@ public class Item : Collidable
     public ItemType Type;
     public float Damage;
     public DamageType DamageType;
+    public float CriticalChance;
     public float Speed;
     public float Cooldown;
     public float CooldownTimer;
@@ -55,7 +56,17 @@ public class Item : Collidable
                 // if collider is the owner of the item
                 if (collider.gameObject == actor.gameObject) return;
 
-                var damageData = new DamageData(Damage, DamageType, Knockback, actor);
+                // check for critical hit
+                var damage = Damage;
+                var knockback = Knockback;
+                bool isCritical = UnityEngine.Random.Range(0f, 100f) <= CriticalChance;
+                if (isCritical)
+                {
+                    damage *= 2;
+                    knockback *= 2;
+                }
+
+                var damageData = new DamageData(damage, DamageType, knockback, actor, isCritical);
                 collider.gameObject.SendMessage("TakeDamage", damageData);
             }
         }
