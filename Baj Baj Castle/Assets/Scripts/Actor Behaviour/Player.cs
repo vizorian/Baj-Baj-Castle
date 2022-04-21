@@ -31,28 +31,6 @@ public class Player : Actor
         Move();
     }
 
-    // Get player SaveData
-    public SaveData GetSaveData()
-    {
-        SaveData data = new SaveData();
-        data.Gold = Gold;
-        data.StrengthUpgradeLevel = StrengthUpgradeLevel;
-        data.AgilityUpgradeLevel = AgilityUpgradeLevel;
-        data.IntelligenceUpgradeLevel = IntelligenceUpgradeLevel;
-        data.LuckUpgradeLevel = LuckUpgradeLevel;
-        return data;
-    }
-
-    // Set player SaveData
-    public void SetSaveData(SaveData data)
-    {
-        Gold = data.Gold;
-        StrengthUpgradeLevel = data.StrengthUpgradeLevel;
-        AgilityUpgradeLevel = data.AgilityUpgradeLevel;
-        IntelligenceUpgradeLevel = data.IntelligenceUpgradeLevel;
-        LuckUpgradeLevel = data.LuckUpgradeLevel;
-    }
-
     /// <summary>
     /// Processes the incoming inputs
     /// </summary>
@@ -64,12 +42,19 @@ public class Player : Actor
         // Left click
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            Hand.isFreezing = true;
+            if (Hand.HoldingItem)
+            {
+                if (Hand.HeldItemType == ItemType.Consumable)
+                {
+                    Hand.UseHeldItem();
+                }
+            }
+            Hand.IsFreezingHand = true;
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            Hand.isFreezing = false;
+            Hand.IsFreezingHand = false;
         }
 
         // Interaction button
@@ -100,6 +85,27 @@ public class Player : Actor
         }
     }
 
+    // Get player SaveData
+    public SaveData GetSaveData()
+    {
+        SaveData data = new SaveData();
+        data.Gold = Gold;
+        data.StrengthUpgradeLevel = StrengthUpgradeLevel;
+        data.AgilityUpgradeLevel = AgilityUpgradeLevel;
+        data.IntelligenceUpgradeLevel = IntelligenceUpgradeLevel;
+        data.LuckUpgradeLevel = LuckUpgradeLevel;
+        return data;
+    }
+
+    // Set player SaveData
+    public void SetSaveData(SaveData data)
+    {
+        Gold = data.Gold;
+        StrengthUpgradeLevel = data.StrengthUpgradeLevel;
+        AgilityUpgradeLevel = data.AgilityUpgradeLevel;
+        IntelligenceUpgradeLevel = data.IntelligenceUpgradeLevel;
+        LuckUpgradeLevel = data.LuckUpgradeLevel;
+    }
     private protected override void CalculateMovement()
     {
         float x = Input.GetAxisRaw("Horizontal");

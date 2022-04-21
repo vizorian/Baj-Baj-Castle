@@ -16,7 +16,7 @@ MonoBehaviour:
   DisplayName: Steel Knife
   Icon: {fileID: -6665930254976882886, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: c8af5b3413230384c9b16c5c6b4ecfcd, type: 3}
-  itemType: 1
+  ItemType: 2
   ItemProperties:
     Damage: 6
     DamageType: 3

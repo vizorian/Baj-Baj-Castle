@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class ActorHand : MonoBehaviour
 {
-    public bool isFreezing = false;
-
+    public bool IsFreezingHand = false;
+    public bool HoldingItem = false;
+    public bool IsItemTurned = false;
+    public ItemType HeldItemType;
     private bool newSelection = false;
-    public bool IsTurned = false;
 
     private float HandSpeed = 1f;
     public float HandRange;
@@ -30,7 +31,7 @@ public class ActorHand : MonoBehaviour
     {
         UpdateHeldItem();
         UpdateVerticalRendering();
-        if (!isFreezing)
+        if (!IsFreezingHand)
             UpdateHorizontalRendering();
     }
 
@@ -41,6 +42,12 @@ public class ActorHand : MonoBehaviour
             transform.localScale = new Vector2(1, 1);
         else // If to the left of actor
             transform.localScale = new Vector2(-1, 1);
+    }
+
+    public void UseHeldItem()
+    {
+        itemObject.GetComponent<Item>().Use(transform.parent.gameObject.GetComponent<Actor>());
+        InventorySystem.Instance.Remove(heldItem.Data);
     }
 
     // Updates rendering for the hand and held item based on vertical position
@@ -69,6 +76,7 @@ public class ActorHand : MonoBehaviour
     // Creates a new instance of the held item if there needs to be one
     private void UpdateHeldItem()
     {
+        HoldingItem = true;
         if (newSelection || heldItem == null)
         {
             Destroy(itemObject);
@@ -92,15 +100,15 @@ public class ActorHand : MonoBehaviour
         if (heldItem == null)
             return;
 
-        if (!IsTurned)
+        if (!IsItemTurned)
         {
             itemObject.transform.Rotate(0, 0, 90);
-            IsTurned = true;
+            IsItemTurned = true;
         }
         else
         {
             itemObject.transform.Rotate(0, 0, -90);
-            IsTurned = false;
+            IsItemTurned = false;
         }
 
         RealignHeldItem();
@@ -119,7 +127,8 @@ public class ActorHand : MonoBehaviour
 
         var item = itemObject.AddComponent<Item>();
         ItemProperties properties = heldItem.Data.ItemProperties;
-        item.Type = heldItem.Data.itemType;
+        HeldItemType = heldItem.Data.ItemType;
+        item.Type = heldItem.Data.ItemType;
         item.Damage = properties.Damage;
         item.DamageType = properties.DamageType;
         item.CriticalChance = properties.CriticalChance;
@@ -166,7 +175,7 @@ public class ActorHand : MonoBehaviour
             heldItemHandlePosition = Vector3.zero;
         }
 
-        IsTurned = false;
+        IsItemTurned = false;
         newSelection = true;
     }
 
@@ -181,6 +190,8 @@ public class ActorHand : MonoBehaviour
     {
         ResetHandAttributes();
         heldItem = null;
+        HoldingItem = false;
+        HeldItemType = ItemType.None;
     }
 
     private void ResetHandAttributes()
@@ -200,7 +211,7 @@ public class ActorHand : MonoBehaviour
         MoveTowards(lookTarget);
 
         //Rotates hand
-        if (!isFreezing)
+        if (!IsFreezingHand)
             RotateTowards(lookTarget);
 
         // FAILURE: Interesting effect for menu

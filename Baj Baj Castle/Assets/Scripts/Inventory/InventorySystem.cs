@@ -111,10 +111,8 @@ public class InventorySystem : MonoBehaviour
     {
         if (SelectedItem != null)
         {
-            var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
             // Drop the actual item in the world
-            Instantiate(SelectedItem.Data.Prefab, new Vector3(mousePos.x, mousePos.y), Quaternion.identity); // FIX THIS to drop towards mouse
+            Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity); // FIX THIS to drop towards mouse
 
             // Remove the item from inventory
             Remove(SelectedItem.Data);

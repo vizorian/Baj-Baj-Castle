@@ -13,7 +13,7 @@ public class Pickupable : Interactable
 
         if (collider.tag == "Player")
         {
-            Tooltip.ShowTooltip_Static(ToTooltipString(), transform.position);
+            // Tooltip.ShowTooltip_Static(ToTooltipString(), transform.position);
             DrawHighlightFull(collider.gameObject);
         }
 

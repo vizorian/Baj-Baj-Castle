@@ -92,11 +92,11 @@ public class Actor : MonoBehaviour
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsTurned)
+        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
         {
             damageData.Type = DamageType.Slashing;
         }
-        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsTurned)
+        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
         {
             damageData.Type = DamageType.Piercing;
         }
@@ -137,7 +137,7 @@ public class Actor : MonoBehaviour
     }
 
     // TODO use this for potions
-    private protected virtual void Heal(float amount)
+    public virtual void Heal(float amount)
     {
         if (Health + amount > MaxHealth)
         {

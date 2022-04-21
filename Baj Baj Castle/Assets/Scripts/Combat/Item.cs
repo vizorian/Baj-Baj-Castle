@@ -34,6 +34,16 @@ public class Item : Collidable
         }
     }
 
+    // Use item
+    public void Use(Actor actor)
+    {
+        if (Type == ItemType.Consumable)
+        {
+            var healingAmount = actor.MaxHealth / 100f * Damage;
+            actor.Heal(healingAmount);
+        }
+    }
+
     private protected override void OnCollide(Collider2D collider)
     {
         // Attack cooldown

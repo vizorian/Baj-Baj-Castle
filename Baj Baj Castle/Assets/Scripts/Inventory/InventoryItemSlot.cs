@@ -25,11 +25,11 @@ public class InventoryItemSlot : MonoBehaviour
         // check if mouse is over the slot
         if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), Input.mousePosition))
         {
-            Tooltip.ShowTooltip_Static(ToTooltipString(), Input.mousePosition, true);
+            // Tooltip.ShowTooltip_Static(ToTooltipString(), Input.mousePosition, true);
         }
         else
         {
-            Tooltip.HideTooltip_Static();
+            // Tooltip.HideTooltip_Static();
         }
     }
 

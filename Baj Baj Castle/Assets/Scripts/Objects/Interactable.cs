@@ -30,7 +30,7 @@ public class Interactable : Collidable
 
         if (!collisions)
         {
-            Tooltip.HideTooltip_Static();
+            // Tooltip.HideTooltip_Static();
             _lineRenderer.positionCount = 0;
         }
     }
@@ -108,6 +108,11 @@ public class Interactable : Collidable
 
     protected virtual void DrawHighlightFull(GameObject obj)
     {
+        if (_lineRenderer == null)
+        {
+            return;
+        }
+
         Vector3[] vertices = GetVertexPositions(gameObject);
         Vector3[] newVertices = new Vector3[vertices.Length + 1];
         newVertices[0] = vertices[0];
@@ -138,10 +143,14 @@ public class Interactable : Collidable
     private Vector3[] GetVertexPositions(GameObject obj)
     {
         var vertices = new Vector3[4];
+        if (_spriteRenderer == null)
+        {
+            return vertices;
+        }
+
         var thisMatrix = obj.transform.localToWorldMatrix;
         var storedRotation = obj.transform.rotation;
         obj.transform.rotation = Quaternion.identity;
-
         var extents = _spriteRenderer.bounds.extents;
 
         vertices[0] = thisMatrix.MultiplyPoint3x4(new Vector3(-extents.x, extents.y, 0));
@@ -158,11 +167,11 @@ public class Interactable : Collidable
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsTurned)
+        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
         {
             damageData.Type = DamageType.Slashing;
         }
-        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsTurned)
+        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
         {
             damageData.Type = DamageType.Piercing;
         }

@@ -16,7 +16,7 @@ MonoBehaviour:
   DisplayName: Wooden Knife
   Icon: {fileID: -8934060672885858020, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 8865499550531167265, guid: 3e9b6ac6cfeca4747b4be7a54706f36d, type: 3}
-  itemType: 1
+  ItemType: 2
   ItemProperties:
     Damage: 2
     DamageType: 3

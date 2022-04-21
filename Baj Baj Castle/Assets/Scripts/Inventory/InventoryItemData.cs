@@ -7,6 +7,6 @@ public class InventoryItemData : ScriptableObject
     public string DisplayName;
     public Sprite Icon;
     public GameObject Prefab;
-    public ItemType itemType;
+    public ItemType ItemType;
     public ItemProperties ItemProperties;
 }
