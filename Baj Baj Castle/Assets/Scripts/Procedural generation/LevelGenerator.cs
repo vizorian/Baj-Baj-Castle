@@ -42,6 +42,79 @@ public class LevelGenerator : MonoBehaviour
     private bool startMapping;
     private bool isSimulated;
     private bool isProcessed;
+
+    public void Clear()
+    {
+        foreach (Cell cell in cells)
+        {
+            if (cell.DisplayCell != null)
+            {
+                Destroy(cell.DisplayCell);
+            }
+
+            if (cell.SimulationCell != null)
+            {
+                Destroy(cell.SimulationCell);
+            }
+
+            if (cell.PhysicsCell != null)
+            {
+                Destroy(cell.PhysicsCell);
+            }
+        }
+
+        foreach (Cell cell in Rooms)
+        {
+            if (cell.DisplayCell != null)
+            {
+                Destroy(cell.DisplayCell);
+            }
+
+            if (cell.SimulationCell != null)
+            {
+                Destroy(cell.SimulationCell);
+            }
+
+            if (cell.PhysicsCell != null)
+            {
+                Destroy(cell.PhysicsCell);
+            }
+        }
+
+        foreach (Cell cell in Hallways)
+        {
+            if (cell.DisplayCell != null)
+            {
+                Destroy(cell.DisplayCell);
+            }
+
+            if (cell.SimulationCell != null)
+            {
+                Destroy(cell.SimulationCell);
+            }
+
+            if (cell.PhysicsCell != null)
+            {
+                Destroy(cell.PhysicsCell);
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        Rooms.Clear();
+        Hallways.Clear();
+        cells.Clear();
+        delaunayGraph = null;
+        levelGraph = null;
+        simulationLoops = 0;
+        startSimulation = false;
+        startProcessing = false;
+        startMapping = false;
+        isSimulated = false;
+        isProcessed = false;
+    }
+
     private bool isMapped;
     private float startTime;
     private float endTime;

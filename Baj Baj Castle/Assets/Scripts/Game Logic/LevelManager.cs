@@ -16,6 +16,8 @@ public class LevelManager : MonoBehaviour
     private Tilemap floorTilemap;
     private Tilemap decorationTilemap;
     private Tilemap collisionTilemap;
+    public List<Room> Rooms;
+    public List<TileData> Hallways;
 
     public bool IsGeneratingLevel = false;
     public bool IsGenerated = false;
@@ -42,18 +44,22 @@ public class LevelManager : MonoBehaviour
 
     public void GenerateLevelTiles()
     {
-        var rooms = levelGenerator.Rooms;
-        var hallways = levelGenerator.Hallways;
+        var roomCells = levelGenerator.Rooms;
+        var hallwayCells = levelGenerator.Hallways;
 
-        print("Rooms: " + rooms.Count);
-        print("Hallways: " + hallways.Count);
-
+        levelGenerator.Clear();
         if (tileCreator == null)
         {
             InstantiateTileCreator();
         }
-        tileCreator.CreateTiles(rooms);
-        tileCreator.CreateTiles(hallways);
+        Rooms = tileCreator.CreateRooms(roomCells);
+        Hallways = tileCreator.CreateHallways(hallwayCells);
+
+        levelGenerator.Clear();
+
+        tileCreator.UpdateTiles(Rooms);
+
+        levelGenerator.Reset();
         Level++;
     }
 

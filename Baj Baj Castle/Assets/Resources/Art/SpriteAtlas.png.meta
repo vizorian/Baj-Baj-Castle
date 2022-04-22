@@ -4,13 +4,13 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: -6460368395533782001
-    second: Wall_0_F
+    second: WallNW
   - first:
       213: 6875313188632250476
     second: Player_S
   - first:
       213: 7234583761468912955
-    second: Wall_1_U
+    second: WallN
   - first:
       213: -8262991748867391410
     second: Goblin_S
@@ -52,25 +52,25 @@ TextureImporter:
     second: TableH_S
   - first:
       213: -4955526946697255835
-    second: Wall_0_U
+    second: WallNE
   - first:
       213: -8741467292000695927
-    second: Wall_1_U
+    second: WallN
   - first:
       213: -6997266836488049200
-    second: Wall_2_U
+    second: WallSE
   - first:
       213: -8579496812511856797
-    second: Wall_1
+    second: WallS
   - first:
       213: 2298073905629416631
-    second: Wall_2
+    second: WallSW
   - first:
       213: 4174798708927786481
-    second: Wall_1_F
+    second: WallW
   - first:
       213: -385190827197881602
-    second: Wall_2_F
+    second: FloorNW
   - first:
       213: 9083728258779766058
     second: Floor_1
@@ -160,7 +160,7 @@ TextureImporter:
     second: Torch_7
   - first:
       213: 1176876918205601351
-    second: Wall
+    second: Background
   - first:
       213: -7127033491996108885
     second: Collision
@@ -257,6 +257,75 @@ TextureImporter:
   - first:
       213: -6082922002079475146
     second: Spear_Golden
+  - first:
+      213: -546629146611392598
+    second: FloorN
+  - first:
+      213: 1563392895536984208
+    second: FloorNE
+  - first:
+      213: 3011829902800805395
+    second: FloorE
+  - first:
+      213: 2118876868228655412
+    second: FloorSE
+  - first:
+      213: -4214677765077392085
+    second: FloorS
+  - first:
+      213: -2452648021110158787
+    second: FloorSW
+  - first:
+      213: 6886709796017190430
+    second: FloorW
+  - first:
+      213: 6169190223158931066
+    second: WallTopNWN
+  - first:
+      213: 6837038005728638327
+    second: WallTopNWW
+  - first:
+      213: -8333164581351401487
+    second: WallTopNWC
+  - first:
+      213: -2250974561351227149
+    second: WallTopN
+  - first:
+      213: 6442759165207783438
+    second: WallTopNEN
+  - first:
+      213: -2736433307781900204
+    second: WallTopNEC
+  - first:
+      213: 1123042526167017597
+    second: WallTopNEE
+  - first:
+      213: 3313519428582713004
+    second: WallTopE
+  - first:
+      213: -5646352971795681265
+    second: WallTopSEE
+  - first:
+      213: -8914251629973348874
+    second: WallTopSES
+  - first:
+      213: -1565030404952655266
+    second: WallTopSEC
+  - first:
+      213: -8016247766738197590
+    second: WallTopS
+  - first:
+      213: -8943123808138825353
+    second: WallTopSWS
+  - first:
+      213: -1690039608968722766
+    second: WallTopSWC
+  - first:
+      213: 2158971329023178908
+    second: WallTopSWW
+  - first:
+      213: 491627375347675211
+    second: WallTopW
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -379,11 +448,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_0_F
+      name: WallNW
       rect:
         serializedVersion: 2
-        x: 0
-        y: 464
+        x: 16
+        y: 216
         width: 16
         height: 16
       alignment: 0
@@ -400,11 +469,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_1_U
+      name: WallN
       rect:
         serializedVersion: 2
-        x: 16
-        y: 496
+        x: 32
+        y: 216
         width: 16
         height: 16
       alignment: 0
@@ -694,11 +763,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_0_U
+      name: WallNE
       rect:
         serializedVersion: 2
-        x: 0
-        y: 496
+        x: 48
+        y: 216
         width: 16
         height: 16
       alignment: 0
@@ -715,11 +784,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_0
+      name: WallE
       rect:
         serializedVersion: 2
-        x: 0
-        y: 480
+        x: 48
+        y: 200
         width: 16
         height: 16
       alignment: 0
@@ -736,11 +805,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_2_U
+      name: WallSE
       rect:
         serializedVersion: 2
-        x: 32
-        y: 496
+        x: 48
+        y: 184
         width: 16
         height: 16
       alignment: 0
@@ -757,11 +826,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_1
+      name: WallS
       rect:
         serializedVersion: 2
-        x: 16
-        y: 480
+        x: 32
+        y: 184
         width: 16
         height: 16
       alignment: 0
@@ -778,11 +847,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_2
+      name: WallSW
       rect:
         serializedVersion: 2
-        x: 32
-        y: 480
+        x: 16
+        y: 184
         width: 16
         height: 16
       alignment: 0
@@ -799,11 +868,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_1_F
+      name: WallW
       rect:
         serializedVersion: 2
         x: 16
-        y: 464
+        y: 200
         width: 16
         height: 16
       alignment: 0
@@ -820,11 +889,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall_2_F
+      name: FloorNW
       rect:
         serializedVersion: 2
-        x: 32
-        y: 464
+        x: 0
+        y: 152
         width: 16
         height: 16
       alignment: 0
@@ -865,8 +934,8 @@ TextureImporter:
       name: Floor
       rect:
         serializedVersion: 2
-        x: 32
-        y: 448
+        x: 16
+        y: 136
         width: 16
         height: 16
       alignment: 0
@@ -1450,7 +1519,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wall
+      name: Background
       rect:
         serializedVersion: 2
         x: 64
@@ -2138,6 +2207,489 @@ TextureImporter:
       bones: []
       spriteID: 63a15a5faae159ba0800000000000000
       internalID: -6082922002079475146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorN
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 152
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaf5a54ffabf968f0800000000000000
+      internalID: -546629146611392598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorNE
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 152
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 090f9d62e8942b510800000000000000
+      internalID: 1563392895536984208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorE
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 136
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31e5758d65b2cc920800000000000000
+      internalID: 3011829902800805395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorSE
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 120
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 439af8d0943c76d10800000000000000
+      internalID: 2118876868228655412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorS
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 120
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2523d927e47285c0800000000000000
+      internalID: -4214677765077392085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorSW
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 120
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3a0aa69e9176fdd0800000000000000
+      internalID: -2452648021110158787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FloorW
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 136
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e16bec67212829f50800000000000000
+      internalID: 6886709796017190430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNWN
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 232
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7e633b72dd5d9550800000000000000
+      internalID: 6169190223158931066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNWW
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 216
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 775fc4f87d902ee50800000000000000
+      internalID: 6837038005728638327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNWC
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 232
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f7dea9d6f6aa5c80800000000000000
+      internalID: -8333164581351401487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopN
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 232
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f82838009ee2c0e0800000000000000
+      internalID: -2250974561351227149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNEN
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 232
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e082a975357496950800000000000000
+      internalID: 6442759165207783438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNEC
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 232
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 458dc12a76c360ad0800000000000000
+      internalID: -2736433307781900204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopNEE
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 216
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d78a7d73a39d59f00800000000000000
+      internalID: 1123042526167017597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopE
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 200
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca627015d5cfbfd20800000000000000
+      internalID: 3313519428582713004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSEE
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 184
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f00b5a743ef14a1b0800000000000000
+      internalID: -5646352971795681265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSES
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 168
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6fdddfc4f573a4480800000000000000
+      internalID: -8914251629973348874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSEC
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 168
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5a7c1a7325e74ae0800000000000000
+      internalID: -1565030404952655266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopS
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 168
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa32d08c02190c090800000000000000
+      internalID: -8016247766738197590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSWS
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 168
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 771fb897744a3e380800000000000000
+      internalID: -8943123808138825353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSWC
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 168
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b6441b0ee5cb88e0800000000000000
+      internalID: -1690039608968722766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopSWW
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 184
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c98fdaa2cf436fd10800000000000000
+      internalID: 2158971329023178908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallTopW
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 200
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b40b47d3e7c92d600800000000000000
+      internalID: 491627375347675211
       vertices: []
       indices: 
       edges: []
