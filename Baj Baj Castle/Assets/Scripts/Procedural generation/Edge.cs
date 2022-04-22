@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,5 +60,34 @@ public class Edge
     {
         int hash = (int)P1.X ^ (int)P1.Y ^ (int)P2.X ^ (int)P2.Y;
         return hash.GetHashCode();
+    }
+
+    public bool SharesPoint(Edge otherEdge)
+    {
+        return (P1.Equals(otherEdge.P1) || P1.Equals(otherEdge.P2)) || (P2.Equals(otherEdge.P1) || P2.Equals(otherEdge.P2));
+    }
+
+    public Point[] GetNonSharedPoints(Edge otherEdge)
+    {
+        if (P1.Equals(otherEdge.P1))
+        {
+            return new Point[] { P2, otherEdge.P2 };
+        }
+        else if (P1.Equals(otherEdge.P2))
+        {
+            return new Point[] { P2, otherEdge.P1 };
+        }
+        else if (P2.Equals(otherEdge.P1))
+        {
+            return new Point[] { P1, otherEdge.P2 };
+        }
+        else if (P2.Equals(otherEdge.P2))
+        {
+            return new Point[] { P1, otherEdge.P1 };
+        }
+        else
+        {
+            return new Point[0];
+        }
     }
 }

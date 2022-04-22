@@ -61,44 +61,14 @@ public class DelaunayTriangulator
         return triangulation;
     }
 
-    // Create supra triangle from most spread out points (kind of)
-    public void CreateSupraTriangle(List<Cell> cells)
+    // Create triangle large enough to contain all points
+    public void CreateSupraTriangle(HashSet<Point> points)
     {
-        var leftCell = cells.OrderBy(c => c.SimulationCell.transform.position.x - c.Width / 2)
-                                  .ThenBy(c => c.SimulationCell.transform.position.y - c.Height / 2).First();
-        var topCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.y + c.Height / 2).First();
-        var rightCell = cells.OrderByDescending(c => c.SimulationCell.transform.position.x + c.Width / 2)
-                                   .ThenBy(c => c.SimulationCell.transform.position.y - c.Height / 2).First();
+        var minX = (float)points.Min(p => p.X) - 20;
+        var minY = (float)points.Min(p => p.Y) - 10;
+        var maxX = (float)points.Max(p => p.X) + 20;
+        var maxY = (float)points.Max(p => p.Y) + 20;
 
-        var pointLeft = new Point((float)leftCell.SimulationCell.transform.position.x,
-                                  (float)leftCell.SimulationCell.transform.position.y);
-        var pointTop = new Point((float)topCell.SimulationCell.transform.position.x,
-                                 (float)topCell.SimulationCell.transform.position.y);
-        var pointRight = new Point((float)rightCell.SimulationCell.transform.position.x,
-                                   (float)rightCell.SimulationCell.transform.position.y);
-
-        Supra = new Triangle(pointLeft, pointTop, pointRight);
-    }
-
-    // Increase supra triangle size to fit all points
-    public void AdjustSupraTriangle(HashSet<Point> points)
-    {
-        var count = 0;
-        while (count < 100)
-        {
-            var pointsOutside = points.Where(p => !p.IsWithinTriangle(Supra));
-
-            if (pointsOutside.Count() == 0) break;
-
-            var furthestPoint = pointsOutside.OrderByDescending(p => p.DistanceTo(Supra.Circumcenter)).First();
-            var distance = furthestPoint.DistanceTo(Supra.Circumcenter) * 0.3f;
-
-            Supra.Vertices[0].X -= distance;
-            Supra.Vertices[0].Y -= distance;
-            Supra.Vertices[1].Y += distance;
-            Supra.Vertices[2].X += distance;
-            Supra.Vertices[2].Y -= distance;
-            count++;
-        }
+        Supra = new Triangle(new Point(minX, minY), new Point(maxX, minY), new Point((maxX + minX) / 2, maxY));
     }
 }

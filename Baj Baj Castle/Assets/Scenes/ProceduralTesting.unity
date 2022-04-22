@@ -455,7 +455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GridObject: {fileID: 684738809}
   CellSprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
-  Debug: 1
+  Debug: 0
   saveData:
     Gold: 0
     StrengthUpgradeLevel: 0

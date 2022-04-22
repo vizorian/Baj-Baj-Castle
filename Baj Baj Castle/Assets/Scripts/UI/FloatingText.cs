@@ -7,7 +7,7 @@ public class FloatingText : MonoBehaviour
 {
     public static void Create(string text, Color color, Vector3 position, float textSize = 1f, float lifeTime = 1f, float speed = 1f)
     {
-        var floatingTextObject = Instantiate(GameAssets.instance.floatingTextObject, Vector3.zero, Quaternion.identity);
+        var floatingTextObject = Instantiate(GameAssets.Instance.floatingTextObject, Vector3.zero, Quaternion.identity);
         var floatingText = floatingTextObject.GetComponent<FloatingText>();
         floatingText.Setup(text, color, position, textSize, lifeTime, speed);
     }

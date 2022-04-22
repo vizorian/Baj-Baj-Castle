@@ -5,8 +5,8 @@ public class DisjointSet
 
     public DisjointSet(int size)
     {
-        parent = new int[size];
-        rank = new int[size];
+        parent = new int[size + 1];
+        rank = new int[size + 1];
     }
 
     public void MakeSet(int x)
@@ -16,19 +16,28 @@ public class DisjointSet
 
     public int Find(int x)
     {
-        while (parent[x] != x)
+        while (x != parent[x])
         {
             x = parent[x];
         }
         return x;
     }
 
+    // while (parent[x] != x)
+    // {
+    //         x = parent[x];
+    // }
+    // return x;
+
     public void Union(int x, int y)
     {
         int xRoot = Find(x);
         int yRoot = Find(y);
 
-        if (xRoot == yRoot) return;
+        if (xRoot == yRoot)
+        {
+            return;
+        }
 
         if (rank[xRoot] > rank[yRoot])
         {

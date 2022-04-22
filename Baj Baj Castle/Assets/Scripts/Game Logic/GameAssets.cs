@@ -4,17 +4,17 @@ using UnityEngine.Tilemaps;
 
 public class GameAssets : MonoBehaviour
 {
-    private static GameAssets _instance;
-    public static GameAssets instance
+    private static GameAssets instance;
+    public static GameAssets Instance
     {
         get
         {
-            if (_instance == null)
+            if (instance == null)
             {
-                _instance = GameObject.FindObjectOfType<GameAssets>();
-                DontDestroyOnLoad(_instance.gameObject);
+                instance = GameObject.FindObjectOfType<GameAssets>();
+                DontDestroyOnLoad(instance.gameObject);
             }
-            return _instance;
+            return instance;
         }
     }
 
@@ -26,10 +26,6 @@ public class GameAssets : MonoBehaviour
         {
             tiles[tile.name] = tile;
         }
-    }
-
-    public void test()
-    {
     }
 
     public GameObject floatingTextObject;

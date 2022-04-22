@@ -6,20 +6,19 @@ using System.Linq;
 public class LevelGenerator : MonoBehaviour
 {
     // Inputs
-    public int LevelSize;
-    public bool IsDebug;
     public Sprite CellSprite;
 
     // Outputs
     public List<Cell> Rooms = new List<Cell>();
     public List<Cell> Hallways = new List<Cell>();
+    public List<Vector2> DoorPositions = new List<Vector2>();
 
     // Constants
     public const int TILE_SIZE = 16;
     public const float PIXEL_SIZE = 0.01f;
     public const float CELL_SIZE = 0.16f;
 
-
+    private bool isDebug;
     public float SimulationDelay = 3f;
     public int CycleCount = 2000;
     public int Complexity = 50;
@@ -33,6 +32,7 @@ public class LevelGenerator : MonoBehaviour
     public float EdgePercentage = 0.1f;
     public int HallwayWidth = 4;
     private Sprite cellSprite;
+    private int levelSize;
     private List<Cell> cells = new List<Cell>();
     private HashSet<Edge> delaunayGraph;
     private HashSet<Edge> levelGraph;
@@ -42,10 +42,13 @@ public class LevelGenerator : MonoBehaviour
     private bool startMapping;
     private bool isSimulated;
     private bool isProcessed;
-
+    private bool isMapped;
+    private float startTime;
+    private float endTime;
+    public bool IsCompleted { get { return isSimulated && isProcessed && isMapped; } }
     public void Clear()
     {
-        foreach (Cell cell in cells)
+        foreach (var cell in cells)
         {
             if (cell.DisplayCell != null)
             {
@@ -63,7 +66,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        foreach (Cell cell in Rooms)
+        foreach (var cell in Rooms)
         {
             if (cell.DisplayCell != null)
             {
@@ -81,7 +84,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        foreach (Cell cell in Hallways)
+        foreach (var cell in Hallways)
         {
             if (cell.DisplayCell != null)
             {
@@ -115,20 +118,15 @@ public class LevelGenerator : MonoBehaviour
         isProcessed = false;
     }
 
-    private bool isMapped;
-    private float startTime;
-    private float endTime;
-    public bool IsCompleted { get { return isSimulated && isProcessed && isMapped; } }
-
-    public void GenerateLevel(int i, bool isDebug, Sprite sprite)
+    public void GenerateLevel(int level, bool isDebug, Sprite sprite)
     {
         // Set input variables
-        IsDebug = isDebug;
+        this.isDebug = isDebug;
         cellSprite = sprite;
-
-        if (IsDebug)
+        levelSize = (int)(4 + level * 1.4f);
+        if (this.isDebug)
         {
-            Debug.Log("Generating level #" + i);
+            Debug.Log("Generating level #" + level);
         }
         PrepareForGeneration();
     }
@@ -141,18 +139,20 @@ public class LevelGenerator : MonoBehaviour
         isMapped = false;
         simulationLoops = 0;
 
+
         CreateCells(Complexity);
-        if (IsDebug)
+        if (isDebug)
         {
-            DrawGrid();
-            StartCoroutine(DelaySimulation(SimulationDelay));
+            startSimulation = false;
+            startProcessing = false;
+            startMapping = false;
         }
         else
         {
-            startSimulation = true;
             startProcessing = true;
             startMapping = true;
         }
+        StartCoroutine(DelaySimulation(SimulationDelay));
     }
 
     void FixedUpdate()
@@ -220,11 +220,13 @@ public class LevelGenerator : MonoBehaviour
 
         isSimulated = true;
 
-        var endTime = Time.realtimeSinceStartup;
-        print($"Simulation took {simulationLoops} cycles");
-        print("Simulation took " + (endTime - startTime) + " seconds.");
-
-        StartCoroutine(DelayProcessing(SimulationDelay));
+        if (isDebug)
+        {
+            var endTime = Time.realtimeSinceStartup;
+            print($"Simulation took {simulationLoops} cycles");
+            print("Simulation took " + (endTime - startTime) + " seconds.");
+            StartCoroutine(DelayProcessing(SimulationDelay));
+        }
     }
 
     private void ProcessCells()
@@ -236,18 +238,29 @@ public class LevelGenerator : MonoBehaviour
                                       (int)(cell.SimulationCell.transform.position.y / CELL_SIZE));
         }
 
+        if (isDebug)
+        {
+            startTime = Time.realtimeSinceStartup;
+        }
         // filter out cells that qualify to be rooms
-        startTime = Time.realtimeSinceStartup;
         FilterCells();
-        endTime = Time.realtimeSinceStartup;
-        print("Cell filtering took " + (endTime - startTime) + " seconds.");
+
+        if (isDebug)
+        {
+            endTime = Time.realtimeSinceStartup;
+            print("Cell filtering took " + (endTime - startTime) + " seconds.");
+        }
 
         Graph();
 
         isProcessed = true;
-        StartCoroutine(DelayMapping(SimulationDelay * 2));
+        if (isDebug)
+        {
+            StartCoroutine(DelayMapping(SimulationDelay * 2));
+        }
     }
 
+    // TODO filter the top X cells by ratio
     private void FilterCells()
     {
         float widthAverage = 0;
@@ -262,12 +275,39 @@ public class LevelGenerator : MonoBehaviour
         widthAverage /= cells.Count;
         heightAverage /= cells.Count;
 
+        // Sort cells by area
+
         foreach (var cell in cells)
         {
-            if (cell.Width >= widthAverage * FilteringCriteria && cell.Height >= heightAverage * FilteringCriteria)
+            if (cell.Width >= widthAverage * FilteringCriteria
+                && cell.Height >= heightAverage * FilteringCriteria)
             {
-                cell.SimulationCell.GetComponent<SpriteRenderer>().color = Color.red;
-                Rooms.Add(cell);
+                if (Rooms.Count < levelSize)
+                {
+                    cell.SimulationCell.GetComponent<SpriteRenderer>().color = Color.red;
+                    Rooms.Add(cell);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        if (Rooms.Count < levelSize)
+        {
+            var sortedCells = cells.OrderByDescending(cell => cell.Width / cell.Height);
+            foreach (var cell in sortedCells)
+            {
+                if (Rooms.Count < levelSize)
+                {
+                    cell.SimulationCell.GetComponent<SpriteRenderer>().color = Color.red;
+                    Rooms.Add(cell);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -279,7 +319,6 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(cell.SimulationCell);
             }
         }
-
         cells.Clear();
     }
 
@@ -293,43 +332,92 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // perform triangulation
-        startTime = Time.realtimeSinceStartup;
+        if (isDebug)
+        {
+            startTime = Time.realtimeSinceStartup;
+        }
         var triangulation = Triangulate(points);
-        endTime = Time.realtimeSinceStartup;
-        print("Cell triangulation took " + (endTime - startTime) + " seconds.");
-        DrawTriangles(triangulation);
+        if (isDebug)
+        {
+            endTime = Time.realtimeSinceStartup;
+            print("Cell triangulation took " + (endTime - startTime) + " seconds.");
+            DrawTriangles(triangulation);
+            print("Triangulation: " + triangulation.Count);
+        }
 
         Cleanup(triangulation);
 
         // get a minimum spanning tree from triangulation results
-        startTime = Time.realtimeSinceStartup;
+        if (isDebug)
+        {
+            startTime = Time.realtimeSinceStartup;
+        }
         levelGraph = MinimumSpanningTree(triangulation, points.ToList());
-        endTime = Time.realtimeSinceStartup;
-        print("Minimum spanning tree calculation took " + (endTime - startTime) + " seconds.");
-        DrawEdges(levelGraph, Color.green, 3f);
+        if (isDebug)
+        {
+            endTime = Time.realtimeSinceStartup;
+            print("Minimum spanning tree calculation took " + (endTime - startTime) + " seconds.");
+            DrawEdges(levelGraph, Color.green, 3f);
+        }
 
         // add some edges from delaunay graph back to graph
         RefillEdges(EdgePercentage);
-        DrawEdges(levelGraph, Color.green, 6f);
+
+        if (isDebug)
+        {
+            DrawEdges(levelGraph, Color.green, 6f);
+        }
     }
 
     private void MapCells()
     {
         // calculate hallways between cells
-        startTime = Time.realtimeSinceStartup; ;
+        if (isDebug)
+        {
+            startTime = Time.realtimeSinceStartup; ;
+        }
         var hallways = CalculateHallways();
-        endTime = Time.realtimeSinceStartup;
-        print("Hallway calculation took " + (endTime - startTime) + " seconds.");
-        print("Found " + hallways.Count + " hallways.");
-        DrawEdges(hallways, Color.cyan, 3f);
+        if (isDebug)
+        {
+            endTime = Time.realtimeSinceStartup;
+            print("Hallway calculation took " + (endTime - startTime) + " seconds.");
+            print("Found " + hallways.Count + " hallways.");
+            DrawEdges(hallways, Color.cyan, 3f);
+            startTime = Time.realtimeSinceStartup;
+        }
+
+        // TODO search the whole thing?
+        // get hallway path positions
+        var doorPosition = new List<Vector2>();
+        var hallwayEdges = hallways.ToList();
+        for (int i = 0; i < hallwayEdges.Count; i++)
+        {
+            var hallway = hallwayEdges[i];
+            var nextHallway = hallwayEdges[(i + 1) % hallwayEdges.Count];
+
+            var doorPositions = hallway.GetNonSharedPoints(nextHallway);
+            if (doorPositions.Length > 0)
+            {
+                DoorPositions.Add(new Vector2((float)doorPositions[0].X, (float)doorPositions[0].Y));
+                DoorPositions.Add(new Vector2((float)doorPositions[1].X, (float)doorPositions[1].Y));
+                i++;
+            }
+            else
+            {
+                DoorPositions.Add(new Vector2((float)hallway.P1.X, (float)hallway.P1.Y));
+                DoorPositions.Add(new Vector2((float)hallway.P2.X, (float)hallway.P2.Y));
+            }
+        }
 
         // carve out hallways
-        startTime = Time.realtimeSinceStartup;
         var hallwayPoints = GetHallwayPoints(hallways);
-
         CreateHallways(hallwayPoints, Color.cyan);
-        endTime = Time.realtimeSinceStartup;
-        print("Hallway creation took " + (endTime - startTime) + " seconds.");
+
+        if (isDebug)
+        {
+            endTime = Time.realtimeSinceStartup;
+            print("Hallway creation took " + (endTime - startTime) + " seconds.");
+        }
 
         isMapped = true;
     }
@@ -645,44 +733,6 @@ public class LevelGenerator : MonoBehaviour
         return hallways;
     }
 
-    // Draw a grid with 1x1 cells
-    private void DrawGrid()
-    {
-        var minX = -20f;
-        var minY = -20f;
-        var maxX = 20f;
-        var maxY = 20f;
-
-        // round values to grid
-        minX = Mathf.Round(minX / CELL_SIZE) * CELL_SIZE;
-        minY = Mathf.Round(minY / CELL_SIZE) * CELL_SIZE;
-        maxX = Mathf.Round(maxX / CELL_SIZE) * CELL_SIZE;
-        maxY = Mathf.Round(maxY / CELL_SIZE) * CELL_SIZE;
-
-        // find corner positions from extremes
-        var topLeft = new Vector2(minX, maxY);
-        var topRight = new Vector2(maxX, maxY);
-        var bottomLeft = new Vector2(minX, minY);
-        var bottomRight = new Vector2(maxX, minY);
-
-        HashSet<Edge> edges = new HashSet<Edge>();
-
-        // create edges every cellSize units
-        for (var x = minX; x <= maxX; x += CELL_SIZE)
-        {
-            edges.Add(new Edge(new Point(x, minY), new Point(x, maxY)));
-        }
-        for (var y = minY; y <= maxY; y += CELL_SIZE)
-        {
-            edges.Add(new Edge(new Point(minX, y), new Point(maxX, y)));
-        }
-
-        // Draw all edges
-        DrawEdges(edges, new Color(0, 0, 1f, 0.3f), 100f);
-    }
-
-
-
     private void RefillEdges(float edgePercentage)
     {
         var remainingEdges = delaunayGraph.Except(levelGraph);
@@ -699,8 +749,7 @@ public class LevelGenerator : MonoBehaviour
     private HashSet<Triangle> Triangulate(HashSet<Point> points)
     {
         var triangulator = new DelaunayTriangulator();
-        triangulator.CreateSupraTriangle(Rooms);
-        triangulator.AdjustSupraTriangle(points);
+        triangulator.CreateSupraTriangle(points);
         return triangulator.BowyerWatson(points);
     }
 
@@ -886,7 +935,10 @@ public class LevelGenerator : MonoBehaviour
     IEnumerator DelaySimulation(float time)
     {
         yield return new WaitForSeconds(time);
-        print("Starting simulation...");
+        if (isDebug)
+        {
+            print("Starting simulation...");
+        }
         foreach (var cell in cells)
         {
             cell.SimulationCell.SetActive(true);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// TODO potentially include neighbour bools
 public class TileData
 {
     public int X;

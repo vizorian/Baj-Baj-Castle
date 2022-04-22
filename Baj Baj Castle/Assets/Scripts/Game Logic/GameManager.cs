@@ -28,9 +28,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         levelManager = gameObject.AddComponent<LevelManager>();
-        levelManager.CellSprite = CellSprite;
-        levelManager.GridObject = GridObject;
-        levelManager.IsDebug = Debug;
+        levelManager.InstantiateComponent(CellSprite, GridObject, Debug);
     }
 
     void Awake()

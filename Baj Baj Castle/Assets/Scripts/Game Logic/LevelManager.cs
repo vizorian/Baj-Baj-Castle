@@ -5,9 +5,9 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
-    public GameObject GridObject;
-    public Sprite CellSprite;
-    public bool IsDebug;
+    private GameObject gridObject;
+    private Sprite cellSprite;
+    private bool isDebug;
 
     public Dictionary<string, Tile> TileDictionary;
     private LevelGenerator levelGenerator;
@@ -35,51 +35,47 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void GenerateLevel(int i)
+    public void InstantiateComponent(Sprite cellSprite, GameObject gridObject, bool isDebug)
     {
-        IsGeneratingLevel = true;
-        InstantiateLevelGenerator();
-        levelGenerator.GenerateLevel(i, IsDebug, CellSprite);
+        this.isDebug = isDebug;
+        this.gridObject = gridObject;
+        this.cellSprite = cellSprite;
+
+        levelGenerator = gameObject.AddComponent<LevelGenerator>();
+
+        var floorTilemap = this.gridObject.transform.Find("Floor").GetComponent<Tilemap>();
+        var decorationTilemap = this.gridObject.transform.Find("Decoration").GetComponent<Tilemap>();
+        var collisionTilemap = this.gridObject.transform.Find("Collision").GetComponent<Tilemap>();
+        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap);
     }
 
-    public void GenerateLevelTiles()
+    public void GenerateLevel(int level)
+    {
+        IsGenerated = false;
+        IsGeneratingLevel = true;
+
+        levelGenerator.GenerateLevel(level, isDebug, cellSprite);
+    }
+
+    public async void GenerateLevelTiles()
     {
         var roomCells = levelGenerator.Rooms;
         var hallwayCells = levelGenerator.Hallways;
-
-        levelGenerator.Clear();
-        if (tileCreator == null)
-        {
-            InstantiateTileCreator();
-        }
-        Rooms = tileCreator.CreateRooms(roomCells);
-        Hallways = tileCreator.CreateHallways(hallwayCells);
-
+        var doorPositions = levelGenerator.DoorPositions;
         levelGenerator.Clear();
 
-        tileCreator.UpdateTiles(Rooms);
+
+        Rooms = tileCreator.CreateRooms(roomCells, doorPositions);
+        // tileCreator.CreateRoomTiles(Rooms);
+        Hallways = tileCreator.CreateHallways(hallwayCells, Rooms);
+
+        // tileCreator.CreateHallwayTiles(Hallways);
+
+        // TODO task might be useless?
+        await tileCreator.FindNeighbours(Rooms);
+        tileCreator.CreateTiles(Rooms, Hallways);
 
         levelGenerator.Reset();
         Level++;
-    }
-
-    private void InstantiateLevelGenerator()
-    {
-        levelGenerator = gameObject.AddComponent<LevelGenerator>();
-        levelGenerator.CellSprite = CellSprite;
-        levelGenerator.IsDebug = IsDebug;
-    }
-
-    private void InstantiateTileCreator()
-    {
-        var floorTileObject = GridObject.transform.Find("Floor").gameObject;
-        var decorationTileObject = GridObject.transform.Find("Decoration").gameObject;
-        var collisionTileObject = GridObject.transform.Find("Collision").gameObject;
-
-        floorTilemap = floorTileObject.GetComponent<Tilemap>();
-        decorationTilemap = decorationTileObject.GetComponent<Tilemap>();
-        collisionTilemap = collisionTileObject.GetComponent<Tilemap>();
-
-        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap);
     }
 }
