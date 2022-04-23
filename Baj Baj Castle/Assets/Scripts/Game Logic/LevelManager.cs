@@ -97,7 +97,7 @@ public class LevelManager : MonoBehaviour
         // tileCreator.CreateHallwayTiles(Hallways);
 
         // TODO task might be useless?
-        tileCreator.FindNeighbours(Rooms);
+        tileCreator.FindNeighbouringRooms(Rooms);
         tileCreator.CreateTiles(Rooms, Hallways);
 
         levelGenerator.Reset();

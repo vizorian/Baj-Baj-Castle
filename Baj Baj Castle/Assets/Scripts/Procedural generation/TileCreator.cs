@@ -49,7 +49,7 @@ public class TileCreator
         return rooms;
     }
 
-    public void FindNeighbours(List<Room> rooms)
+    public void FindNeighbouringRooms(List<Room> rooms)
     {
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -104,14 +104,12 @@ public class TileCreator
             foreach (var tile in room.Tiles)
             {
                 // TODO check for doors
-                // if tile is at door position
                 if (tile.Type != TileType.None)
                 {
                     continue;
                 }
 
-                // If there's no tile diagonally adjacent to this one, it's a wall
-                if (!room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y + 1)
+                if (!room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y + 1) // If there's no tile diagonally adjacent to this one, it's a wall
                     || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                     || !room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
                     || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
@@ -133,35 +131,131 @@ public class TileCreator
             }
         }
 
-        //print door count
-        Debug.Log("Door count: " + rooms.SelectMany(x => x.Tiles).Where(x => x.Type == TileType.Door).Count());
-        //print wall count
-        Debug.Log("Wall count: " + rooms.SelectMany(x => x.Tiles).Where(x => x.Type == TileType.Wall).Count());
-
         foreach (var tile in hallwayTiles)
         {
-            // If there's no tile diagonally adjacent to this one, it's a wall
-            if (!hallwayTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y + 1)
+
+            if (!hallwayTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y + 1) // If there's no tile diagonally adjacent to this one, it's a wall
                 || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                 || !hallwayTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
                 || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
             {
-                // If there's a room tile of type Door in any direction, it's a floor
-                if (rooms.Any(r => r.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y && t.Type == TileType.Door)
-                                || r.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y && t.Type == TileType.Door)
-                                || r.Tiles.Any(t => t.X == tile.X && t.Y == tile.Y - 1 && t.Type == TileType.Door)
-                                || r.Tiles.Any(t => t.X == tile.X && t.Y == tile.Y + 1 && t.Type == TileType.Door)))
-                {
-                    tile.Type = TileType.Floor;
-                }
-                else
-                {
-                    tile.Type = TileType.Wall;
-                }
+                tile.Type = TileType.Wall;
+
+                // if (rooms.Any(r => r.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y && t.Type == TileType.Door) // If there's a room tile of type Door in any direction, it's a floor
+                //                 || r.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y && t.Type == TileType.Door)
+                //                 || r.Tiles.Any(t => t.X == tile.X && t.Y == tile.Y - 1 && t.Type == TileType.Door)
+                //                 || r.Tiles.Any(t => t.X == tile.X && t.Y == tile.Y + 1 && t.Type == TileType.Door)))
+                // {
+                //     tile.Type = TileType.Floor;
+                // }
             }
             else
             {
                 tile.Type = TileType.Floor;
+            }
+        }
+
+        //for each room, find hallway tiles of type Wall
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            Room room = rooms[i];
+            var roomWalls = room.Tiles.Where(t => t.Type == TileType.Wall).ToList();
+
+            // West wall
+            var westNearbyTiles = new List<TileData>();
+            foreach (var wall in roomWalls.Where(w => w.X == room.X_Min).ToList())
+            {
+                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X - 1 && x.Y == wall.Y);
+                if (nearbyTile != null)
+                {
+                    westNearbyTiles.Add(nearbyTile);
+                }
+            }
+            if (westNearbyTiles.Count > 3)
+            {
+                var middle = westNearbyTiles.Count / 2;
+                room.DoorPositions.Add(new Vector2(westNearbyTiles[middle].X + 1, westNearbyTiles[middle].Y));
+                room.DoorPositions.Add(new Vector2(westNearbyTiles[middle - 1].X + 1, westNearbyTiles[middle - 1].Y));
+
+                westNearbyTiles[middle].Type = TileType.Floor;
+                westNearbyTiles[middle - 1].Type = TileType.Floor;
+            }
+
+            // East wall
+            var eastNearbyTiles = new List<TileData>();
+            foreach (var wall in roomWalls.Where(w => w.X == room.X_Max).ToList())
+            {
+                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X + 1 && x.Y == wall.Y);
+                if (nearbyTile != null)
+                {
+                    eastNearbyTiles.Add(nearbyTile);
+                }
+            }
+            if (eastNearbyTiles.Count > 3)
+            {
+                var middle = eastNearbyTiles.Count / 2;
+                room.DoorPositions.Add(new Vector2(eastNearbyTiles[middle].X - 1, eastNearbyTiles[middle].Y));
+                room.DoorPositions.Add(new Vector2(eastNearbyTiles[middle - 1].X - 1, eastNearbyTiles[middle - 1].Y));
+
+                eastNearbyTiles[middle].Type = TileType.Floor;
+                eastNearbyTiles[middle - 1].Type = TileType.Floor;
+            }
+
+            // North wall
+            var northNearbyTiles = new List<TileData>();
+            var northTiles = new List<TileData>();
+            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Max).ToList())
+            {
+                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X && x.Y == wall.Y + 1);
+                if (nearbyTile != null)
+                {
+                    northNearbyTiles.Add(nearbyTile);
+                    northTiles.Add(wall);
+                }
+            }
+            if (northNearbyTiles.Count > 3)
+            {
+                var middle = northNearbyTiles.Count / 2;
+                northTiles[middle].Type = TileType.Door;
+                northTiles[middle - 1].Type = TileType.Door;
+                northNearbyTiles[middle].Type = TileType.Floor;
+                northNearbyTiles[middle - 1].Type = TileType.Floor;
+            }
+
+            // South wall
+            var southNearbyTiles = new List<TileData>();
+            var southTiles = new List<TileData>();
+            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Min).ToList())
+            {
+                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X && x.Y == wall.Y - 1);
+                if (nearbyTile != null)
+                {
+                    southNearbyTiles.Add(nearbyTile);
+                    southTiles.Add(wall);
+                }
+            }
+            if (southNearbyTiles.Count > 3)
+            {
+                var middle = southNearbyTiles.Count / 2;
+                southTiles[middle].Type = TileType.Door;
+                southTiles[middle - 1].Type = TileType.Door;
+                southNearbyTiles[middle].Type = TileType.Floor;
+                southNearbyTiles[middle - 1].Type = TileType.Floor;
+            }
+        }
+
+        foreach (var room in rooms)
+        {
+            foreach (var tile in room.Tiles)
+            {
+                // iterate through door positions and set them to door
+                foreach (var door in room.DoorPositions)
+                {
+                    if (tile.X == Mathf.RoundToInt(door.x) && tile.Y == Mathf.RoundToInt(door.y))
+                    {
+                        tile.Type = TileType.Door;
+                    }
+                }
             }
         }
 
@@ -221,7 +315,16 @@ public class TileCreator
                     directionalName = ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
                 }
             }
-            floorTilemap.SetTile(location, tileDict[baseName + directionalName]);
+            try
+            {
+                floorTilemap.SetTile(location, tileDict[baseName + directionalName]);
+
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                Debug.Log("Exception with tile " + baseName + directionalName);
+            }
         }
     }
 
@@ -259,13 +362,16 @@ public class TileCreator
         {
             return "SE";
         }
-        else if (!W && !E && N && S)
+        else if (tileType == TileType.Wall)
         {
-            return "NS";
-        }
-        else if (W && E && !N && !S)
-        {
-            return "WE";
+            if (!W && !E && N && S)
+            {
+                return "NS";
+            }
+            else if (W && E && !N && !S)
+            {
+                return "WE";
+            }
         }
 
         return "";
