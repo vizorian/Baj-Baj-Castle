@@ -11,8 +11,6 @@ public class LevelGenerator : MonoBehaviour
     // Outputs
     public List<Cell> Rooms = new List<Cell>();
     public List<Cell> Hallways = new List<Cell>();
-    public List<Vector2> DoorPositions = new List<Vector2>();
-
     // Constants
     public const int TILE_SIZE = 16;
     public const float PIXEL_SIZE = 0.01f;
@@ -260,7 +258,6 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    // TODO filter the top X cells by ratio
     private void FilterCells()
     {
         float widthAverage = 0;
@@ -274,8 +271,6 @@ public class LevelGenerator : MonoBehaviour
 
         widthAverage /= cells.Count;
         heightAverage /= cells.Count;
-
-        // Sort cells by area
 
         foreach (var cell in cells)
         {
@@ -384,29 +379,6 @@ public class LevelGenerator : MonoBehaviour
             print("Found " + hallways.Count + " hallways.");
             DrawEdges(hallways, Color.cyan, 3f);
             startTime = Time.realtimeSinceStartup;
-        }
-
-        // TODO search the whole thing?
-        // get hallway path positions
-        var doorPosition = new List<Vector2>();
-        var hallwayEdges = hallways.ToList();
-        for (int i = 0; i < hallwayEdges.Count; i++)
-        {
-            var hallway = hallwayEdges[i];
-            var nextHallway = hallwayEdges[(i + 1) % hallwayEdges.Count];
-
-            var doorPositions = hallway.GetNonSharedPoints(nextHallway);
-            if (doorPositions.Length > 0)
-            {
-                DoorPositions.Add(new Vector2((float)doorPositions[0].X, (float)doorPositions[0].Y));
-                DoorPositions.Add(new Vector2((float)doorPositions[1].X, (float)doorPositions[1].Y));
-                i++;
-            }
-            else
-            {
-                DoorPositions.Add(new Vector2((float)hallway.P1.X, (float)hallway.P1.Y));
-                DoorPositions.Add(new Vector2((float)hallway.P2.X, (float)hallway.P2.Y));
-            }
         }
 
         // carve out hallways
@@ -674,7 +646,7 @@ public class LevelGenerator : MonoBehaviour
 
                 var leftPoint = new Point(c1.SimulationCell.transform.position.x, c2.SimulationCell.transform.position.y);
 
-                // TODO: improve this
+                // TODO cleaner code
                 // check if point is within any of the cells
                 if (!Rooms.Any(c => c.IsPointInside(leftPoint)))
                 {
@@ -938,12 +910,12 @@ public class LevelGenerator : MonoBehaviour
         if (isDebug)
         {
             print("Starting simulation...");
+            foreach (var cell in cells)
+            {
+                cell.SimulationCell.SetActive(true);
+            }
+            startTime = Time.realtimeSinceStartup;
         }
-        foreach (var cell in cells)
-        {
-            cell.SimulationCell.SetActive(true);
-        }
-        startTime = Time.realtimeSinceStartup;
         startSimulation = true;
     }
 

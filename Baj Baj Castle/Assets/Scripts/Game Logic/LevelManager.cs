@@ -57,22 +57,40 @@ public class LevelManager : MonoBehaviour
         levelGenerator.GenerateLevel(level, isDebug, cellSprite);
     }
 
-    public async void GenerateLevelTiles()
+    public void Clear()
+    {
+        if (floorTilemap != null)
+        {
+            floorTilemap.ClearAllTiles();
+        }
+
+        if (decorationTilemap != null)
+        {
+            decorationTilemap.ClearAllTiles();
+        }
+
+        if (collisionTilemap != null)
+        {
+            collisionTilemap.ClearAllTiles();
+        }
+
+        tileCreator.Clear();
+    }
+
+    public void GenerateLevelTiles()
     {
         var roomCells = levelGenerator.Rooms;
         var hallwayCells = levelGenerator.Hallways;
-        var doorPositions = levelGenerator.DoorPositions;
         levelGenerator.Clear();
 
-
-        Rooms = tileCreator.CreateRooms(roomCells, doorPositions);
+        Rooms = tileCreator.CreateRooms(roomCells);
         // tileCreator.CreateRoomTiles(Rooms);
         Hallways = tileCreator.CreateHallways(hallwayCells, Rooms);
 
         // tileCreator.CreateHallwayTiles(Hallways);
 
         // TODO task might be useless?
-        await tileCreator.FindNeighbours(Rooms);
+        tileCreator.FindNeighbours(Rooms);
         tileCreator.CreateTiles(Rooms, Hallways);
 
         levelGenerator.Reset();

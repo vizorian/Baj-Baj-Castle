@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public Sprite CellSprite;
     public bool Debug = false;
     private GameState gameState;
-
+    private int level = 10;
     // References
     private Player player;
 
@@ -50,7 +50,8 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             print("Generating level");
-            levelManager.GenerateLevel(1);
+            levelManager.Clear();
+            levelManager.GenerateLevel(level);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftBracket))

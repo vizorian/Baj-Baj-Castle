@@ -22,11 +22,12 @@ public class TileCreator
     }
 
     // Puts room cells into a list of rooms with tiles
-    public List<Room> CreateRooms(List<Cell> roomCells, List<Vector2> doorPositions)
+    public List<Room> CreateRooms(List<Cell> roomCells)
     {
         List<Room> rooms = new List<Room>();
-        foreach (var cell in roomCells)
+        for (int i = 0; i < roomCells.Count; i++)
         {
+            Cell cell = roomCells[i];
             var halfWidth = cell.Width / 2;
             var halfHeight = cell.Height / 2;
 
@@ -35,41 +36,34 @@ public class TileCreator
             int endingX = startingX + cell.Width;
             int endingY = startingY + cell.Height;
 
-            var newRoom = new Room();
-            var tilesList = new List<TileData>();
+            var tilesToAdd = new List<TileData>();
             for (var x = startingX; x < endingX; x++)
             {
                 for (var y = startingY; y < endingY; y++)
                 {
-                    foreach (var door in doorPositions)
-                    {
-                        if (x == Mathf.RoundToInt(door.x) && y == Mathf.RoundToInt(door.y))
-                        {
-                            newRoom.DoorPositions.Add(door);
-                        }
-                    }
-                    tilesList.Add(new TileData(x, y, TileType.None));
+                    tilesToAdd.Add(new TileData(x, y, TileType.None));
                 }
             }
-            newRoom.Tiles = tilesList;
-            rooms.Add(newRoom);
+            rooms.Add(new Room(i, tilesToAdd));
         }
         return rooms;
     }
 
-    public Task FindNeighbours(List<Room> rooms)
+    public void FindNeighbours(List<Room> rooms)
     {
-        foreach (var room in rooms)
+        for (int i = 0; i < rooms.Count; i++)
         {
-            foreach (var otherRoom in rooms)
+            Room room = rooms[i];
+            for (int j = 0; j < rooms.Count; j++)
             {
-                if (room != otherRoom)
+                if (i != j)
                 {
+                    Room otherRoom = rooms[j];
+                    room.WallNearby(otherRoom);
                     room.SharesWall(otherRoom);
                 }
             }
         }
-        return Task.CompletedTask;
     }
 
     public void CreateTiles(List<Room> rooms, List<TileData> hallwayTiles)
@@ -79,39 +73,68 @@ public class TileCreator
 
         var allTiles = rooms.SelectMany(x => x.Tiles).ToList();
         allTiles.AddRange(hallwayTiles);
-        Debug.Log("Setting hallways");
-        // SetTiles(hallwayTiles);
-        Debug.Log("Setting rooms");
-        // SetTiles(roomTiles);
-        Debug.Log("Setting all tiles");
-        SetTiles(allTiles);
 
-        // Debug.Log("Setting walls");
-        // SetTiles(allTiles, wallTiles, floorTiles);
+        var floorTiles = allTiles.Where(x => x.Type == TileType.Floor).ToList();
+        var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
+        var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
+        SetTiles(doorTiles);
+        Debug.Log("floors");
+        SetTiles(floorTiles);
+        Debug.Log("walls");
+        SetTiles(wallTiles, floorTiles);
+
+    }
+
+    public void Clear()
+    {
+        floorTilemap.ClearAllTiles();
+        decorationTilemap.ClearAllTiles();
+        collisionTilemap.ClearAllTiles();
     }
 
     private void SetTileTypes(List<Room> rooms, List<TileData> hallwayTiles)
     {
-        foreach (var room in rooms)
+        for (int i = 0; i < rooms.Count; i++)
         {
+            Room room = rooms[i];
+            FloatingText.Create(i.ToString(), Color.red, new Vector3((room.X_Max + room.X_Min) * LevelGenerator.CELL_SIZE / 2, (room.Y_Max + room.Y_Min) * LevelGenerator.CELL_SIZE / 2, 0), 4f, 100f, 0f);
+            Debug.Log("Setting room tiles for room " + i);
             foreach (var tile in room.Tiles)
             {
                 // TODO check for doors
                 // if tile is at door position
-                if (room.DoorPositions.Any(door => door.x == tile.X && door.y == tile.Y))
+                if (tile.Type != TileType.None)
                 {
-                    tile.Type = TileType.Door;
+                    continue;
                 }
-                else if (tile.X == room.X_Min || tile.X == room.X_Max || tile.Y == room.Y_Min || tile.Y == room.Y_Max)
+
+                // If there's no tile diagonally adjacent to this one, it's a wall
+                if (!room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y + 1)
+                    || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
+                    || !room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
+                    || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
                 {
-                    tile.Type = TileType.Wall;
+                    if (room.DoorPositions.Any(door => Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y))
+                    {
+                        tile.Type = TileType.Door;
+                    }
+                    else
+                    {
+                        tile.Type = TileType.Wall;
+                    }
                 }
                 else
                 {
                     tile.Type = TileType.Floor;
                 }
+
             }
         }
+
+        //print door count
+        Debug.Log("Door count: " + rooms.SelectMany(x => x.Tiles).Where(x => x.Type == TileType.Door).Count());
+        //print wall count
+        Debug.Log("Wall count: " + rooms.SelectMany(x => x.Tiles).Where(x => x.Type == TileType.Wall).Count());
 
         foreach (var tile in hallwayTiles)
         {
@@ -142,13 +165,23 @@ public class TileCreator
 
     }
 
-    private void SetTiles(List<TileData> tiles)
+    private void SetTiles(List<TileData> tiles, List<TileData> tilesToCheck = null)
     {
-        var floorTiles = tiles.Where(x => x.Type == TileType.Floor).ToList();
-        var wallTiles = tiles.Where(x => x.Type == TileType.Wall).ToList();
+        if (tilesToCheck == null)
+        {
+            tilesToCheck = tiles;
+        }
+
+        // var floorTiles = tiles.Where(x => x.Type == TileType.Floor).ToList();
+        // var wallTiles = tiles.Where(x => x.Type == TileType.Wall).ToList();
+        // var doorTiles = tiles.Where(x => x.Type == TileType.Door).ToList();
+        // var copies = new TileData[floorTiles.Count + wallTiles.Count];
+        // floorTiles.CopyTo(copies);
+        // wallTiles.CopyTo(copies, floorTiles.Count);
+        // var allTiles = new List<TileData>(copies);
+
         foreach (var tile in tiles)
         {
-            List<TileData> tilesToCheck = new List<TileData>();
             var location = new Vector3Int(tile.X, tile.Y, 0);
             TileType tileType = TileType.None;
             string tileName = "";
@@ -157,14 +190,19 @@ public class TileCreator
                 case TileType.Wall:
                     tileType = TileType.Wall;
                     tileName += "Wall";
-                    tilesToCheck = wallTiles;
+                    tilesToCheck = tiles;
                     collisionTilemap.SetTile(location, tileDict["Collision"]);
                     break;
                 case TileType.Floor:
                     tileType = TileType.Floor;
                     tileName += "Floor";
-                    tilesToCheck = floorTiles;
+                    tilesToCheck = tiles;
                     break;
+                case TileType.Door:
+                    tileType = TileType.Door;
+                    tileName += "Door";
+                    floorTilemap.SetTile(location, tileDict[tileName]);
+                    continue;
             }
 
             // check all directions for any tile
@@ -216,6 +254,10 @@ public class TileCreator
         switch (tileType)
         {
             case TileType.Wall:
+                if (!W && !E && N && S)
+                {
+
+                }
                 break;
             case TileType.Floor:
                 break;
