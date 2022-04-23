@@ -77,11 +77,13 @@ public class TileCreator
         var floorTiles = allTiles.Where(x => x.Type == TileType.Floor).ToList();
         var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
         var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
+
+        Debug.Log("Doors");
         SetTiles(doorTiles);
-        Debug.Log("floors");
+        Debug.Log("Floors");
         SetTiles(floorTiles);
-        Debug.Log("walls");
-        SetTiles(wallTiles, floorTiles);
+        Debug.Log("Walls");
+        SetTiles(wallTiles, allTiles);
 
     }
 
@@ -172,47 +174,54 @@ public class TileCreator
             tilesToCheck = tiles;
         }
 
-        // var floorTiles = tiles.Where(x => x.Type == TileType.Floor).ToList();
-        // var wallTiles = tiles.Where(x => x.Type == TileType.Wall).ToList();
-        // var doorTiles = tiles.Where(x => x.Type == TileType.Door).ToList();
-        // var copies = new TileData[floorTiles.Count + wallTiles.Count];
-        // floorTiles.CopyTo(copies);
-        // wallTiles.CopyTo(copies, floorTiles.Count);
-        // var allTiles = new List<TileData>(copies);
-
         foreach (var tile in tiles)
         {
             var location = new Vector3Int(tile.X, tile.Y, 0);
             TileType tileType = TileType.None;
-            string tileName = "";
+            string baseName = "";
             switch (tile.Type)
             {
                 case TileType.Wall:
                     tileType = TileType.Wall;
-                    tileName += "Wall";
-                    tilesToCheck = tiles;
+                    baseName = "Wall";
                     collisionTilemap.SetTile(location, tileDict["Collision"]);
                     break;
                 case TileType.Floor:
                     tileType = TileType.Floor;
-                    tileName += "Floor";
-                    tilesToCheck = tiles;
+                    baseName = "Floor";
                     break;
                 case TileType.Door:
                     tileType = TileType.Door;
-                    tileName += "Door";
-                    floorTilemap.SetTile(location, tileDict[tileName]);
+                    floorTilemap.SetTile(location, tileDict["Door"]);
                     continue;
             }
 
-            // check all directions for any tile
-            var hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
-            var hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
-            var hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
-            var hasSouth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y - 1);
+            bool hasWest, hasEast, hasNorth, hasSouth;
 
-            tileName += ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
-            floorTilemap.SetTile(location, tileDict[tileName]);
+            // check all directionss for tiles
+            hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
+            hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
+            hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
+            hasSouth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y - 1);
+
+            var directionalName = ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
+            if (directionalName == "" && tileType == TileType.Wall) // corner
+            {
+                hasWest = tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
+                hasEast = tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
+                hasNorth = tiles.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
+                hasSouth = tiles.Any(t => t.X == tile.X && t.Y == tile.Y - 1);
+                directionalName = ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
+                if (directionalName == "") // straight
+                {
+                    hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y && (t.Type == TileType.Wall || t.Type == TileType.Door));
+                    hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y && (t.Type == TileType.Wall || t.Type == TileType.Door));
+                    hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1 && (t.Type == TileType.Wall || t.Type == TileType.Door));
+                    hasSouth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y - 1 && (t.Type == TileType.Wall || t.Type == TileType.Door));
+                    directionalName = ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
+                }
+            }
+            floorTilemap.SetTile(location, tileDict[baseName + directionalName]);
         }
     }
 
@@ -250,20 +259,13 @@ public class TileCreator
         {
             return "SE";
         }
-
-        switch (tileType)
+        else if (!W && !E && N && S)
         {
-            case TileType.Wall:
-                if (!W && !E && N && S)
-                {
-
-                }
-                break;
-            case TileType.Floor:
-                break;
-            default:
-                Debug.Log("ERROR" + tileType);
-                break;
+            return "NS";
+        }
+        else if (W && E && !N && !S)
+        {
+            return "WE";
         }
 
         return "";

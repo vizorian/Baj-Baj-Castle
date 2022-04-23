@@ -9,11 +9,8 @@ public class Room
     public int Id;
     public bool IsExplored = false;
     public List<Room> Neighbours = new List<Room>();
-    public List<Room> ConnectedRooms = new List<Room>();
+    public List<Room> JointRooms = new List<Room>();
     public List<TileData> Tiles;
-    // TODO PRIORITY get door positions from hallways as ints
-    // to do that, need to check if the hallway point is vertical or horizontal
-    // and then get the 2 rounded values nearby based on orientation.
     public List<Vector2> DoorPositions = new List<Vector2>();
     public int X_Max;
     public int X_Min;
@@ -24,11 +21,6 @@ public class Room
     {
         Id = id;
         Tiles = tiles;
-        UpdateSize();
-    }
-
-    private void UpdateSize()
-    {
         X_Max = Tiles.Max(x => x.X);
         Y_Max = Tiles.Max(x => x.Y);
         X_Min = Tiles.Min(x => x.X);
@@ -65,7 +57,6 @@ public class Room
         TileData first = null;
         TileData second = null;
 
-        // find two nearby tiles 
         if (matchingTiles.Count > 3)
         {
             var middle = matchingTiles.Count / 2;
@@ -74,7 +65,6 @@ public class Room
             DoorPositions.Add(new Vector2(first.X, first.Y));
             DoorPositions.Add(new Vector2(second.X, second.Y));
         }
-
 
         foreach (var tile in matchingTiles)
         {
@@ -87,7 +77,6 @@ public class Room
                     tile.Type = TileType.Door;
                     otherRoom.Tiles.Add(tile);
                     Tiles.Add(tile);
-
                 }
             }
         }
@@ -95,7 +84,7 @@ public class Room
 
     public void WallNearby(Room otherRoom)
     {
-        if (ConnectedRooms.Contains(otherRoom) || otherRoom.ConnectedRooms.Contains(this))
+        if (JointRooms.Contains(otherRoom) || otherRoom.JointRooms.Contains(this))
         {
             return;
         }
@@ -128,13 +117,11 @@ public class Room
 
         if (closeTile != null)
         {
-            ConnectedRooms.Add(otherRoom);
-            otherRoom.ConnectedRooms.Add(this);
-            Debug.Log("Room " + Id + " has a close wall with room " + otherRoom.Id);
+            JointRooms.Add(otherRoom);
+            otherRoom.JointRooms.Add(this);
 
             if (closeTile.X > X_Max)
             {
-                Debug.Log("Increasing wall to the right");
                 X_Max++;
                 for (int i = Y_Min; i <= Y_Max; i++)
                 {
@@ -143,7 +130,6 @@ public class Room
             }
             else if (closeTile.X < X_Min)
             {
-                Debug.Log("Increasing wall to the left");
                 X_Min--;
                 for (int i = Y_Min; i <= Y_Max; i++)
                 {
@@ -152,7 +138,6 @@ public class Room
             }
             else if (closeTile.Y > Y_Max)
             {
-                Debug.Log("Increasing wall above");
                 Y_Max++;
                 for (int i = X_Min; i <= X_Max; i++)
                 {
@@ -161,7 +146,6 @@ public class Room
             }
             else if (closeTile.Y < Y_Min)
             {
-                Debug.Log("Increasing wall to the bottom");
                 Y_Min--;
                 for (int i = X_Min; i <= X_Max; i++)
                 {
@@ -170,7 +154,8 @@ public class Room
             }
             else
             {
-                Debug.Log("ERROR. No wall found");
+                Debug.Log("Room " + Id + " could not find a joint with room " + otherRoom.Id);
+                // throw new System.Exception("Nearby wall not found");
             }
         }
     }

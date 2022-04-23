@@ -73,7 +73,14 @@ public class LevelManager : MonoBehaviour
         {
             collisionTilemap.ClearAllTiles();
         }
-
+        if (Rooms != null)
+        {
+            Rooms.Clear();
+        }
+        if (Hallways != null)
+        {
+            Hallways.Clear();
+        }
         tileCreator.Clear();
     }
 

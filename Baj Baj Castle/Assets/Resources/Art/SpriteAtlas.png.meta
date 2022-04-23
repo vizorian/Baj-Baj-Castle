@@ -329,6 +329,12 @@ TextureImporter:
   - first:
       213: 4631789285751986274
     second: Door
+  - first:
+      213: -5319939496029795333
+    second: WallWE
+  - first:
+      213: 4114149641635227039
+    second: WallNS
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -2706,7 +2712,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2714,6 +2720,48 @@ TextureImporter:
       bones: []
       spriteID: 26815bba0db674040800000000000000
       internalID: 4631789285751986274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallWE
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 136
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfbc290f637cb26b0800000000000000
+      internalID: -5319939496029795333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallNS
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 120
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f95e7762d45681930800000000000000
+      internalID: 4114149641635227039
       vertices: []
       indices: 
       edges: []
