@@ -78,13 +78,9 @@ public class TileCreator
         var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
         var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
 
-        Debug.Log("Doors");
         SetTiles(doorTiles);
-        Debug.Log("Floors");
         SetTiles(floorTiles);
-        Debug.Log("Walls");
         SetTiles(wallTiles, allTiles);
-
     }
 
     public void Clear()
@@ -100,10 +96,8 @@ public class TileCreator
         {
             Room room = rooms[i];
             FloatingText.Create(i.ToString(), Color.red, new Vector3((room.X_Max + room.X_Min) * LevelGenerator.CELL_SIZE / 2, (room.Y_Max + room.Y_Min) * LevelGenerator.CELL_SIZE / 2, 0), 4f, 100f, 0f);
-            Debug.Log("Setting room tiles for room " + i);
             foreach (var tile in room.Tiles)
             {
-                // TODO check for doors
                 if (tile.Type != TileType.None)
                 {
                     continue;
@@ -127,7 +121,6 @@ public class TileCreator
                 {
                     tile.Type = TileType.Floor;
                 }
-
             }
         }
 
@@ -147,93 +140,253 @@ public class TileCreator
         }
 
         //for each room, find hallway tiles of type Wall
-        for (int i = 0; i < rooms.Count; i++)
+        foreach (var room in rooms)
         {
-            Room room = rooms[i];
+            // Preparation
             var roomWalls = room.Tiles.Where(t => t.Type == TileType.Wall).ToList();
+            var tempNearbyTiles = new List<TileData>();
+            var tempRoomTiles = new List<TileData>();
+            List<TileData> nearbyGroup = new List<TileData>();
+            List<TileData> roomGroup = new List<TileData>();
 
             // West wall
-            var westNearbyTiles = new List<TileData>();
-            var westTiles = new List<TileData>();
-            foreach (var wall in roomWalls.Where(w => w.X == room.X_Min).ToList())
+            var westNearbyTileGroups = new List<List<TileData>>();
+            var westTileGroups = new List<List<TileData>>();
+            foreach (var wall in roomWalls.Where(w => w.X == room.X_Min).ToList()) // looping through all room walls
             {
-                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X - 1 && x.Y == wall.Y);
-                if (nearbyTile != null)
+                var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X - 1 && t.Y == wall.Y);
+                if (nearbyTile != null) // if tile exists
                 {
-                    westNearbyTiles.Add(nearbyTile);
-                    westTiles.Add(wall);
+                    tempNearbyTiles.Add(nearbyTile);
+                    tempRoomTiles.Add(wall);
                 }
             }
-            if (westNearbyTiles.Count > 3)
+            for (int i = 0; i < tempNearbyTiles.Count - 1; i++)
             {
-                var middle = westNearbyTiles.Count / 2;
-                westNearbyTiles[middle].Type = TileType.Floor;
-                westNearbyTiles[middle - 1].Type = TileType.Floor;
-                westTiles[middle].Type = TileType.Floor;
-                westTiles[middle - 1].Type = TileType.Floor;
+                var isLast = false;
+                nearbyGroup.Add(tempNearbyTiles[i]);
+                roomGroup.Add(tempRoomTiles[i]);
+                if (tempNearbyTiles[i].X != tempNearbyTiles[i + 1].X || Mathf.Abs(tempNearbyTiles[i].Y - tempNearbyTiles[i + 1].Y) > 1) // if tile out of range
+                {
+                    // create new group
+                    westNearbyTileGroups.Add(nearbyGroup);
+                    westTileGroups.Add(roomGroup);
+                    nearbyGroup = new List<TileData>();
+                    roomGroup = new List<TileData>();
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    i++;
+                    if (i == tempNearbyTiles.Count - 1)
+                    {
+                        isLast = true;
+                    }
+                }
+                else if (i == tempNearbyTiles.Count - 2)
+                {
+                    isLast = true;
+
+                }
+                if (isLast)
+                {
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    westNearbyTileGroups.Add(nearbyGroup);
+                    westTileGroups.Add(roomGroup);
+                }
+            }
+            for (int i = 0; i < westNearbyTileGroups.Count; i++)
+            {
+                if (westNearbyTileGroups[i].Count > 3)
+                {
+                    var middle = westNearbyTileGroups[i].Count / 2;
+                    westNearbyTileGroups[i][middle].Type = TileType.Floor;
+                    westNearbyTileGroups[i][middle - 1].Type = TileType.Floor;
+                    westTileGroups[i][middle].Type = TileType.Door;
+                    westTileGroups[i][middle - 1].Type = TileType.Door;
+                }
             }
 
             // East wall
-            var eastNearbyTiles = new List<TileData>();
-            var eastTiles = new List<TileData>();
-            foreach (var wall in roomWalls.Where(w => w.X == room.X_Max).ToList())
+            tempNearbyTiles = new List<TileData>();
+            tempRoomTiles = new List<TileData>();
+            nearbyGroup = new List<TileData>();
+            roomGroup = new List<TileData>();
+            var eastNearbyTileGroups = new List<List<TileData>>();
+            var eastTileGroups = new List<List<TileData>>();
+            foreach (var wall in roomWalls.Where(w => w.X == room.X_Max).ToList()) // looping through all room walls
             {
-                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X + 1 && x.Y == wall.Y);
-                if (nearbyTile != null)
+                var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X + 1 && t.Y == wall.Y);
+                if (nearbyTile != null) // if tile exists
                 {
-                    eastNearbyTiles.Add(nearbyTile);
-                    eastTiles.Add(wall);
+                    tempNearbyTiles.Add(nearbyTile);
+                    tempRoomTiles.Add(wall);
                 }
             }
-            if (eastNearbyTiles.Count > 3)
+            for (int i = 0; i < tempNearbyTiles.Count - 1; i++)
             {
-                var middle = eastNearbyTiles.Count / 2;
-                eastNearbyTiles[middle].Type = TileType.Floor;
-                eastNearbyTiles[middle - 1].Type = TileType.Floor;
-                eastTiles[middle].Type = TileType.Floor;
-                eastTiles[middle - 1].Type = TileType.Floor;
+                var isLast = false;
+                nearbyGroup.Add(tempNearbyTiles[i]);
+                roomGroup.Add(tempRoomTiles[i]);
+                if (tempNearbyTiles[i].X != tempNearbyTiles[i + 1].X || Mathf.Abs(tempNearbyTiles[i].Y - tempNearbyTiles[i + 1].Y) > 1) // if tile out of range
+                {
+                    // create new group
+                    eastNearbyTileGroups.Add(nearbyGroup);
+                    eastTileGroups.Add(roomGroup);
+                    nearbyGroup = new List<TileData>();
+                    roomGroup = new List<TileData>();
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    i++;
+                    if (i == tempNearbyTiles.Count - 1)
+                    {
+                        isLast = true;
+                    }
+                }
+                else if (i == tempNearbyTiles.Count - 2)
+                {
+                    isLast = true;
+
+                }
+                if (isLast)
+                {
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    eastNearbyTileGroups.Add(nearbyGroup);
+                    eastTileGroups.Add(roomGroup);
+                }
+            }
+            for (int i = 0; i < eastNearbyTileGroups.Count; i++)
+            {
+                if (eastNearbyTileGroups[i].Count > 3)
+                {
+                    var middle = eastNearbyTileGroups[i].Count / 2;
+                    eastNearbyTileGroups[i][middle].Type = TileType.Floor;
+                    eastNearbyTileGroups[i][middle - 1].Type = TileType.Floor;
+                    eastTileGroups[i][middle].Type = TileType.Door;
+                    eastTileGroups[i][middle - 1].Type = TileType.Door;
+                }
             }
 
             // North wall
-            var northNearbyTiles = new List<TileData>();
-            var northTiles = new List<TileData>();
-            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Max).ToList())
+            tempNearbyTiles = new List<TileData>();
+            tempRoomTiles = new List<TileData>();
+            nearbyGroup = new List<TileData>();
+            roomGroup = new List<TileData>();
+            var northNearbyTileGroups = new List<List<TileData>>();
+            var northTileGroups = new List<List<TileData>>();
+            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Max).ToList()) // looping through all room walls
             {
-                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X && x.Y == wall.Y + 1);
-                if (nearbyTile != null)
+                var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X && t.Y == wall.Y + 1);
+                if (nearbyTile != null) // if tile exists
                 {
-                    northNearbyTiles.Add(nearbyTile);
-                    northTiles.Add(wall);
+                    tempNearbyTiles.Add(nearbyTile);
+                    tempRoomTiles.Add(wall);
                 }
             }
-            if (northNearbyTiles.Count > 3)
+            for (int i = 0; i < tempNearbyTiles.Count - 1; i++)
             {
-                var middle = northNearbyTiles.Count / 2;
-                northTiles[middle].Type = TileType.Door;
-                northTiles[middle - 1].Type = TileType.Door;
-                northNearbyTiles[middle].Type = TileType.Floor;
-                northNearbyTiles[middle - 1].Type = TileType.Floor;
+                var isLast = false;
+                nearbyGroup.Add(tempNearbyTiles[i]);
+                roomGroup.Add(tempRoomTiles[i]);
+                if (tempNearbyTiles[i].Y != tempNearbyTiles[i + 1].Y || Mathf.Abs(tempNearbyTiles[i].X - tempNearbyTiles[i + 1].X) > 1) // if tile out of range
+                {
+                    // create new group
+                    northNearbyTileGroups.Add(nearbyGroup);
+                    northTileGroups.Add(roomGroup);
+                    nearbyGroup = new List<TileData>();
+                    roomGroup = new List<TileData>();
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    i++;
+                    if (i == tempNearbyTiles.Count - 1)
+                    {
+                        isLast = true;
+                    }
+                }
+                else if (i == tempNearbyTiles.Count - 2)
+                {
+                    isLast = true;
+
+                }
+                if (isLast)
+                {
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    northNearbyTileGroups.Add(nearbyGroup);
+                    northTileGroups.Add(roomGroup);
+                }
+            }
+            for (int i = 0; i < northNearbyTileGroups.Count; i++)
+            {
+                if (northNearbyTileGroups[i].Count > 3)
+                {
+                    var middle = northNearbyTileGroups[i].Count / 2;
+                    northNearbyTileGroups[i][middle].Type = TileType.Floor;
+                    northNearbyTileGroups[i][middle - 1].Type = TileType.Floor;
+                    northTileGroups[i][middle].Type = TileType.Door;
+                    northTileGroups[i][middle - 1].Type = TileType.Door;
+                }
             }
 
             // South wall
-            var southNearbyTiles = new List<TileData>();
-            var southTiles = new List<TileData>();
-            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Min).ToList())
+            tempNearbyTiles = new List<TileData>();
+            tempRoomTiles = new List<TileData>();
+            nearbyGroup = new List<TileData>();
+            roomGroup = new List<TileData>();
+            var southNearbyTileGroups = new List<List<TileData>>();
+            var southTileGroups = new List<List<TileData>>();
+            foreach (var wall in roomWalls.Where(w => w.Y == room.Y_Min).ToList()) // looping through all room walls
             {
-                var nearbyTile = hallwayTiles.FirstOrDefault(x => x.X == wall.X && x.Y == wall.Y - 1);
-                if (nearbyTile != null)
+                var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X && t.Y == wall.Y - 1);
+                if (nearbyTile != null) // if tile exists
                 {
-                    southNearbyTiles.Add(nearbyTile);
-                    southTiles.Add(wall);
+                    tempNearbyTiles.Add(nearbyTile);
+                    tempRoomTiles.Add(wall);
                 }
             }
-            if (southNearbyTiles.Count > 3)
+            for (int i = 0; i < tempNearbyTiles.Count - 1; i++)
             {
-                var middle = southNearbyTiles.Count / 2;
-                southTiles[middle].Type = TileType.Door;
-                southTiles[middle - 1].Type = TileType.Door;
-                southNearbyTiles[middle].Type = TileType.Floor;
-                southNearbyTiles[middle - 1].Type = TileType.Floor;
+                var isLast = false;
+                nearbyGroup.Add(tempNearbyTiles[i]);
+                roomGroup.Add(tempRoomTiles[i]);
+                if (tempNearbyTiles[i].Y != tempNearbyTiles[i + 1].Y || Mathf.Abs(tempNearbyTiles[i].X - tempNearbyTiles[i + 1].X) > 1) // if tile out of range
+                {
+                    // create new group
+                    southNearbyTileGroups.Add(nearbyGroup);
+                    southTileGroups.Add(roomGroup);
+                    nearbyGroup = new List<TileData>();
+                    roomGroup = new List<TileData>();
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    i++;
+                    if (i == tempNearbyTiles.Count - 1)
+                    {
+                        isLast = true;
+                    }
+                }
+                else if (i == tempNearbyTiles.Count - 2)
+                {
+                    isLast = true;
+
+                }
+                if (isLast)
+                {
+                    nearbyGroup.Add(tempNearbyTiles[i + 1]);
+                    roomGroup.Add(tempRoomTiles[i + 1]);
+                    southNearbyTileGroups.Add(nearbyGroup);
+                    southTileGroups.Add(roomGroup);
+                }
+            }
+            for (int i = 0; i < southNearbyTileGroups.Count; i++)
+            {
+                if (southNearbyTileGroups[i].Count > 3)
+                {
+                    var middle = southNearbyTileGroups[i].Count / 2;
+                    southNearbyTileGroups[i][middle].Type = TileType.Floor;
+                    southNearbyTileGroups[i][middle - 1].Type = TileType.Floor;
+                    southTileGroups[i][middle].Type = TileType.Door;
+                    southTileGroups[i][middle - 1].Type = TileType.Door;
+                }
             }
         }
     }

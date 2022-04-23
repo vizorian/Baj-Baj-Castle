@@ -152,11 +152,6 @@ public class Room
                     Tiles.Add(new TileData(i, Y_Min, TileType.None));
                 }
             }
-            else
-            {
-                Debug.Log("Room " + Id + " could not find a joint with room " + otherRoom.Id);
-                // throw new System.Exception("Nearby wall not found");
-            }
         }
     }
 
