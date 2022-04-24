@@ -60,6 +60,17 @@ public class TileCreator
                 {
                     Room otherRoom = rooms[j];
                     room.WallNearby(otherRoom);
+                }
+            }
+        }
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            Room room = rooms[i];
+            for (int j = 0; j < rooms.Count; j++)
+            {
+                if (i != j)
+                {
+                    Room otherRoom = rooms[j];
                     room.SharesWall(otherRoom);
                 }
             }

@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventoryItemSlot : MonoBehaviour
+public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
     private Image icon;
@@ -20,18 +21,6 @@ public class InventoryItemSlot : MonoBehaviour
     private TextMeshProUGUI stackCount;
 
     private InventoryItem item;
-    private void FixedUpdate()
-    {
-        // check if mouse is over the slot
-        if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), Input.mousePosition))
-        {
-            // Tooltip.ShowTooltip_Static(ToTooltipString(), Input.mousePosition, true);
-        }
-        else
-        {
-            // Tooltip.HideTooltip_Static();
-        }
-    }
 
     public void Set(InventoryItem item)
     {
@@ -61,6 +50,7 @@ public class InventoryItemSlot : MonoBehaviour
             // description
             tooltip += "Damage: " + item.Data.ItemProperties.Damage + " " + item.Data.ItemProperties.DamageType + " damage\n";
             tooltip += "Attack speed: " + item.Data.ItemProperties.Cooldown + " attacks per second\n";
+            tooltip += "Critical chance: " + item.Data.ItemProperties.CriticalChance + "%\n";
             tooltip += "Reach: " + item.Data.ItemProperties.Range + " units\n";
             tooltip += "Speed: " + item.Data.ItemProperties.Speed + " units\n";
             tooltip += "Knockback: " + item.Data.ItemProperties.Knockback + "\n";
@@ -69,4 +59,13 @@ public class InventoryItemSlot : MonoBehaviour
         return tooltip;
     }
 
+    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+    {
+        Tooltip.ShowTooltip_Static(ToTooltipString());
+    }
+
+    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
+    {
+        Tooltip.HideTooltip_Static();
+    }
 }

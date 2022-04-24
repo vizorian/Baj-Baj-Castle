@@ -30,7 +30,6 @@ public class Interactable : Collidable
 
         if (!collisions)
         {
-            // Tooltip.HideTooltip_Static();
             _lineRenderer.positionCount = 0;
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,16 +9,12 @@ using UnityEngine.UI;
 public class Tooltip : MonoBehaviour
 {
     public static Tooltip Instance { get; private set; }
-
-    // private float timer = 0.1f;
-    // private float currentTimer = 0f;
-    private bool isUsed = false;
     private RectTransform canvasTransform;
     private RectTransform rectTransform;
     private TextMeshProUGUI text;
     private RectTransform backgroundTransform;
     private Vector2 position;
-
+    private Transform followTarget;
     private void Awake()
     {
         Instance = this;
@@ -37,7 +34,15 @@ public class Tooltip : MonoBehaviour
 
     private void UpdatePosition()
     {
-        Vector2 newPosition = position;
+        Vector2 newPosition;
+        if (followTarget != null)
+        {
+            newPosition = Camera.main.WorldToViewportPoint(followTarget.position) * canvasTransform.sizeDelta;
+        }
+        else
+        {
+            newPosition = Input.mousePosition;
+        }
 
         // Check if tooltip is off screen
         if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
@@ -53,31 +58,28 @@ public class Tooltip : MonoBehaviour
         rectTransform.anchoredPosition = newPosition;
     }
 
-    private void ShowTooltip(string text, Vector2 location, bool useMousePosition)
+    private void ShowTooltip(string text, Transform target)
     {
-        isUsed = true;
-        if (useMousePosition)
+        followTarget = target;
+
+        if (followTarget != null)
         {
-            position = Input.mousePosition / canvasTransform.localScale.x;
+            position = Camera.main.WorldToViewportPoint(followTarget.position) * canvasTransform.sizeDelta;
         }
         else
         {
-            position = Camera.main.WorldToViewportPoint(location) * canvasTransform.sizeDelta;
+            position = Input.mousePosition / canvasTransform.localScale.x;
         }
 
-        SetText(text);
         UpdatePosition();
+        SetText(text);
         gameObject.SetActive(true);
     }
 
     private void HideTooltip()
     {
-        if (!isUsed)
-        {
-            gameObject.SetActive(false);
-        }
-
-        isUsed = false;
+        gameObject.SetActive(false);
+        followTarget = null;
     }
 
     private void SetText(string text)
@@ -89,9 +91,9 @@ public class Tooltip : MonoBehaviour
         backgroundTransform.sizeDelta = textSize + padding;
     }
 
-    public static void ShowTooltip_Static(string text, Vector2 position, bool useMousePosition = false)
+    public static void ShowTooltip_Static(string text, Transform target = null)
     {
-        Instance.ShowTooltip(text, position, useMousePosition);
+        Instance.ShowTooltip(text, target);
     }
 
     public static void HideTooltip_Static()
