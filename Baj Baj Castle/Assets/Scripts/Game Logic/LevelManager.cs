@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,9 +19,18 @@ public class LevelManager : MonoBehaviour
     private Tilemap collisionTilemap;
     public List<Room> Rooms;
     public List<TileData> Hallways;
+    public Room StartRoom;
+    public Room ExitRoom;
+    public List<GameObject> Items = new List<GameObject>();
+    public List<GameObject> Actors = new List<GameObject>();
+    public List<GameObject> Triggers = new List<GameObject>();
+    public List<GameObject> Objects = new List<GameObject>();
+    public GameObject Player;
 
     public bool IsGeneratingLevel = false;
     public bool IsGenerated = false;
+    public bool IsLoaded = false;
+    public bool StartingLevelPopulation = false;
 
     private void Update()
     {
@@ -46,7 +56,7 @@ public class LevelManager : MonoBehaviour
         var floorTilemap = this.gridObject.transform.Find("Floor").GetComponent<Tilemap>();
         var decorationTilemap = this.gridObject.transform.Find("Decoration").GetComponent<Tilemap>();
         var collisionTilemap = this.gridObject.transform.Find("Collision").GetComponent<Tilemap>();
-        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap);
+        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap, isDebug);
     }
 
     public void GenerateLevel(int level)
@@ -57,8 +67,11 @@ public class LevelManager : MonoBehaviour
         levelGenerator.GenerateLevel(level, isDebug, cellSprite);
     }
 
-    public void Clear()
+    public void Cleanup()
     {
+        tileCreator.Cleanup();
+        levelGenerator.Cleanup();
+
         if (floorTilemap != null)
         {
             floorTilemap.ClearAllTiles();
@@ -73,33 +86,105 @@ public class LevelManager : MonoBehaviour
         {
             collisionTilemap.ClearAllTiles();
         }
+
         if (Rooms != null)
         {
             Rooms.Clear();
         }
+
         if (Hallways != null)
         {
             Hallways.Clear();
         }
-        tileCreator.Clear();
+
+        foreach (var item in Items)
+        {
+            Destroy(item);
+        }
+        Items.Clear();
+
+        foreach (var actor in Actors)
+        {
+            Destroy(actor);
+        }
+        Actors.Clear();
+
+        foreach (var trigger in Triggers)
+        {
+            Destroy(trigger);
+        }
+        Triggers.Clear();
+
+        foreach (var object_ in Objects)
+        {
+            Destroy(object_);
+        }
+        Objects.Clear();
+
+        if (Player != null)
+        {
+            Player.SetActive(false);
+        }
+
+        IsGenerated = false;
+        IsGeneratingLevel = false;
+        IsLoaded = false;
+        StartingLevelPopulation = false;
+    }
+
+    // TODO: Fill level with content
+    public void PopulateLevel(int level)
+    {
+        StartingLevelPopulation = true;
+
+        CreateEndpoints();
+    }
+
+    private void CreateEndpoints()
+    {
+        // set starting room as random room
+        StartRoom = Rooms[UnityEngine.Random.Range(0, Rooms.Count)];
+
+        // set exit room as random room that is not the starting room and is not a neighbor of the starting room and is furthest away
+
+        do
+        {
+            ExitRoom = Rooms[UnityEngine.Random.Range(0, Rooms.Count)];
+        }
+        while (ExitRoom == StartRoom || ExitRoom.Neighbours.Contains(StartRoom));
+
+        // spawn player at center of starting room
+        if (Player != null)
+        {
+            Player.transform.position = new Vector3(StartRoom.Center.X * LevelGenerator.CELL_SIZE, StartRoom.Center.Y * LevelGenerator.CELL_SIZE, 0);
+            Player.SetActive(true);
+        }
+        else
+        {
+            Player = Instantiate(GameAssets.Instance.playerPrefab, new Vector2(StartRoom.Center.X * LevelGenerator.CELL_SIZE, StartRoom.Center.Y * LevelGenerator.CELL_SIZE), Quaternion.identity);
+            Camera.main.GetComponent<CameraMovement>().target = Player.transform;
+        }
+
+        // create exit from level at center of exit room
+        Triggers.Add(Instantiate(GameAssets.Instance.triggers[0], new Vector2(ExitRoom.Center.X * LevelGenerator.CELL_SIZE, ExitRoom.Center.Y * LevelGenerator.CELL_SIZE), Quaternion.identity));
+        tileCreator.OverrideTile(ExitRoom.Center, "Exit");
     }
 
     public void GenerateLevelTiles()
     {
         var roomCells = levelGenerator.Rooms;
         var hallwayCells = levelGenerator.Hallways;
-        levelGenerator.Clear();
 
         Rooms = tileCreator.CreateRooms(roomCells);
-        // tileCreator.CreateRoomTiles(Rooms);
         Hallways = tileCreator.CreateHallways(hallwayCells, Rooms);
+        levelGenerator.Cleanup();
 
         // tileCreator.CreateHallwayTiles(Hallways);
 
         tileCreator.FindNeighbouringRooms(Rooms);
         tileCreator.CreateTiles(Rooms, Hallways);
 
-        levelGenerator.Reset();
         Level++;
+        IsLoaded = true;
     }
 }

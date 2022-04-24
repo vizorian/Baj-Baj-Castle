@@ -44,7 +44,7 @@ public class LevelGenerator : MonoBehaviour
     private float startTime;
     private float endTime;
     public bool IsCompleted { get { return isSimulated && isProcessed && isMapped; } }
-    public void Clear()
+    public void Cleanup()
     {
         foreach (var cell in cells)
         {
@@ -63,6 +63,7 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(cell.PhysicsCell);
             }
         }
+        cells.Clear();
 
         foreach (var cell in Rooms)
         {
@@ -81,6 +82,7 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(cell.PhysicsCell);
             }
         }
+        Rooms.Clear();
 
         foreach (var cell in Hallways)
         {
@@ -99,13 +101,8 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(cell.PhysicsCell);
             }
         }
-    }
-
-    public void Reset()
-    {
-        Rooms.Clear();
         Hallways.Clear();
-        cells.Clear();
+
         delaunayGraph = null;
         levelGraph = null;
         simulationLoops = 0;
@@ -136,7 +133,6 @@ public class LevelGenerator : MonoBehaviour
         isProcessed = false;
         isMapped = false;
         simulationLoops = 0;
-
 
         CreateCells(Complexity);
         if (isDebug)

@@ -29,7 +29,12 @@ public class GameAssets : MonoBehaviour
     }
 
     public GameObject floatingTextObject;
-    public GameObject tooltipObject;
     public Dictionary<string, Tile> tiles;
+
+    public GameObject playerPrefab;
+    public List<GameObject> enemyPrefabs;
+    public List<GameObject> itemPrefabs;
+    public List<GameObject> objectPrefabs;
+    public List<GameObject> triggers;
 }
 

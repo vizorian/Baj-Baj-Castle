@@ -15,9 +15,9 @@ public class Interactable : Collidable
     private protected bool collisions = false;
     private protected bool up, right, down, left = false;
 
-    private protected override void Start()
+    private protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (_lineRenderer == null)

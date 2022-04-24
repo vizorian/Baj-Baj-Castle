@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // This class is responsible for managing everything related to the game.
 // It is responsible for generating levels, spawning enemies, and managing the player's health.
@@ -14,22 +15,19 @@ public class GameManager : MonoBehaviour
 
     // Resources
     private LevelManager levelManager;
+    public GameObject Canvas;
     public GameObject GridObject;
     public Sprite CellSprite;
-    public bool Debug = false;
-    private GameState gameState;
-    private int level = 1;
+    public bool IsDebug = false;
+    private bool isNextLevel;
+
+    public int Level = 1;
+    public int MaxLevels = 3;
+
     // References
     private Player player;
-
     // Logic
     public SaveData saveData;
-
-    void Start()
-    {
-        levelManager = gameObject.AddComponent<LevelManager>();
-        levelManager.InstantiateComponent(CellSprite, GridObject, Debug);
-    }
 
     void Awake()
     {
@@ -43,46 +41,41 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(GridObject);
     }
+
+    bool isSceneLoaded = false;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        // TODO clean this up
+        // potentially do game states
+        if (SceneManager.GetActiveScene().name == "Game")
         {
-            print("Generating level " + level);
-            levelManager.Clear();
-            levelManager.GenerateLevel(level++);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftBracket))
-        {
-            if (player == null)
+            if (!isSceneLoaded || isNextLevel)
             {
-                FindPlayer();
-            }
-            // Save player data
-            SaveState();
-        }
+                if (isNextLevel)
+                {
+                    isNextLevel = false;
+                    levelManager.Cleanup();
+                    levelManager.GenerateLevel(Level);
+                }
+                else
+                {
+                    isSceneLoaded = true;
+                    levelManager = gameObject.AddComponent<LevelManager>();
+                    levelManager.InstantiateComponent(CellSprite, GridObject, IsDebug);
+                    levelManager.GenerateLevel(Level);
+                }
 
-        if (Input.GetKeyDown(KeyCode.RightBracket))
-        {
-            if (player == null)
-            {
-                FindPlayer();
             }
-            // Load player data
-            LoadState();
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (player == null)
+            else
             {
-                FindPlayer();
+                if (!levelManager.StartingLevelPopulation && levelManager.IsGenerated)
+                {
+                    levelManager.PopulateLevel(Level);
+                }
             }
-            LoadState();
-            // Set player data
-            player.SetSaveData(saveData);
         }
     }
 
@@ -92,13 +85,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Saving
-    /*
-    INT Gold
-    INT StrengthUpgradeLevel
-    INT AgilityUpgradeLevel
-    INT IntelligenceUpgradeLevel
-    */
-    public void SaveState()
+    public void SavePlayerData()
     {
         string path = Application.persistentDataPath + "/save.dat";
         FileStream file = File.Create(path);
@@ -107,11 +94,8 @@ public class GameManager : MonoBehaviour
         // Save player data
         if (player != null)
         {
+            print("Player found, taking new data.");
             saveData = player.GetSaveData();
-        }
-        else
-        {
-            saveData = new SaveData();
         }
 
         bf.Serialize(file, saveData);
@@ -121,14 +105,12 @@ public class GameManager : MonoBehaviour
         print("Game saved to " + path);
     }
 
-    public void LoadState()
+    public void LoadPlayerData()
     {
         string path = Application.persistentDataPath + "/save.dat";
         if (File.Exists(path))
         {
-            print("file found at " + path);
             FileStream file = File.Open(path, FileMode.Open);
-            print("file length: " + file.Length);
             if (file.Length > 0)
             {
                 BinaryFormatter bf = new BinaryFormatter();
@@ -140,31 +122,71 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                print("No save data found");
+                print("Empty file found. New game.");
+                saveData = new SaveData();
             }
+        }
+        else
+        {
+            print("No save data found. New game.");
+            saveData = new SaveData();
         }
     }
 
-    // This method is called when the player presses the "Start" button.
-    // It changes the game state to "Castle".
-    // It brings the player to Castle mode.
-    public void StartGame()
+    public void DeletePlayerData()
     {
-        gameState = GameState.Castle;
+        string path = Application.persistentDataPath + "/save.dat";
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+            print("Deleted save data.");
+        }
     }
 
+    // This method is called when the player presses the "Play" button
+    // It loads Castle mode if the player has not yet played the game before
+    // Else, escape mode
+    public void PlayGame()
+    {
+        LoadPlayerData();
+        if (saveData.IsNewGame)
+        {
+            saveData.IsNewGame = false;
+            SavePlayerData();
+
+            Debug.Log("Loading game scene");
+            // loading escape mode
+            Loader.Load(Loader.Scene.Game);
+        }
+        else
+        {
+            Debug.Log("Continuing game & opening Castle mode.");
+        }
+    }
+
+    public void QuitToDesktop()
+    {
+        Application.Quit();
+    }
+
+    // TODO death
     // This method is called when the player dies.
-    // It brings the player back to the Castle mode.
-    public void PlayerDied()
+    // It brings the player to the GameOver scene.
+    public void Defeat()
     {
-
+        Debug.Log("You died");
+        throw new NotImplementedException();
+        // Loader.Load(Loader.Scene.GameOver);
     }
 
+    // TODO victory
     // This method is called when the player wins.
     // It stops the game and displays a victory message.
-    public void PlayerWon()
+    public void Victory()
     {
-
+        Debug.Log("Won the game");
+        throw new NotImplementedException();
+        // Loader.Load(Loader.Scene.GameOver);
     }
 
     // This method is called when the player presses the restart button.
@@ -178,6 +200,9 @@ public class GameManager : MonoBehaviour
     // It generates a new level.
     public void NextLevel()
     {
-
+        SavePlayerData();
+        Level++;
+        isNextLevel = true;
+        Debug.Log("Loading new level");
     }
 }

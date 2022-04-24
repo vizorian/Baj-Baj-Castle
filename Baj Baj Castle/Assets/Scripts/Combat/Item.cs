@@ -16,7 +16,7 @@ public class Item : Collidable
     public float Knockback;
     public float Range;
 
-    private protected override void Start()
+    private protected override void Awake()
     {
         _edgeCollider = GetComponent<EdgeCollider2D>();
     }

@@ -16,6 +16,7 @@ public class Room
     public int X_Min;
     public int Y_Max;
     public int Y_Min;
+    public TileData Center;
 
     public Room(int id, List<TileData> tiles)
     {
@@ -25,6 +26,7 @@ public class Room
         Y_Max = Tiles.Max(x => x.Y);
         X_Min = Tiles.Min(x => x.X);
         Y_Min = Tiles.Min(x => x.Y);
+        Center = Tiles.First(x => x.X == (X_Max + X_Min) / 2 && x.Y == (Y_Max + Y_Min) / 2);
     }
 
     public void SharesWall(Room otherRoom)
