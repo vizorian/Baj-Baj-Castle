@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour
     public bool IsGenerated = false;
     public bool IsLoaded = false;
     public bool StartingLevelPopulation = false;
+    public bool IsPopulated = false;
 
     private void Update()
     {
@@ -126,6 +127,7 @@ public class LevelManager : MonoBehaviour
             Player.SetActive(false);
         }
 
+        IsPopulated = false;
         IsGenerated = false;
         IsGeneratingLevel = false;
         IsLoaded = false;
@@ -138,6 +140,8 @@ public class LevelManager : MonoBehaviour
         StartingLevelPopulation = true;
 
         CreateEndpoints();
+
+        IsPopulated = true;
     }
 
     private void CreateEndpoints()

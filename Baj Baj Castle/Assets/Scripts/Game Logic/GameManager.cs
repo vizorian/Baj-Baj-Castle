@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 // This class is responsible for managing everything related to the game.
 // It is responsible for generating levels, spawning enemies, and managing the player's health.
@@ -40,6 +41,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // TODO remove
+        DeletePlayerData();
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(GridObject);
     }
@@ -52,7 +55,7 @@ public class GameManager : MonoBehaviour
         // potentially do game states
         if (SceneManager.GetActiveScene().name == "Game")
         {
-            if (!isSceneLoaded || isNextLevel)
+            if (!isSceneLoaded || isNextLevel) // if scene is loaded or next level
             {
                 if (isNextLevel)
                 {
@@ -67,13 +70,29 @@ public class GameManager : MonoBehaviour
                     levelManager.InstantiateComponent(CellSprite, GridObject, IsDebug);
                     levelManager.GenerateLevel(Level);
                 }
-
+                Canvas = GameObject.Find("Canvas");
+                var loading = Canvas.transform.Find("Loading").gameObject;
+                if (loading != null)
+                {
+                    Debug.Log("Enabling loading screen");
+                    loading.SetActive(true);
+                }
             }
-            else
+            else // checks if generation is complete
             {
-                if (!levelManager.StartingLevelPopulation && levelManager.IsGenerated)
+                if (!levelManager.StartingLevelPopulation && levelManager.IsGenerated) // if complete
                 {
                     levelManager.PopulateLevel(Level);
+                }
+                else if (levelManager.IsPopulated) // if population is complete
+                {
+                    levelManager.IsPopulated = false;
+                    var loading = Canvas.transform.Find("Loading").gameObject;
+                    if (loading != null)
+                    {
+                        Debug.Log("Disabling loading screen");
+                        loading.SetActive(false);
+                    }
                 }
             }
         }
