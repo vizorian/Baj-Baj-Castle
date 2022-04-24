@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadPlayerData()
     {
+        saveData = new SaveData();
         string path = Application.persistentDataPath + "/save.dat";
         if (File.Exists(path))
         {
@@ -152,18 +153,8 @@ public class GameManager : MonoBehaviour
 
                 file.Close();
                 file.Dispose();
-                print("Loaded save data: " + saveData.ToString());
             }
-            else
-            {
-                print("Empty file found. New game.");
-                saveData = new SaveData();
-            }
-        }
-        else
-        {
-            print("No save data found. New game.");
-            saveData = new SaveData();
+
         }
     }
 
@@ -173,7 +164,6 @@ public class GameManager : MonoBehaviour
         if (File.Exists(path))
         {
             File.Delete(path);
-            print("Deleted save data.");
         }
     }
 
@@ -190,8 +180,6 @@ public class GameManager : MonoBehaviour
                 SavePlayerData();
             }
 
-            Debug.Log("Loading game scene");
-            // loading escape mode
             Loader.Load(Loader.Scene.Game);
         }
         else
@@ -200,7 +188,6 @@ public class GameManager : MonoBehaviour
             var castleMenu = Canvas.transform.Find("CastleMenu").gameObject;
             mainMenu.SetActive(false);
             castleMenu.SetActive(true);
-            Debug.Log("Continuing game & opening Castle mode.");
         }
     }
 
@@ -311,7 +298,7 @@ public class GameManager : MonoBehaviour
         }
         if (isHealth)
         {
-            return Mathf.RoundToInt((level * (level / 10)));
+            return Mathf.RoundToInt((level + (level * 0.5f)));
         }
         else
         {

@@ -1,19 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
 {
     public static Tooltip Instance { get; private set; }
+
     private RectTransform canvasTransform;
     private RectTransform rectTransform;
     private TextMeshProUGUI text;
     private RectTransform backgroundTransform;
     private Vector2 position;
-    private Transform followTarget;
+
     private void Awake()
     {
         Instance = this;
@@ -33,15 +30,7 @@ public class Tooltip : MonoBehaviour
 
     private void UpdatePosition()
     {
-        Vector2 newPosition;
-        if (followTarget != null)
-        {
-            newPosition = Camera.main.WorldToViewportPoint(followTarget.position) * canvasTransform.sizeDelta;
-        }
-        else
-        {
-            newPosition = Input.mousePosition;
-        }
+        var newPosition = Input.mousePosition / canvasTransform.localScale.x;
 
         // Check if tooltip is off screen
         if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
@@ -57,28 +46,17 @@ public class Tooltip : MonoBehaviour
         rectTransform.anchoredPosition = newPosition;
     }
 
-    private void ShowTooltip(string text, Transform target)
+    private void ShowTooltip(string text)
     {
-        followTarget = target;
-
-        if (followTarget != null)
-        {
-            position = Camera.main.WorldToViewportPoint(followTarget.position) * canvasTransform.sizeDelta;
-        }
-        else
-        {
-            position = Input.mousePosition / canvasTransform.localScale.x;
-        }
-
-        UpdatePosition();
+        position = Input.mousePosition / canvasTransform.localScale.x;
         SetText(text);
+        UpdatePosition();
         gameObject.SetActive(true);
     }
 
     private void HideTooltip()
     {
         gameObject.SetActive(false);
-        followTarget = null;
     }
 
     private void SetText(string text)
@@ -90,9 +68,9 @@ public class Tooltip : MonoBehaviour
         backgroundTransform.sizeDelta = textSize + padding;
     }
 
-    public static void ShowTooltip_Static(string text, Transform target = null)
+    public static void ShowTooltip_Static(string text)
     {
-        Instance.ShowTooltip(text, target);
+        Instance.ShowTooltip(text);
     }
 
     public static void HideTooltip_Static()

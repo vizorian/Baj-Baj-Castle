@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -167,6 +168,11 @@ public class LevelManager : MonoBehaviour
         {
             Player = Instantiate(GameAssets.Instance.playerPrefab, new Vector2(StartRoom.Center.X * LevelGenerator.CELL_SIZE, StartRoom.Center.Y * LevelGenerator.CELL_SIZE), Quaternion.identity);
             Camera.main.GetComponent<CameraMovement>().target = Player.transform;
+            Instantiate(GameAssets.Instance.itemPrefabs.First(i => i.name.Contains("Knife")), Player.transform.position, Quaternion.identity);
+            GameManager.Instance.Canvas.transform.Find("InventoryBar").gameObject.SetActive(true);
+            var healthBar = GameManager.Instance.Canvas.transform.Find("HealthBar").gameObject;
+            // healthBar.GetComponent<HealthBar>().Player = Player.GetComponent<Player>();
+            healthBar.SetActive(true);
         }
 
         // create exit from level at center of exit room
