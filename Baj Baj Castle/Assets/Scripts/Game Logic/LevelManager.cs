@@ -169,8 +169,9 @@ public class LevelManager : MonoBehaviour
             Player = Instantiate(GameAssets.Instance.playerPrefab, new Vector2(StartRoom.Center.X * LevelGenerator.CELL_SIZE, StartRoom.Center.Y * LevelGenerator.CELL_SIZE), Quaternion.identity);
             Camera.main.GetComponent<CameraMovement>().target = Player.transform;
             Instantiate(GameAssets.Instance.itemPrefabs.First(i => i.name.Contains("Knife")), Player.transform.position, Quaternion.identity);
-            GameManager.Instance.Canvas.transform.Find("InventoryBar").gameObject.SetActive(true);
-            var healthBar = GameManager.Instance.Canvas.transform.Find("HealthBar").gameObject;
+            var gameCanvas = GameObject.Find("GameCanvas");
+            gameCanvas.transform.Find("InventoryBar").gameObject.SetActive(true);
+            var healthBar = gameCanvas.transform.Find("HealthBar").gameObject;
             // healthBar.GetComponent<HealthBar>().Player = Player.GetComponent<Player>();
             healthBar.SetActive(true);
         }

@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public static class Loader
 {
+    public static GameState loadState;
+
     public enum Scene
     {
         Menu,
@@ -14,24 +16,26 @@ public static class Loader
         Loading
     }
 
-    private static Action onLoaderCallback;
+    private static Action<GameState> onLoaderCallback;
 
-    public static void Load(Scene scene)
+    public static void Load(Scene scene, GameState state)
     {
-        onLoaderCallback = () =>
+        loadState = state;
+        GameManager.Instance.GameState = GameState.Loading;
+        onLoaderCallback = (state) =>
         {
             SceneManager.LoadScene(scene.ToString());
-            Debug.Log("Loaded scene: " + scene.ToString());
         };
 
         SceneManager.LoadScene(Scene.Loading.ToString());
     }
 
-    public static void LoaderCallback()
+    public static void LoaderCallback(GameState state)
     {
         if (onLoaderCallback != null)
         {
-            onLoaderCallback();
+            onLoaderCallback(state);
+            GameManager.Instance.GameState = state;
             onLoaderCallback = null;
         }
     }

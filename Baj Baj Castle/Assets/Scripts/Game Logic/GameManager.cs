@@ -13,38 +13,43 @@ using UnityEngine.UI;
 // It is also responsible for managing the game's state.
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-
+    public static GameManager Instance { get; private set; }
+    public GameObject PauseMenuPrefab;
+    private GameObject pauseMenu;
     // Resources
     private LevelManager levelManager;
     public GameObject Canvas;
+    public GameObject GameCanvas;
     public GameObject GridObject;
     public Sprite CellSprite;
     public bool IsDebug = false;
     private bool isNextLevel;
-
+    public bool IsNewGame = true;
     public int Level = 1;
     public int MaxLevels = 3;
 
     // References
-    private Player player;
+    public Player player;
     // Logic
-    public SaveData saveData;
+    public SaveData SaveData;
+    public GameState GameState;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            LoadPlayerData();
+            GameState = GameState.MainMenu;
+            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(GridObject);
+            // Wrong
+            // DontDestroyOnLoad(Canvas);
         }
         else
         {
             Destroy(gameObject);
         }
-
-        LoadPlayerData();
-        DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(GridObject);
     }
 
     bool isSceneLoaded = false;
@@ -52,6 +57,23 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (GameState == GameState.Reload)
+        {
+            Cleanup();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameState == GameState.Escape)
+            {
+                PauseGame();
+            }
+            else if (GameState == GameState.Pause)
+            {
+                UnpauseGame();
+            }
+        }
+
         // TODO clean this up
         // clean the bool mess
         // potentially do game states
@@ -72,8 +94,10 @@ public class GameManager : MonoBehaviour
                     levelManager.InstantiateComponent(CellSprite, GridObject, IsDebug);
                     levelManager.GenerateLevel(Level);
                 }
-                Canvas = GameObject.Find("Canvas");
-                var loading = Canvas.transform.Find("Loading").gameObject;
+                // Canvas = GameObject.Find("Canvas");
+                Canvas.SetActive(false);
+                GameCanvas = GameObject.Find("GameCanvas");
+                var loading = GameCanvas.transform.Find("Loading").gameObject;
                 if (loading != null)
                 {
                     Debug.Log("Enabling loading screen");
@@ -92,14 +116,14 @@ public class GameManager : MonoBehaviour
                     if (isSaveLoaded)
                     {
                         isSaveLoaded = false;
-                        player.SetSaveData(saveData);
+                        player.SetSaveData(SaveData);
                     }
 
                     levelManager.IsPopulated = false;
-                    var loading = Canvas.transform.Find("Loading").gameObject;
+                    // TODO improve this
+                    var loading = GameCanvas.transform.Find("Loading").gameObject;
                     if (loading != null)
                     {
-                        Debug.Log("Disabling loading screen");
                         loading.SetActive(false);
                     }
                 }
@@ -109,7 +133,7 @@ public class GameManager : MonoBehaviour
         {
             if (Input.anyKeyDown)
             {
-                Loader.Load(Loader.Scene.Menu);
+                Loader.Load(Loader.Scene.Menu, GameState.MainMenu);
             }
         }
         else if (SceneManager.GetActiveScene().name == "Menu")
@@ -118,30 +142,73 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Cleanup()
+    {
+        // Canvas = GameObject.Find("Canvas");
+        Level = 1;
+
+        if (levelManager != null)
+        {
+            levelManager.Cleanup();
+            Destroy(levelManager);
+            levelManager = null;
+        }
+
+        if (pauseMenu != null)
+        {
+            Destroy(pauseMenu);
+            pauseMenu = null;
+        }
+
+        if (player != null)
+        {
+            Destroy(player.gameObject);
+            player = null;
+        }
+
+        isNextLevel = false;
+        isSceneLoaded = false;
+        isSaveLoaded = false;
+        GameState = GameState.MainMenu;
+    }
+
+    private void PauseGame()
+    {
+        pauseMenu = Instantiate(PauseMenuPrefab, GameCanvas.transform);
+        Time.timeScale = 0;
+        GameState = GameState.Pause;
+    }
+
     // Saving
     public void SavePlayerData()
     {
         string path = Application.persistentDataPath + "/save.dat";
         FileStream file = File.Create(path);
         BinaryFormatter bf = new BinaryFormatter();
-
-        // Save player data
-        if (player != null)
+        Debug.Log("Saving player data");
+        if (!IsNewGame)
         {
-            print("Player found, taking new data.");
-            saveData = player.GetSaveData();
+            Debug.Log(player.name);
+            if (levelManager.Player != null)
+            {
+                SaveData = levelManager.Player.GetComponent<Player>().GetSaveData();
+                Debug.Log("Got ingame player data");
+            }
+            else
+            {
+                Debug.Log("No player data received");
+            }
         }
-
-        bf.Serialize(file, saveData);
+        Debug.Log("Saved data: " + SaveData.ToString());
+        bf.Serialize(file, SaveData);
         file.Close();
         file.Dispose();
-
-        print("Game saved to " + path);
     }
 
-    public void LoadPlayerData()
+    public bool LoadPlayerData()
     {
-        saveData = new SaveData();
+        Debug.Log("Loading player data");
+        SaveData = new SaveData();
         string path = Application.persistentDataPath + "/save.dat";
         if (File.Exists(path))
         {
@@ -149,13 +216,23 @@ public class GameManager : MonoBehaviour
             if (file.Length > 0)
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                saveData = (SaveData)bf.Deserialize(file);
-
+                SaveData = (SaveData)bf.Deserialize(file);
                 file.Close();
                 file.Dispose();
+                IsNewGame = false;
+                Debug.Log("Loaded file.");
+                return false;
             }
-
+            else
+            {
+                Debug.Log("Save file empty. New game.");
+            }
         }
+        else
+        {
+            Debug.Log("No save file found. New game.");
+        }
+        return true;
     }
 
     public void DeletePlayerData()
@@ -170,20 +247,17 @@ public class GameManager : MonoBehaviour
     // This method is called when the player presses the "Play" button
     // It loads Castle mode if the player has not yet played the game before
     // Else, escape mode
-    public void PlayGame(bool force = false)
+    public void PlayGame()
     {
-        if (saveData.IsNewGame || force)
+        Debug.Log("Play game is called by button");
+        if (IsNewGame)
         {
-            if (!force)
-            {
-                saveData.IsNewGame = false;
-                SavePlayerData();
-            }
-
-            Loader.Load(Loader.Scene.Game);
+            Debug.Log("New game");
+            Loader.Load(Loader.Scene.Game, GameState.Escape);
         }
         else
         {
+            Debug.Log("Continuing game");
             var mainMenu = Canvas.transform.Find("MainMenu").gameObject;
             var castleMenu = Canvas.transform.Find("CastleMenu").gameObject;
             mainMenu.SetActive(false);
@@ -191,11 +265,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void CheckNewGame()
+    {
+        if (IsNewGame)
+        {
+            IsNewGame = true;
+        }
+        else
+        {
+            IsNewGame = false;
+        }
+    }
+
     public void UpdateUpgradeMenu()
     {
         var upgradeMenu = GameObject.Find("UpgradeMenu");
         var treasureCount = upgradeMenu.transform.Find("Header").Find("Subheader").Find("TreasureCount").gameObject.GetComponent<TextMeshProUGUI>();
-        treasureCount.text = saveData.Gold.ToString();
+        treasureCount.text = SaveData.Gold.ToString();
         string[] stats = { "Strength", "Agility", "Intelligence", "Luck", "Health", "Defense" };
 
         foreach (string stat in stats)
@@ -203,7 +289,7 @@ public class GameManager : MonoBehaviour
             var statText = upgradeMenu.transform.Find("Upgrade" + stat).Find("Text").Find("Subtext");
             var statCount = statText.Find(stat + "Count").gameObject.GetComponent<TextMeshProUGUI>();
             var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
-            var statLevel = saveData.GetStat(stat);
+            var statLevel = SaveData.GetStat(stat);
             statCount.text = statLevel.ToString();
             statCost.text = CalculateCost(statLevel).ToString();
         }
@@ -214,11 +300,11 @@ public class GameManager : MonoBehaviour
         switch (stat)
         {
             case "Strength":
-                var cost = CalculateCost(saveData.StrengthUpgradeLevel);
-                if (saveData.Gold >= cost)
+                var cost = CalculateCost(SaveData.StrengthUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.StrengthUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.StrengthUpgradeLevel++;
                 }
                 else
                 {
@@ -226,11 +312,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Agility":
-                cost = CalculateCost(saveData.AgilityUpgradeLevel);
-                if (saveData.Gold >= cost)
+                cost = CalculateCost(SaveData.AgilityUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.AgilityUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.AgilityUpgradeLevel++;
                 }
                 else
                 {
@@ -238,11 +324,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Intelligence":
-                cost = CalculateCost(saveData.IntelligenceUpgradeLevel);
-                if (saveData.Gold >= cost)
+                cost = CalculateCost(SaveData.IntelligenceUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.IntelligenceUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.IntelligenceUpgradeLevel++;
                 }
                 else
                 {
@@ -250,11 +336,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Luck":
-                cost = CalculateCost(saveData.LuckUpgradeLevel);
-                if (saveData.Gold >= cost)
+                cost = CalculateCost(SaveData.LuckUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.LuckUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.LuckUpgradeLevel++;
                 }
                 else
                 {
@@ -262,11 +348,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Health":
-                cost = CalculateCost(saveData.HealthUpgradeLevel);
-                if (saveData.Gold >= cost)
+                cost = CalculateCost(SaveData.HealthUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.HealthUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.HealthUpgradeLevel++;
                 }
                 else
                 {
@@ -274,11 +360,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Defense":
-                cost = CalculateCost(saveData.DefenseUpgradeLevel);
-                if (saveData.Gold >= cost)
+                cost = CalculateCost(SaveData.DefenseUpgradeLevel);
+                if (SaveData.Gold >= cost)
                 {
-                    saveData.Gold -= cost;
-                    saveData.DefenseUpgradeLevel++;
+                    SaveData.Gold -= cost;
+                    SaveData.DefenseUpgradeLevel++;
                 }
                 else
                 {
@@ -306,9 +392,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UnpauseGame()
+    {
+        Time.timeScale = 1;
+        pauseMenu.SetActive(false);
+        GameState = GameState.Escape;
+        Destroy(pauseMenu);
+        pauseMenu = null;
+    }
+
+    public void QuitToMenu()
+    {
+        SavePlayerData();
+        Destroy(pauseMenu);
+        Time.timeScale = 1;
+        Loader.Load(Loader.Scene.Menu, GameState.Reload);
+    }
+
     // This method is called when the player presses the "Quit" button
     public void QuitToDesktop()
     {
+        SavePlayerData();
         Application.Quit();
     }
 
@@ -317,9 +421,9 @@ public class GameManager : MonoBehaviour
     // It brings the player to the GameOver scene.
     public void Defeat()
     {
+        SavePlayerData();
         Debug.Log("You died");
-        throw new NotImplementedException();
-        // Loader.Load(Loader.Scene.GameOver);
+        Loader.Load(Loader.Scene.GameOver, GameState.GameOver);
     }
 
     // TODO victory
@@ -327,16 +431,9 @@ public class GameManager : MonoBehaviour
     // It stops the game and displays a victory message.
     public void Victory()
     {
+        SavePlayerData();
         Debug.Log("Won the game");
-        throw new NotImplementedException();
-        // Loader.Load(Loader.Scene.GameOver);
-    }
-
-    // This method is called when the player presses the restart button.
-    // It resets the game and generates a new level.
-    public void Restart()
-    {
-
+        Loader.Load(Loader.Scene.GameOver, GameState.Victory);
     }
 
     // This method is called when the player finishes a level.

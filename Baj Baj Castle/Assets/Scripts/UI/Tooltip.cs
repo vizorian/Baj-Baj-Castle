@@ -13,7 +13,14 @@ public class Tooltip : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
 
         canvasTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
         rectTransform = GetComponent<RectTransform>();
