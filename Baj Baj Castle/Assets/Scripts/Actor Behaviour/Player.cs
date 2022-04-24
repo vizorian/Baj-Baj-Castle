@@ -11,6 +11,8 @@ public class Player : Actor
     public int AgilityUpgradeLevel;
     public int IntelligenceUpgradeLevel;
     public int LuckUpgradeLevel;
+    public int HealthUpgradeLevel;
+    public int DefenseUpgradeLevel;
 
     private void Update()
     {
@@ -89,11 +91,14 @@ public class Player : Actor
     public SaveData GetSaveData()
     {
         SaveData data = new SaveData();
+        data.IsNewGame = false;
         data.Gold = Gold;
         data.StrengthUpgradeLevel = StrengthUpgradeLevel;
         data.AgilityUpgradeLevel = AgilityUpgradeLevel;
         data.IntelligenceUpgradeLevel = IntelligenceUpgradeLevel;
         data.LuckUpgradeLevel = LuckUpgradeLevel;
+        data.HealthUpgradeLevel = HealthUpgradeLevel;
+        data.DefenseUpgradeLevel = DefenseUpgradeLevel;
         return data;
     }
 
@@ -101,10 +106,12 @@ public class Player : Actor
     public void SetSaveData(SaveData data)
     {
         Gold = data.Gold;
-        StrengthUpgradeLevel = data.StrengthUpgradeLevel;
-        AgilityUpgradeLevel = data.AgilityUpgradeLevel;
-        IntelligenceUpgradeLevel = data.IntelligenceUpgradeLevel;
-        LuckUpgradeLevel = data.LuckUpgradeLevel;
+        Strength += data.StrengthUpgradeLevel;
+        Agility += data.AgilityUpgradeLevel;
+        Intelligence += data.IntelligenceUpgradeLevel;
+        Luck += data.LuckUpgradeLevel;
+        Health += data.HealthUpgradeLevel;
+        Defense += data.DefenseUpgradeLevel;
     }
     private protected override void CalculateMovement()
     {

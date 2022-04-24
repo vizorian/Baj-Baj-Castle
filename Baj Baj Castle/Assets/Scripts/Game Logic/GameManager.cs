@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -41,17 +42,18 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // TODO remove
-        DeletePlayerData();
+        LoadPlayerData();
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(GridObject);
     }
 
     bool isSceneLoaded = false;
+    bool isSaveLoaded = false;
 
     void Update()
     {
         // TODO clean this up
+        // clean the bool mess
         // potentially do game states
         if (SceneManager.GetActiveScene().name == "Game")
         {
@@ -86,6 +88,13 @@ public class GameManager : MonoBehaviour
                 }
                 else if (levelManager.IsPopulated) // if population is complete
                 {
+                    player = levelManager.Player.GetComponent<Player>();
+                    if (isSaveLoaded)
+                    {
+                        isSaveLoaded = false;
+                        player.SetSaveData(saveData);
+                    }
+
                     levelManager.IsPopulated = false;
                     var loading = Canvas.transform.Find("Loading").gameObject;
                     if (loading != null)
@@ -96,11 +105,17 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }
+        else if (SceneManager.GetActiveScene().name == "GameOver")
+        {
+            if (Input.anyKeyDown)
+            {
+                Loader.Load(Loader.Scene.Menu);
+            }
+        }
+        else if (SceneManager.GetActiveScene().name == "Menu")
+        {
 
-    private void FindPlayer()
-    {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        }
     }
 
     // Saving
@@ -165,13 +180,15 @@ public class GameManager : MonoBehaviour
     // This method is called when the player presses the "Play" button
     // It loads Castle mode if the player has not yet played the game before
     // Else, escape mode
-    public void PlayGame()
+    public void PlayGame(bool force = false)
     {
-        LoadPlayerData();
-        if (saveData.IsNewGame)
+        if (saveData.IsNewGame || force)
         {
-            saveData.IsNewGame = false;
-            SavePlayerData();
+            if (!force)
+            {
+                saveData.IsNewGame = false;
+                SavePlayerData();
+            }
 
             Debug.Log("Loading game scene");
             // loading escape mode
@@ -179,10 +196,130 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            var mainMenu = Canvas.transform.Find("MainMenu").gameObject;
+            var castleMenu = Canvas.transform.Find("CastleMenu").gameObject;
+            mainMenu.SetActive(false);
+            castleMenu.SetActive(true);
             Debug.Log("Continuing game & opening Castle mode.");
         }
     }
 
+    public void UpdateUpgradeMenu()
+    {
+        var upgradeMenu = GameObject.Find("UpgradeMenu");
+        var treasureCount = upgradeMenu.transform.Find("Header").Find("Subheader").Find("TreasureCount").gameObject.GetComponent<TextMeshProUGUI>();
+        treasureCount.text = saveData.Gold.ToString();
+        string[] stats = { "Strength", "Agility", "Intelligence", "Luck", "Health", "Defense" };
+
+        foreach (string stat in stats)
+        {
+            var statText = upgradeMenu.transform.Find("Upgrade" + stat).Find("Text").Find("Subtext");
+            var statCount = statText.Find(stat + "Count").gameObject.GetComponent<TextMeshProUGUI>();
+            var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
+            var statLevel = saveData.GetStat(stat);
+            statCount.text = statLevel.ToString();
+            statCost.text = CalculateCost(statLevel).ToString();
+        }
+    }
+
+    public void UpgradeStat(string stat)
+    {
+        switch (stat)
+        {
+            case "Strength":
+                var cost = CalculateCost(saveData.StrengthUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.StrengthUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+            case "Agility":
+                cost = CalculateCost(saveData.AgilityUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.AgilityUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+            case "Intelligence":
+                cost = CalculateCost(saveData.IntelligenceUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.IntelligenceUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+            case "Luck":
+                cost = CalculateCost(saveData.LuckUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.LuckUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+            case "Health":
+                cost = CalculateCost(saveData.HealthUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.HealthUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+            case "Defense":
+                cost = CalculateCost(saveData.DefenseUpgradeLevel);
+                if (saveData.Gold >= cost)
+                {
+                    saveData.Gold -= cost;
+                    saveData.DefenseUpgradeLevel++;
+                }
+                else
+                {
+                    return;
+                }
+                break;
+        }
+        SavePlayerData();
+        UpdateUpgradeMenu();
+    }
+
+    private int CalculateCost(int level, bool isHealth = false)
+    {
+        if (level == 0)
+        {
+            return 1;
+        }
+        if (isHealth)
+        {
+            return Mathf.RoundToInt((level * (level / 10)));
+        }
+        else
+        {
+            return Mathf.RoundToInt((level * (level + 1)));
+        }
+    }
+
+    // This method is called when the player presses the "Quit" button
     public void QuitToDesktop()
     {
         Application.Quit();

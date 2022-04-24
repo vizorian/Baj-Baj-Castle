@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// TODO rework tooltips as gameobjects that get created when in use and destroyed when not in use
 public class Tooltip : MonoBehaviour
 {
     public static Tooltip Instance { get; private set; }

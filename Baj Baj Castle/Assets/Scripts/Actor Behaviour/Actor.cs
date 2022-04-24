@@ -118,7 +118,6 @@ public class Actor : MonoBehaviour
         if (damage < 1)
             damage = 1;
 
-        // TODO Resistances of multiple damage types?
         if (damageData.IsCritical)
         {
             damage *= 2;
@@ -137,7 +136,6 @@ public class Actor : MonoBehaviour
         }
     }
 
-    // TODO use this for potions
     public virtual void Heal(float amount)
     {
         if (Health + amount > MaxHealth)
@@ -177,7 +175,6 @@ public class Actor : MonoBehaviour
             knockbackDirection = Vector3.zero;
             moveDelta = Vector3.zero;
         }
-
 
         var realResistance = 0.1f + Resistance / 100f;
         if (realResistance > 1)

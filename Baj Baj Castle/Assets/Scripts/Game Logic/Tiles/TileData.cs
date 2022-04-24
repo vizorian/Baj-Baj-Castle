@@ -15,10 +15,6 @@ public class TileData
         Type = type;
     }
 
-    public TileData()
-    {
-    }
-
     public override string ToString()
     {
         return $"{X}, {Y}, {Type}";
