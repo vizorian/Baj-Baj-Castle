@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO implement collisons
 public class Actor : MonoBehaviour
 {
     public bool isActive;

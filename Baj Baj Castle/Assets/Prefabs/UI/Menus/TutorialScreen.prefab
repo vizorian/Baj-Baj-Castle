@@ -202,7 +202,6 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'WASD - Controlling the character
 
-
     Mouse - Controlling the hand
 
     Mousewheel
@@ -210,13 +209,12 @@ MonoBehaviour:
 
     Left Mouse - Use item & Hold hand
 
+    E - Interact
 
-    F - Interact & Flip
-    hand
-
+    F
+    - Flip hand
 
     G - Drop held item
-
 
     Escape - Pause menu'
   m_isRightToLeft: 0
@@ -257,7 +255,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 70.43
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

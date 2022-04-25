@@ -34,58 +34,86 @@ public class Player : Actor
         Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
-    // TODO check for gamestate
     /// <summary>
     /// Processes the incoming inputs
     /// </summary>
     private void ProcessInputs()
     {
-        // Getting inputs
-        float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
-
-        // Left click
-        if (Input.GetKey(KeyCode.Mouse0))
+        GameState state = GameState.Escape;
+        if (GameManager.Instance != null)
         {
-            if (Hand.HoldingItem)
-            {
-                if (Hand.HeldItemType == ItemType.Consumable)
+            state = GameManager.Instance.GameState;
+        }
+
+        switch (state)
+        {
+            case GameState.MainMenu:
+                return;
+            case GameState.Escape: ////
+                                   // Getting inputs
+                float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
+
+                // Scroll wheel
+                if (scrollWheelDelta != 0)
                 {
-                    Hand.UseHeldItem();
+                    if (scrollWheelDelta > 0)
+                    {
+                        InventorySystem.Instance.Next();
+                    }
+                    else
+                    {
+                        InventorySystem.Instance.Previous();
+                    }
                 }
-            }
-            Hand.IsFreezingHand = true;
-        }
 
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            Hand.IsFreezingHand = false;
-        }
+                // Left click
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    if (Hand.HoldingItem)
+                    {
+                        if (Hand.HeldItemType == ItemType.Consumable)
+                        {
+                            Hand.UseHeldItem();
+                        }
+                    }
+                    Hand.IsFreezingHand = true;
+                }
 
-        // Interaction button
-        if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
-        {
-            interactionObject.SendMessage("OnInteraction");
-        }
+                if (Input.GetKeyUp(KeyCode.Mouse0))
+                {
+                    Hand.IsFreezingHand = false;
+                }
 
-        // Drop button
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            InventorySystem.Instance.Drop();
-        }
+                // Interaction button
+                if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
+                {
+                    interactionObject.SendMessage("OnInteraction");
+                }
 
-        // Flip button
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Hand.TurnHeldItem();
-        }
+                // Drop button
+                if (Input.GetKeyDown(KeyCode.G))
+                {
+                    InventorySystem.Instance.Drop();
+                }
 
-        // Scroll wheel
-        if (scrollWheelDelta != 0)
-        {
-            if (scrollWheelDelta > 0)
-                InventorySystem.Instance.Next();
-            else
-                InventorySystem.Instance.Previous();
+                // Flip button
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Hand.TurnHeldItem();
+                }
+                break;
+            case GameState.Tutorial:
+                break;
+            case GameState.Pause:
+                break;
+            case GameState.Loading:
+                return;
+            case GameState.Victory:
+                return;
+            case GameState.Defeat:
+                return;
+            case GameState.Reload:
+                return;
         }
     }
 
