@@ -22,7 +22,7 @@ public class Tooltip : MonoBehaviour
             Instance = this;
         }
 
-        canvasTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
+        canvasTransform = GameObject.Find("GameCanvas").GetComponent<RectTransform>();
         rectTransform = GetComponent<RectTransform>();
         backgroundTransform = transform.Find("Background").GetComponent<RectTransform>();
         text = transform.Find("Text").GetComponent<TextMeshProUGUI>();

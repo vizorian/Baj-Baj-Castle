@@ -19,14 +19,15 @@ public class GameManager : MonoBehaviour
     // Resources
     private LevelManager levelManager;
     public GameObject Canvas;
-    public GameObject GameCanvas;
     public GameObject GridObject;
     public Sprite CellSprite;
     public bool IsDebug = false;
     private bool isNextLevel;
-    public bool IsNewGame = true;
+    public bool IsNewGame;
     public int Level = 1;
     public int MaxLevels = 3;
+    bool isSceneLoaded = false;
+    bool isSaveLoaded = false;
 
     // References
     public Player player;
@@ -36,41 +37,38 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            LoadPlayerData();
-            GameState = GameState.MainMenu;
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(GridObject);
-            // Wrong
-            // DontDestroyOnLoad(Canvas);
-        }
-        else
+        if (Instance != null)
         {
             Destroy(gameObject);
         }
+        else
+        {
+            Instance = this;
+            Instance.GameState = GameState.MainMenu;
+            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(Instance.GridObject);
+        }
     }
-
-    bool isSceneLoaded = false;
-    bool isSaveLoaded = false;
 
     void Update()
     {
-        if (GameState == GameState.Reload)
+        if (Instance.GameState == GameState.Reload)
         {
-            Cleanup();
+            Instance.Cleanup();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Instance.GameState != GameState.Loading)
         {
-            if (GameState == GameState.Escape)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                PauseGame();
-            }
-            else if (GameState == GameState.Pause)
-            {
-                UnpauseGame();
+                if (Instance.GameState == GameState.Escape)
+                {
+                    Instance.PauseGame();
+                }
+                else if (Instance.GameState == GameState.Pause)
+                {
+                    Instance.UnpauseGame();
+                }
             }
         }
 
@@ -79,49 +77,49 @@ public class GameManager : MonoBehaviour
         // potentially do game states
         if (SceneManager.GetActiveScene().name == "Game")
         {
-            if (!isSceneLoaded || isNextLevel) // if scene is loaded or next level
+            if (!Instance.isSceneLoaded || Instance.isNextLevel) // if scene is loaded or next level
             {
-                if (isNextLevel)
+                if (Instance.isNextLevel)
                 {
-                    isNextLevel = false;
-                    levelManager.Cleanup();
-                    levelManager.GenerateLevel(Level);
+                    Instance.isNextLevel = false;
+                    Instance.levelManager.Cleanup();
+                    Instance.levelManager.GenerateLevel(Instance.Level);
                 }
                 else
                 {
-                    isSceneLoaded = true;
-                    levelManager = gameObject.AddComponent<LevelManager>();
-                    levelManager.InstantiateComponent(CellSprite, GridObject, IsDebug);
-                    levelManager.GenerateLevel(Level);
+                    Instance.isSceneLoaded = true;
+                    Instance.levelManager = gameObject.AddComponent<LevelManager>();
+                    Instance.levelManager.InstantiateComponent(Instance.CellSprite, GridObject, IsDebug);
+                    Instance.levelManager.GenerateLevel(Instance.Level);
                 }
                 // Canvas = GameObject.Find("Canvas");
-                Canvas.SetActive(false);
-                GameCanvas = GameObject.Find("GameCanvas");
-                var loading = GameCanvas.transform.Find("Loading").gameObject;
+                // Canvas.SetActive(false);
+                Instance.Canvas = GameObject.Find("GameCanvas");
+                var loading = Instance.Canvas.transform.Find("Loading").gameObject;
                 if (loading != null)
                 {
-                    Debug.Log("Enabling loading screen");
                     loading.SetActive(true);
                 }
             }
             else // checks if generation is complete
             {
-                if (!levelManager.StartingLevelPopulation && levelManager.IsGenerated) // if complete
+                if (!Instance.levelManager.StartingLevelPopulation && Instance.levelManager.IsGenerated) // if complete
                 {
-                    levelManager.PopulateLevel(Level);
+                    Instance.levelManager.PopulateLevel(Instance.Level);
                 }
-                else if (levelManager.IsPopulated) // if population is complete
+                else if (Instance.levelManager.IsPopulated) // if population is complete
                 {
-                    player = levelManager.Player.GetComponent<Player>();
-                    if (isSaveLoaded)
+                    Instance.player = Instance.levelManager.Player.GetComponent<Player>();
+
+                    if (!Instance.isSaveLoaded)
                     {
-                        isSaveLoaded = false;
-                        player.SetSaveData(SaveData);
+                        Instance.isSaveLoaded = true;
+                        Instance.player.SetSaveData(Instance.SaveData);
                     }
 
-                    levelManager.IsPopulated = false;
+                    Instance.levelManager.IsPopulated = false;
                     // TODO improve this
-                    var loading = GameCanvas.transform.Find("Loading").gameObject;
+                    var loading = Instance.Canvas.transform.Find("Loading").gameObject;
                     if (loading != null)
                     {
                         loading.SetActive(false);
@@ -144,40 +142,35 @@ public class GameManager : MonoBehaviour
 
     private void Cleanup()
     {
-        // Canvas = GameObject.Find("Canvas");
-        Level = 1;
+        Instance.Canvas = GameObject.Find("Canvas");
+        Instance.Level = 1;
 
-        if (levelManager != null)
+        if (Instance.levelManager != null)
         {
-            levelManager.Cleanup();
-            Destroy(levelManager);
-            levelManager = null;
+            Instance.levelManager.Cleanup();
+            Destroy(Instance.levelManager);
+            Instance.levelManager = null;
         }
 
-        if (pauseMenu != null)
+        if (Instance.pauseMenu != null)
         {
-            Destroy(pauseMenu);
-            pauseMenu = null;
+            Destroy(Instance.pauseMenu);
+            Instance.pauseMenu = null;
         }
 
-        if (player != null)
+        if (Instance.player != null)
         {
-            Destroy(player.gameObject);
-            player = null;
+            Destroy(Instance.player.gameObject);
+            Instance.player = null;
         }
 
-        isNextLevel = false;
-        isSceneLoaded = false;
-        isSaveLoaded = false;
-        GameState = GameState.MainMenu;
+        Instance.isNextLevel = false;
+        Instance.isSceneLoaded = false;
+        Instance.isSaveLoaded = false;
+        Instance.GameState = GameState.MainMenu;
     }
 
-    private void PauseGame()
-    {
-        pauseMenu = Instantiate(PauseMenuPrefab, GameCanvas.transform);
-        Time.timeScale = 0;
-        GameState = GameState.Pause;
-    }
+
 
     // Saving
     public void SavePlayerData()
@@ -185,30 +178,21 @@ public class GameManager : MonoBehaviour
         string path = Application.persistentDataPath + "/save.dat";
         FileStream file = File.Create(path);
         BinaryFormatter bf = new BinaryFormatter();
-        Debug.Log("Saving player data");
-        if (!IsNewGame)
+        if (!Instance.IsNewGame)
         {
-            Debug.Log(player.name);
-            if (levelManager.Player != null)
+            if (Instance.player != null)
             {
-                SaveData = levelManager.Player.GetComponent<Player>().GetSaveData();
-                Debug.Log("Got ingame player data");
-            }
-            else
-            {
-                Debug.Log("No player data received");
+                Instance.SaveData = Instance.player.GetSaveData();
             }
         }
-        Debug.Log("Saved data: " + SaveData.ToString());
-        bf.Serialize(file, SaveData);
+        bf.Serialize(file, Instance.SaveData);
         file.Close();
         file.Dispose();
     }
 
     public bool LoadPlayerData()
     {
-        Debug.Log("Loading player data");
-        SaveData = new SaveData();
+        Instance.SaveData = new SaveData();
         string path = Application.persistentDataPath + "/save.dat";
         if (File.Exists(path))
         {
@@ -216,21 +200,12 @@ public class GameManager : MonoBehaviour
             if (file.Length > 0)
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                SaveData = (SaveData)bf.Deserialize(file);
+                Instance.SaveData = (SaveData)bf.Deserialize(file);
                 file.Close();
                 file.Dispose();
-                IsNewGame = false;
-                Debug.Log("Loaded file.");
+                Instance.IsNewGame = false;
                 return false;
             }
-            else
-            {
-                Debug.Log("Save file empty. New game.");
-            }
-        }
-        else
-        {
-            Debug.Log("No save file found. New game.");
         }
         return true;
     }
@@ -247,51 +222,44 @@ public class GameManager : MonoBehaviour
     // This method is called when the player presses the "Play" button
     // It loads Castle mode if the player has not yet played the game before
     // Else, escape mode
-    public void PlayGame()
+    public void PlayGame(bool isForced)
     {
-        Debug.Log("Play game is called by button");
-        if (IsNewGame)
+        var newGame = Instance.LoadPlayerData();
+        if (newGame || isForced)
         {
-            Debug.Log("New game");
             Loader.Load(Loader.Scene.Game, GameState.Escape);
         }
         else
         {
-            Debug.Log("Continuing game");
-            var mainMenu = Canvas.transform.Find("MainMenu").gameObject;
-            var castleMenu = Canvas.transform.Find("CastleMenu").gameObject;
+            var mainMenu = Instance.Canvas.transform.Find("MainMenu").gameObject;
+            var castleMenu = Instance.Canvas.transform.Find("CastleMenu").gameObject;
             mainMenu.SetActive(false);
             castleMenu.SetActive(true);
         }
     }
 
-    public void CheckNewGame()
-    {
-        if (IsNewGame)
-        {
-            IsNewGame = true;
-        }
-        else
-        {
-            IsNewGame = false;
-        }
-    }
-
     public void UpdateUpgradeMenu()
     {
-        var upgradeMenu = GameObject.Find("UpgradeMenu");
-        var treasureCount = upgradeMenu.transform.Find("Header").Find("Subheader").Find("TreasureCount").gameObject.GetComponent<TextMeshProUGUI>();
-        treasureCount.text = SaveData.Gold.ToString();
+        var upgradeMenu = Instance.Canvas.transform.Find("UpgradeMenu");
+        var treasureCount = upgradeMenu.Find("Header").Find("Subheader").Find("TreasureCount").gameObject.GetComponent<TextMeshProUGUI>();
+        treasureCount.text = Instance.SaveData.Gold.ToString();
         string[] stats = { "Strength", "Agility", "Intelligence", "Luck", "Health", "Defense" };
 
         foreach (string stat in stats)
         {
-            var statText = upgradeMenu.transform.Find("Upgrade" + stat).Find("Text").Find("Subtext");
+            var statText = upgradeMenu.Find("Upgrade" + stat).Find("Text").Find("Subtext");
             var statCount = statText.Find(stat + "Count").gameObject.GetComponent<TextMeshProUGUI>();
             var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
-            var statLevel = SaveData.GetStat(stat);
+            var statLevel = Instance.SaveData.GetStat(stat);
             statCount.text = statLevel.ToString();
-            statCost.text = CalculateCost(statLevel).ToString();
+            if (stat == "Health")
+            {
+                statCost.text = CalculateCost(statLevel, true).ToString();
+            }
+            else
+            {
+                statCost.text = CalculateCost(statLevel).ToString();
+            }
         }
     }
 
@@ -300,11 +268,11 @@ public class GameManager : MonoBehaviour
         switch (stat)
         {
             case "Strength":
-                var cost = CalculateCost(SaveData.StrengthUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                var cost = CalculateCost(Instance.SaveData.StrengthUpgradeLevel);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.StrengthUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.StrengthUpgradeLevel++;
                 }
                 else
                 {
@@ -312,11 +280,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Agility":
-                cost = CalculateCost(SaveData.AgilityUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                cost = CalculateCost(Instance.SaveData.AgilityUpgradeLevel);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.AgilityUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.AgilityUpgradeLevel++;
                 }
                 else
                 {
@@ -324,11 +292,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Intelligence":
-                cost = CalculateCost(SaveData.IntelligenceUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                cost = CalculateCost(Instance.SaveData.IntelligenceUpgradeLevel);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.IntelligenceUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.IntelligenceUpgradeLevel++;
                 }
                 else
                 {
@@ -336,11 +304,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Luck":
-                cost = CalculateCost(SaveData.LuckUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                cost = CalculateCost(Instance.SaveData.LuckUpgradeLevel);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.LuckUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.LuckUpgradeLevel++;
                 }
                 else
                 {
@@ -348,11 +316,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Health":
-                cost = CalculateCost(SaveData.HealthUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                cost = CalculateCost(Instance.SaveData.HealthUpgradeLevel, true);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.HealthUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.HealthUpgradeLevel++;
                 }
                 else
                 {
@@ -360,11 +328,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case "Defense":
-                cost = CalculateCost(SaveData.DefenseUpgradeLevel);
-                if (SaveData.Gold >= cost)
+                cost = CalculateCost(Instance.SaveData.DefenseUpgradeLevel);
+                if (Instance.SaveData.Gold >= cost)
                 {
-                    SaveData.Gold -= cost;
-                    SaveData.DefenseUpgradeLevel++;
+                    Instance.SaveData.Gold -= cost;
+                    Instance.SaveData.DefenseUpgradeLevel++;
                 }
                 else
                 {
@@ -372,8 +340,8 @@ public class GameManager : MonoBehaviour
                 }
                 break;
         }
-        SavePlayerData();
-        UpdateUpgradeMenu();
+        Instance.SavePlayerData();
+        Instance.UpdateUpgradeMenu();
     }
 
     private int CalculateCost(int level, bool isHealth = false)
@@ -392,19 +360,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void PauseGame()
+    {
+        if (Instance.pauseMenu == null)
+        {
+            Debug.Log("First time opening pause menu");
+            Instance.pauseMenu = Instantiate(PauseMenuPrefab, Instance.Canvas.transform);
+        }
+        else
+        {
+            Debug.Log("Opening pause menu");
+            Instance.pauseMenu.SetActive(true);
+        }
+        Time.timeScale = 0;
+        Instance.GameState = GameState.Pause;
+    }
+
     public void UnpauseGame()
     {
+        Debug.Log("Unpausing game");
         Time.timeScale = 1;
-        pauseMenu.SetActive(false);
-        GameState = GameState.Escape;
-        Destroy(pauseMenu);
-        pauseMenu = null;
+        Instance.pauseMenu.SetActive(false);
+        Instance.GameState = GameState.Escape;
     }
 
     public void QuitToMenu()
     {
-        SavePlayerData();
-        Destroy(pauseMenu);
+        Instance.SavePlayerData();
+        Destroy(Instance.pauseMenu);
         Time.timeScale = 1;
         Loader.Load(Loader.Scene.Menu, GameState.Reload);
     }
@@ -412,7 +395,7 @@ public class GameManager : MonoBehaviour
     // This method is called when the player presses the "Quit" button
     public void QuitToDesktop()
     {
-        SavePlayerData();
+        Instance.SavePlayerData();
         Application.Quit();
     }
 
@@ -421,7 +404,7 @@ public class GameManager : MonoBehaviour
     // It brings the player to the GameOver scene.
     public void Defeat()
     {
-        SavePlayerData();
+        Instance.SavePlayerData();
         Debug.Log("You died");
         Loader.Load(Loader.Scene.GameOver, GameState.GameOver);
     }
@@ -431,7 +414,7 @@ public class GameManager : MonoBehaviour
     // It stops the game and displays a victory message.
     public void Victory()
     {
-        SavePlayerData();
+        Instance.SavePlayerData();
         Debug.Log("Won the game");
         Loader.Load(Loader.Scene.GameOver, GameState.Victory);
     }
@@ -440,9 +423,9 @@ public class GameManager : MonoBehaviour
     // It generates a new level.
     public void NextLevel()
     {
-        SavePlayerData();
-        Level++;
-        isNextLevel = true;
+        Instance.SavePlayerData();
+        Instance.Level++;
+        Instance.isNextLevel = true;
         Debug.Log("Loading new level");
     }
 }
