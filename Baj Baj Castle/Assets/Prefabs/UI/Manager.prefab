@@ -76,14 +76,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PauseMenuPrefab: {fileID: 8664892376103781930, guid: 76c97945a9c0c7840a13aec6bd9b64ca, type: 3}
+  TutorialScreenPrefab: {fileID: 8664892376103781930, guid: 87f3ec8f3808e3c49b22823a96284b39, type: 3}
   Canvas: {fileID: 0}
   GridObject: {fileID: 0}
   CellSprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   IsDebug: 0
+  IsNewGame: 0
   Level: 1
   MaxLevels: 3
+  player: {fileID: 0}
   SaveData:
-    IsNewGame: 1
     Gold: 0
     StrengthUpgradeLevel: 0
     AgilityUpgradeLevel: 0

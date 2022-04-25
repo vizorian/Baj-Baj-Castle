@@ -2,10 +2,11 @@ public enum GameState
 {
     MainMenu,
     Escape,
+    Tutorial,
     Pause,
     Loading,
     Victory,
-    GameOver,
+    Defeat,
     Reload,
     None
 }

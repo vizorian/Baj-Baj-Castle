@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public GameObject PauseMenuPrefab;
+    public GameObject TutorialScreenPrefab;
+    private GameObject tutorialScreen;
     private GameObject pauseMenu;
     // Resources
     private LevelManager levelManager;
@@ -23,12 +25,13 @@ public class GameManager : MonoBehaviour
     public Sprite CellSprite;
     public bool IsDebug = false;
     private bool isNextLevel;
+    private bool tutorialDisplayed = false;
     public bool IsNewGame;
     public int Level = 1;
     public int MaxLevels = 3;
     bool isSceneLoaded = false;
     bool isSaveLoaded = false;
-
+    bool isGameOverSet = false;
     // References
     public Player player;
     // Logic
@@ -52,6 +55,25 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Instance.GameState == GameState.Victory || Instance.GameState == GameState.Defeat)
+        {
+            if (Instance.isGameOverSet == false)
+            {
+                var sceneCanvas = GameObject.Find("Canvas");
+                var sceneText = sceneCanvas.transform.Find("GameOverScreen").Find("Background").Find("Message").GetComponent<TextMeshProUGUI>();
+                sceneText.text = Instance.GameState == GameState.Victory ? "You Escaped!" : "You died.";
+                Instance.isGameOverSet = true;
+            }
+            else
+            {
+                if (Input.anyKeyDown)
+                {
+                    QuitToMenu();
+                }
+            }
+
+        }
+
         if (Instance.GameState == GameState.Reload)
         {
             Instance.Cleanup();
@@ -61,13 +83,17 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (Instance.GameState == GameState.Escape)
+                if (Instance.GameState == GameState.Escape && Instance.GameState != GameState.Tutorial)
                 {
                     Instance.PauseGame();
                 }
-                else if (Instance.GameState == GameState.Pause)
+                else if (Instance.GameState == GameState.Pause && Instance.GameState != GameState.Tutorial)
                 {
                     Instance.UnpauseGame();
+                }
+                else if (Instance.GameState == GameState.Tutorial)
+                {
+                    Instance.CloseTutorial();
                 }
             }
         }
@@ -118,11 +144,17 @@ public class GameManager : MonoBehaviour
                     }
 
                     Instance.levelManager.IsPopulated = false;
-                    // TODO improve this
                     var loading = Instance.Canvas.transform.Find("Loading").gameObject;
                     if (loading != null)
                     {
                         loading.SetActive(false);
+                    }
+                    Instance.GameState = GameState.Escape;
+
+                    // open tutorial menu
+                    if (!Instance.tutorialDisplayed)
+                    {
+                        Instance.OpenTutorial();
                     }
                 }
             }
@@ -207,6 +239,7 @@ public class GameManager : MonoBehaviour
                 return false;
             }
         }
+        Instance.IsNewGame = true;
         return true;
     }
 
@@ -227,7 +260,7 @@ public class GameManager : MonoBehaviour
         var newGame = Instance.LoadPlayerData();
         if (newGame || isForced)
         {
-            Loader.Load(Loader.Scene.Game, GameState.Escape);
+            Loader.Load(Loader.Scene.Game, GameState.Loading);
         }
         else
         {
@@ -364,12 +397,10 @@ public class GameManager : MonoBehaviour
     {
         if (Instance.pauseMenu == null)
         {
-            Debug.Log("First time opening pause menu");
             Instance.pauseMenu = Instantiate(PauseMenuPrefab, Instance.Canvas.transform);
         }
         else
         {
-            Debug.Log("Opening pause menu");
             Instance.pauseMenu.SetActive(true);
         }
         Time.timeScale = 0;
@@ -378,17 +409,36 @@ public class GameManager : MonoBehaviour
 
     public void UnpauseGame()
     {
-        Debug.Log("Unpausing game");
-        Time.timeScale = 1;
         Instance.pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+        Instance.GameState = GameState.Escape;
+    }
+
+    public void OpenTutorial()
+    {
+        Debug.Log("Opening tutorial screen");
+        Instance.tutorialDisplayed = true;
+        Instance.tutorialScreen = Instantiate(TutorialScreenPrefab, Instance.Canvas.transform);
+        Time.timeScale = 0;
+        Instance.GameState = GameState.Tutorial;
+    }
+
+    public void CloseTutorial()
+    {
+        Debug.Log("Closing tutorial screen");
+        Destroy(Instance.tutorialScreen);
+        Time.timeScale = 1;
         Instance.GameState = GameState.Escape;
     }
 
     public void QuitToMenu()
     {
         Instance.SavePlayerData();
-        Destroy(Instance.pauseMenu);
-        Time.timeScale = 1;
+        if (Instance.GameState == GameState.Pause)
+        {
+            Destroy(Instance.pauseMenu);
+            Time.timeScale = 1;
+        }
         Loader.Load(Loader.Scene.Menu, GameState.Reload);
     }
 
@@ -405,8 +455,7 @@ public class GameManager : MonoBehaviour
     public void Defeat()
     {
         Instance.SavePlayerData();
-        Debug.Log("You died");
-        Loader.Load(Loader.Scene.GameOver, GameState.GameOver);
+        Loader.Load(Loader.Scene.GameOver, GameState.Defeat);
     }
 
     // TODO victory
@@ -415,7 +464,6 @@ public class GameManager : MonoBehaviour
     public void Victory()
     {
         Instance.SavePlayerData();
-        Debug.Log("Won the game");
         Loader.Load(Loader.Scene.GameOver, GameState.Victory);
     }
 
@@ -426,6 +474,6 @@ public class GameManager : MonoBehaviour
         Instance.SavePlayerData();
         Instance.Level++;
         Instance.isNextLevel = true;
-        Debug.Log("Loading new level");
+        Instance.GameState = GameState.Loading;
     }
 }
