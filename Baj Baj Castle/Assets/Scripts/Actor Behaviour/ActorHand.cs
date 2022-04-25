@@ -46,8 +46,10 @@ public class ActorHand : MonoBehaviour
 
     public void UseHeldItem()
     {
-        itemObject.GetComponent<Item>().Use(transform.parent.gameObject.GetComponent<Actor>());
-        InventorySystem.Instance.Remove(heldItem.Data);
+        if (itemObject.GetComponent<Item>().Use(transform.parent.gameObject.GetComponent<Actor>()))
+        {
+            InventorySystem.Instance.Remove(heldItem.Data);
+        }
     }
 
     // Updates rendering for the hand and held item based on vertical position

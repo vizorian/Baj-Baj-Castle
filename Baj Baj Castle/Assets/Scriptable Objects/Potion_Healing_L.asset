@@ -22,6 +22,6 @@ MonoBehaviour:
     DamageType: 0
     CriticalChance: 0
     Speed: 0
-    Cooldown: 0
+    Cooldown: 1
     Knockback: 0
     Range: 0

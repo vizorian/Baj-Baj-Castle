@@ -23,6 +23,12 @@ public class Item : Collidable
 
     private protected override void FixedUpdate()
     {
+        // Cooldown
+        if (CooldownTimer > 0)
+        {
+            CooldownTimer -= Time.deltaTime;
+        }
+
         if (Type == ItemType.Weapon)
         {
             _edgeCollider.OverlapCollider(contactFilter, _hits);
@@ -35,45 +41,47 @@ public class Item : Collidable
     }
 
     // Use item
-    public void Use(Actor actor)
+    public bool Use(Actor actor)
     {
-        if (Type == ItemType.Consumable)
+        if (CooldownTimer <= 0)
         {
-            var healingAmount = actor.MaxHealth / 100f * Damage;
-            actor.Heal(healingAmount);
+            if (Type == ItemType.Consumable)
+            {
+                var healingAmount = actor.MaxHealth / 100f * Damage;
+                actor.Heal(healingAmount);
+            }
+            CooldownTimer = Cooldown;
+            return true;
         }
+        return false;
     }
 
     private protected override void OnCollide(Collider2D collider)
     {
-        // Cooldown
-        if (CooldownTimer > 0)
-        {
-            CooldownTimer -= Time.deltaTime;
-            return;
-        }
-
         // If item is weapon
         if (Type == ItemType.Weapon)
         {
-            if (collider.gameObject.tag == "Actor"
-                || collider.gameObject.tag == "Object"
-                && collider.gameObject.tag != "Player")
+            if (CooldownTimer <= 0)
             {
-                // get Actor this item is attached to
-                Actor actor = GetComponentInParent<Actor>();
+                if (collider.gameObject.tag == "Actor"
+                    || collider.gameObject.tag == "Object"
+                    && collider.gameObject.tag != "Player")
+                {
+                    // get Actor this item is attached to
+                    Actor actor = GetComponentInParent<Actor>();
 
-                // if collider is the owner of the item
-                if (collider.gameObject == actor.gameObject) return;
+                    // if collider is the owner of the item
+                    if (collider.gameObject == actor.gameObject) return;
 
-                // check for critical hit
-                var damage = Damage;
-                var knockback = Knockback;
-                var damageData = new DamageData(damage, DamageType, knockback, actor);
-                damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance;
-                collider.gameObject.SendMessage("TakeDamage", damageData);
+                    // check for critical hit
+                    var damage = Damage;
+                    var knockback = Knockback;
+                    var damageData = new DamageData(damage, DamageType, knockback, actor);
+                    damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance;
+                    collider.gameObject.SendMessage("TakeDamage", damageData);
+                }
+                CooldownTimer = Cooldown;
             }
         }
-        CooldownTimer = Cooldown;
     }
 }

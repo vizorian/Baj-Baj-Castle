@@ -5,7 +5,6 @@ using UnityEngine;
 // TODO implement collisons
 public class Actor : MonoBehaviour
 {
-
     public bool isActive;
 
     // attributes
@@ -14,9 +13,6 @@ public class Actor : MonoBehaviour
     public float MovementSpeed;
     public int Defense;
     public int Resistance;
-
-
-    // upgradeable attributes
     public int Strength;
     public int Agility;
     public int Intelligence;
@@ -49,6 +45,7 @@ public class Actor : MonoBehaviour
 
     private protected void Awake()
     {
+        Health = MaxHealth;
         rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -83,7 +80,6 @@ public class Actor : MonoBehaviour
     // Take damage, called by weapons on collision
     private protected virtual void TakeDamage(DamageData damageData)
     {
-        Debug.Log(gameObject.name + " took taking damage");
         var knockback = damageData.Knockback;
         var damage = damageData.Amount;
 

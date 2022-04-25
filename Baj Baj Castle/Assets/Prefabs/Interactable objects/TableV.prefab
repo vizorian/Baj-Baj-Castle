@@ -122,20 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d87350de3837f7647bcefcc0a718d565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ContactFilter:
-    useTriggers: 0
-    useLayerMask: 0
-    useDepth: 0
-    useOutsideDepth: 0
-    useNormalAngle: 0
-    useOutsideNormalAngle: 0
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    minDepth: 0
-    maxDepth: 0
-    minNormalAngle: 0
-    maxNormalAngle: 0
+  Health: 40
   MainSprite: {fileID: 1207821204664722783, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: -7482595089818226769, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   UpSprite: {fileID: -7263881698557325647, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}

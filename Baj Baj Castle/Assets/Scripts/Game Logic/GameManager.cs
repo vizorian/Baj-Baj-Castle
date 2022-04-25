@@ -52,11 +52,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        // Instance.GameState = GameState.MainMenu;
-    }
-
     void Update()
     {
         if (Instance.GameState == GameState.Reload)
@@ -262,6 +257,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Updates the shop UI with player's data
     public void UpdateUpgradeMenu()
     {
         var upgradeMenu = Instance.Canvas.transform.Find("UpgradeMenu");
@@ -287,6 +283,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Upgrades specific stat if the player has enough gold
+    // Save data is updated
+    // Calls UpdateUpgradeMenu() to update the shop UI
     public void UpgradeStat(string stat)
     {
         switch (stat)

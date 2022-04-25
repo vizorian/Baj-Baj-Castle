@@ -7,7 +7,6 @@ public class Interactable : Collidable
 {
     // Attributes
     public float Health;
-
     private protected LineRenderer _lineRenderer;
     private protected SpriteRenderer _spriteRenderer;
     private protected Color _highlightColor = Color.white;
@@ -190,6 +189,7 @@ public class Interactable : Collidable
 
 
         Health -= damage;
+        FloatingText.Create(damage.ToString(), Color.grey, transform.position, 1f, 0.5f, 0.2f);
         if (Health <= 0)
         {
             Die();
