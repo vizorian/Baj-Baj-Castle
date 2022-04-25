@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Potion_Healing_L
   DisplayName: Large Healing Potion
+  MaxStackSize: 3
   Icon: {fileID: 3346775860221651040, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: 4cb4509f48dc27440ad01f4861b9ce17, type: 3}
   ItemType: 1

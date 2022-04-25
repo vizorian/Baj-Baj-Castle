@@ -34,8 +34,10 @@ public class Chest : Interactable
             _spriteRenderer.sprite = EmptySprite;
             gameObject.tag = "Object";
 
-            // TODO
-            // GameManager.Instance.player.Gold += GoldContained;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.player.Gold += GoldContained;
+            }
             FloatingText.Create("+" + GoldContained.ToString() + "G", Color.yellow, transform.position, 1f, 0.5f, 0.2f);
 
             foreach (var item in Contents)

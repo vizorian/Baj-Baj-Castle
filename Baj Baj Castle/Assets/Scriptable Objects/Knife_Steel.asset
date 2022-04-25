@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Knife_Steel
   DisplayName: Steel Knife
+  MaxStackSize: 1
   Icon: {fileID: -6665930254976882886, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: c8af5b3413230384c9b16c5c6b4ecfcd, type: 3}
   ItemType: 2

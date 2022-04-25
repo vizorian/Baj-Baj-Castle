@@ -21,7 +21,13 @@ public class Pickupable : Interactable
 
     private protected override void OnInteraction()
     {
-        InventorySystem.Instance.Add(ItemData);
-        Destroy(gameObject);
+        if (InventorySystem.Instance.Add(ItemData))
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            FloatingText.Create("Inventory is full", Color.red, transform.position, 1, 0.5f, 0.5f);
+        }
     }
 }

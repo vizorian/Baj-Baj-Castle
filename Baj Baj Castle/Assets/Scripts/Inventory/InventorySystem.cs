@@ -9,8 +9,8 @@ public class InventorySystem : MonoBehaviour
     private static InventorySystem instance;
     public static InventorySystem Instance { get { return instance; } }
     public UnityEvent OnInventoryChanged;
-    private Dictionary<InventoryItemData, InventoryItem> _itemDictionary;
     public List<InventoryItem> Inventory { get; private set; }
+    public int Capacity = 9;
     public InventoryItem SelectedItem { get; private set; }
     private int selectedItemIndex;
     private ActorHand hand;
@@ -18,7 +18,6 @@ public class InventorySystem : MonoBehaviour
     private void Awake()
     {
         Inventory = new List<InventoryItem>();
-        _itemDictionary = new Dictionary<InventoryItemData, InventoryItem>();
         SelectedItem = null;
         selectedItemIndex = -1;
 
@@ -49,58 +48,64 @@ public class InventorySystem : MonoBehaviour
     }
 
     // Adds an item to inventory and invokes OnInventoryChanged
-    public void Add(InventoryItemData itemData)
+    public bool Add(InventoryItemData itemData)
     {
-        if (_itemDictionary.TryGetValue(itemData, out InventoryItem value))
+        bool success = true;
+        InventoryItem newItem = new InventoryItem(itemData);
+        // probably bad finding
+        var existingItem = Inventory.Find(item => item.Data.Id == itemData.Id && item.StackSize < item.Data.MaxStackSize); // item of same type but not full
+        if (existingItem == null) // non-full stackable item doesn't exist
         {
-            value.AddToStack();
-        }
-        else
-        {
-            InventoryItem newItem = new InventoryItem(itemData);
-            Inventory.Add(newItem);
-            _itemDictionary.Add(itemData, newItem);
-
-            // First pickup is selected automatically
-            if (SelectedItem == null)
+            if (Inventory.Count < Capacity)
             {
-
-                SelectedItem = newItem;
-                selectedItemIndex = 0;
-
-                hand.SetHeldItem(SelectedItem);
+                Inventory.Add(newItem);
+            }
+            else
+            {
+                success = false;
             }
         }
+        else // non-full stackable item exists
+        {
+            existingItem.AddToStack();
+        }
+
+        // First pickup is selected automatically
+        if (SelectedItem == null)
+        {
+            SelectedItem = newItem;
+            selectedItemIndex = 0;
+
+            hand.SetHeldItem(SelectedItem);
+        }
+
         OnInventoryChanged.Invoke();
+        return success;
     }
 
     // Removes an item from inventory and invokes OnInventoryChanged
     public void Remove(InventoryItemData itemData)
     {
-        if (_itemDictionary.TryGetValue(itemData, out InventoryItem value))
+        SelectedItem.RemoveFromStack();
+        if (SelectedItem.StackSize == 0) // if last item dropped
         {
-            value.RemoveFromStack();
+            Inventory.RemoveAt(selectedItemIndex);
 
-            if (value.StackSize == 0)
+            if (Inventory.Count != 0) // If more items remain
             {
-                Inventory.Remove(value);
-                _itemDictionary.Remove(itemData);
-
-                // If removed item was selected
-                if (value == SelectedItem && Inventory.Count != 0) // If more items remain
+                if (selectedItemIndex != 0)
                 {
-                    SelectedItem = Inventory[0];
-                    selectedItemIndex = 0;
-
-                    hand.SetHeldItem(SelectedItem);
+                    selectedItemIndex--;
                 }
-                else // If no items remain
-                {
-                    SelectedItem = null;
-                    selectedItemIndex = -1;
+                SelectedItem = Inventory[selectedItemIndex];
+                hand.SetHeldItem(SelectedItem);
+            }
+            else // If no items remain
+            {
+                SelectedItem = null;
+                selectedItemIndex = -1;
 
-                    hand.ClearHeldItem();
-                }
+                hand.ClearHeldItem();
             }
         }
         OnInventoryChanged.Invoke();

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Knife_Iron
   DisplayName: Iron Knife
+  MaxStackSize: 1
   Icon: {fileID: 2903714021680835994, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: e1b689d74244b734589b41f9ae299cb3, type: 3}
   ItemType: 2

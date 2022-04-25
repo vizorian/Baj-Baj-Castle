@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Spear_Wooden
   DisplayName: Wooden Spear
+  MaxStackSize: 1
   Icon: {fileID: 9025275662231225976, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 8865499550531167265, guid: 227449e935f7b3d459afe0d100bde2e7, type: 3}
   ItemType: 2

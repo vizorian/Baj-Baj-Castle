@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Potion_Healing_M
   DisplayName: Medium Healing Potion
+  MaxStackSize: 3
   Icon: {fileID: 9066584806833873983, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   Prefab: {fileID: 3943407365818885243, guid: ece4f202963e50642a473f253d8102f4, type: 3}
   ItemType: 1
