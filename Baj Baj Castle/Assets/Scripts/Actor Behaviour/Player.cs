@@ -18,21 +18,23 @@ public class Player : Actor
     {
         ProcessInputs();
         CalculateMovement();
+        Move();
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), ActorType);
-
 
         FindInteractable();
         if (interactionObject != null)
             interactionObject.SendMessage("OnCollide", boxCollider);
     }
 
-    private void FixedUpdate()
+    private protected override void FixedUpdate()
     {
+        base.FixedUpdate();
+
         Hand.UpdateCenterPosition(transform.position);
         Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        Move();
     }
 
+    // TODO check for gamestate
     /// <summary>
     /// Processes the incoming inputs
     /// </summary>
@@ -98,7 +100,6 @@ public class Player : Actor
         data.LuckUpgradeLevel = LuckUpgradeLevel;
         data.HealthUpgradeLevel = HealthUpgradeLevel;
         data.DefenseUpgradeLevel = DefenseUpgradeLevel;
-        Debug.Log(data.ToString());
         return data;
     }
 
@@ -127,34 +128,33 @@ public class Player : Actor
 
         moveDelta = new Vector2(x, y);
         moveDelta.Normalize();
-        moveDelta *= MovementSpeed * Time.fixedDeltaTime;
+        moveDelta *= MovementSpeed;
+        rigidBody.velocity = moveDelta;
     }
 
-    private protected override void Move()
-    {
-        if (moveDelta != Vector3.zero)
-        {
-            // Checking for collision on X axis
-            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-                0.01f, LayerMask.GetMask("Actor", "Blocking"));
+    // private protected override void Move()
+    // {
+    //     if (moveDelta != Vector3.zero)
+    //     {
+    //         // Checking for collision on X axis
+    //         var raycast = Physics2D.Raycast(transform.position, Vector2.right * moveDelta.x, moveDelta.magnitude, LayerMask.GetMask("Actor", "Blocking"));
+    //         if (raycast)
+    //         {
+    //             var raycastDistance = Vector2.Distance(transform.position, raycast.point);
+    //             moveDelta.x = raycastDistance;
+    //         }
 
-            if (raycastHit.collider == null)
-            {
-                // Applying movement on X axis
-                transform.Translate(moveDelta.x, 0, 0);
-            }
+    //         // Checking for collision on Y axis
+    //         raycast = Physics2D.Raycast(transform.position, Vector2.up * moveDelta.y, moveDelta.magnitude, LayerMask.GetMask("Actor", "Blocking"));
+    //         if (raycast)
+    //         {
+    //             var raycastDistance = Vector2.Distance(transform.position, raycast.point);
+    //             moveDelta.y = raycastDistance;
+    //         }
 
-            // Checking for collision on Y axis
-            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
-                0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-            if (raycastHit.collider == null)
-            {
-                // Applying movement on Y axis
-                transform.Translate(0, moveDelta.y, 0);
-            }
-        }
-    }
+    //         transform.Translate(moveDelta);
+    //     }
+    // }
 
     private void FindInteractable()
     {

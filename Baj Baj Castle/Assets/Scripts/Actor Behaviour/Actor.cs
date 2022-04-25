@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO implement collisons
 public class Actor : MonoBehaviour
 {
+
     public bool isActive;
 
     // attributes
@@ -25,40 +27,12 @@ public class Actor : MonoBehaviour
     public float ReachRange;
     public float ViewRange;
 
-    public Actor(int health,
-                 int maxHealth,
-                 int movementSpeed,
-                 int defense,
-                 int resistance,
-                 int strength,
-                 int agility,
-                 int intelligence,
-                 int luck,
-                 float interactionRange,
-                 float reachRange,
-                 float viewRange)
-    {
-        Health = health;
-        MaxHealth = maxHealth;
-        MovementSpeed = movementSpeed;
-        Defense = defense;
-        Resistance = resistance;
-        Strength = strength;
-        Agility = agility;
-        Intelligence = intelligence;
-        Luck = luck;
-        InteractionRange = interactionRange;
-        ReachRange = reachRange;
-        ViewRange = viewRange;
-    }
-
-    public Actor()
-    {
-    }
-
+    private protected Rigidbody2D rigidBody;
     private protected BoxCollider2D boxCollider;
     private protected SpriteRenderer spriteRenderer;
     private protected RaycastHit2D raycastHit;
+    private protected ContactFilter2D contactFilter;
+    private protected List<Collider2D> _hits = new List<Collider2D>();
     private protected InventorySystem inventory;
 
     public ActorType ActorType;
@@ -73,16 +47,37 @@ public class Actor : MonoBehaviour
     public Sprite BackSprite;
     public Sprite SideSprite;
 
-    private protected virtual void Start()
+    private protected void Awake()
     {
+        rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(LayerMask.GetMask("Actor"));
         if (HandPrefab != null)
         {
             Hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
             Hand.Init(ReachRange);
             Hand.UpdateCenterPosition(transform.position);
         }
+    }
+
+    private protected virtual void FixedUpdate()
+    {
+        // Handling collisions
+        boxCollider.OverlapCollider(contactFilter, _hits);
+        for (int i = 0; i < _hits.Count; i++)
+        {
+            OnCollide(_hits[i]);
+            _hits[i] = null;
+        }
+    }
+
+    private protected virtual void OnCollide(Collider2D collider)
+    {
+        // var Damage = 10;
+        // collider.gameObject.SendMessage("TakeDamage", Damage);
+        Debug.Log(gameObject.name + " collided with " + collider.name);
     }
 
     // Take damage, called by weapons on collision
@@ -150,8 +145,6 @@ public class Actor : MonoBehaviour
         FloatingText.Create(amount.ToString(), Color.green, transform.position, 1f, 0.5f, 0.2f);
     }
 
-    // TODO improve this
-    // HOW: check if new position is in collision
     private void CalculateKnockback(Vector3 from, float distance)
     {
         knockbackDirection = transform.position - from;
@@ -170,52 +163,25 @@ public class Actor : MonoBehaviour
     /// </summary>
     private protected virtual void Move()
     {
-        if (!isActive)
-        {
-            knockbackDirection = Vector3.zero;
-            moveDelta = Vector3.zero;
-        }
-
-        var realResistance = 0.1f + Resistance / 100f;
-        if (realResistance > 1)
+        if (Resistance >= 100)
         {
             knockbackDirection = Vector3.zero;
         }
         else
         {
+            var realResistance = 0.1f + Resistance / 100f;
             knockbackDirection = Vector3.Lerp(knockbackDirection, Vector3.zero, realResistance);
         }
+
         moveDelta += knockbackDirection;
-
-        if (moveDelta != Vector3.zero)
-        {
-            // Checking for collision on X axis
-            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-                0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-            if (raycastHit.collider == null)
-            {
-                // Applying movement on X axis
-                transform.Translate(moveDelta.x, 0, 0);
-            }
-
-            // Checking for collision on Y axis
-            raycastHit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
-                0.01f, LayerMask.GetMask("Actor", "Blocking"));
-
-            if (raycastHit.collider == null)
-            {
-                // Applying movement on Y axis
-                transform.Translate(0, moveDelta.y, 0);
-            }
-        }
+        rigidBody.velocity = moveDelta;
     }
 
     private protected virtual void CalculateMovement()
     {
         moveDelta = target.transform.position - transform.position;
         moveDelta.Normalize();
-        moveDelta *= MovementSpeed * Time.fixedDeltaTime;
+        moveDelta *= MovementSpeed;
     }
 
     private protected virtual void LookAt(Vector3 lookTarget, ActorType actorType)

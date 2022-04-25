@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class Collidable : MonoBehaviour
 {
-    public ContactFilter2D ContactFilter;
+    private protected ContactFilter2D contactFilter;
     private protected BoxCollider2D boxCollider;
     private protected List<Collider2D> _hits = new List<Collider2D>();
 
     private protected virtual void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        contactFilter = new ContactFilter2D();
     }
 
     private protected virtual void FixedUpdate()
     {
         // Handling collisions
-        boxCollider.OverlapCollider(ContactFilter, _hits);
+        boxCollider.OverlapCollider(contactFilter, _hits);
         for (int i = 0; i < _hits.Count; i++)
         {
             OnCollide(_hits[i]);

@@ -25,7 +25,7 @@ public class Item : Collidable
     {
         if (Type == ItemType.Weapon)
         {
-            _edgeCollider.OverlapCollider(ContactFilter, _hits);
+            _edgeCollider.OverlapCollider(contactFilter, _hits);
             for (int i = 0; i < _hits.Count; i++)
             {
                 OnCollide(_hits[i]);

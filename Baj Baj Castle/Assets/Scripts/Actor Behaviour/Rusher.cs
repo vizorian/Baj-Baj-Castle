@@ -7,6 +7,7 @@ public class Rusher : Actor
 {
     private void Update()
     {
+        Move();
         if (target == null)
         {
             FindAndSetTarget();
@@ -17,9 +18,9 @@ public class Rusher : Actor
         }
     }
 
-    private void FixedUpdate()
+    private protected override void FixedUpdate()
     {
-        Move();
+        base.FixedUpdate();
 
         if (target == null)
         {
@@ -37,6 +38,16 @@ public class Rusher : Actor
 
                 }
             }
+        }
+    }
+
+    // handle collisions
+    private void OnCollide(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            var Damage = 10;
+            collision.gameObject.SendMessage("TakeDamage", Damage);
         }
     }
 
@@ -76,4 +87,6 @@ public class Rusher : Actor
         else Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, ViewRange);
     }
+
+
 }
