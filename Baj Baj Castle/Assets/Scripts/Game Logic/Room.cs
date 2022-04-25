@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,15 @@ using UnityEngine.Tilemaps;
 
 public class Room
 {
+    // game logic
+    public bool IsActive = false; // activates actors inside the room
+    public bool IsCleared = false; // if all actors are dead
+
+    // stuff inside room
+    public List<Actor> Actors = new List<Actor>();
+    public List<Item> Items = new List<Item>();
+    public List<Interactable> Objects = new List<Interactable>();
     public int Id;
-    public bool IsExplored = false;
     public List<Room> Neighbours = new List<Room>();
     public List<Room> JointRooms = new List<Room>();
     public List<TileData> Tiles;
@@ -17,7 +25,14 @@ public class Room
     public int Y_Max;
     public int Y_Min;
     public TileData Center;
-
+    public int Width { get { return Mathf.Abs(X_Max - X_Min - 2); } }
+    public int Height { get { return Mathf.Abs(Y_Max - Y_Min - 2); } }
+    public int Area { get { return Width * Height; } }
+    public float WidthToWorld { get { return (Width + 1) * LevelGenerator.CELL_SIZE; } }
+    public float HeightToWorld { get { return (Height + 1) * LevelGenerator.CELL_SIZE; } }
+    // TODO get this as float?
+    public Vector3 CenterPosition { get { return new Vector3((X_Max + X_Min) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2, (Y_Max + Y_Min) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2); } }
+    public Vector3 TopLeftCorner { get { return new Vector3(X_Min * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE, Y_Max * LevelGenerator.CELL_SIZE - LevelGenerator.CELL_SIZE); } }
     public Room(int id, List<TileData> tiles)
     {
         Id = id;
@@ -83,7 +98,6 @@ public class Room
             }
         }
     }
-
     public void WallNearby(Room otherRoom)
     {
         if (JointRooms.Contains(otherRoom) || otherRoom.JointRooms.Contains(this))
@@ -154,6 +168,10 @@ public class Room
                     Tiles.Add(new TileData(i, Y_Min, TileType.None));
                 }
             }
+            else
+            {
+                Debug.Log("ERROR TILE at CLOSE TILE");
+            }
         }
     }
 
@@ -171,6 +189,22 @@ public class Room
 
         Room other = (Room)obj;
         return this.Id == other.Id;
+    }
+
+    public Vector3 GetRandomTile()
+    {
+        Vector3 position = new Vector3();
+        var offset = LevelGenerator.CELL_SIZE / 2;
+        var tiles = Tiles.Where(t => t.Type != TileType.Wall && t.Type != TileType.Door).ToList();
+        do
+        {
+            var randomTile = tiles[UnityEngine.Random.Range(0, tiles.Count)];
+            position = new Vector3(randomTile.X * LevelGenerator.CELL_SIZE + offset, randomTile.Y * LevelGenerator.CELL_SIZE + offset);
+        } // check if list of Actors or Objects contains anything at this position
+        while (Actors.Any(a => a.transform.position == position) || Objects.Any(o => o.transform.position == position));
+
+        Debug.Log("Random tile: " + position);
+        return position;
     }
 
     public override int GetHashCode()

@@ -78,7 +78,7 @@ public class Rusher : Actor
     private void FindAndSetTarget()
     {
         target = null;
-        isActive = false;
+        IsActive = false;
         var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
 
         foreach (var t in potentialTargets)
@@ -86,7 +86,7 @@ public class Rusher : Actor
             if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
-                isActive = true;
+                IsActive = true;
                 return;
             }
         }
@@ -98,7 +98,7 @@ public class Rusher : Actor
             if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
             {
                 target = t;
-                isActive = true;
+                IsActive = true;
                 return;
             }
         }

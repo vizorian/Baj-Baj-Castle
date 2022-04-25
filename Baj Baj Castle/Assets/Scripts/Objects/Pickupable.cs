@@ -9,6 +9,7 @@ public class Pickupable : Interactable
 
     private protected override void OnCollide(Collider2D collider)
     {
+        // TODO fix this spaghetti
         collisions = true;
 
         if (collider.tag == "Player")

@@ -24,5 +24,5 @@ MonoBehaviour:
     CriticalChance: 4
     Speed: 1
     Cooldown: 0.2
-    Knockback: 0.1
+    Knockback: 3
     Range: 0

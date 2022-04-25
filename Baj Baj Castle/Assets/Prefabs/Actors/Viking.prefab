@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8651ace46057a4fb1ad372f1ce5951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  IsActive: 0
   Health: 50
   MaxHealth: 50
   MovementSpeed: 0.6
@@ -142,6 +142,12 @@ MonoBehaviour:
   FrontSprite: {fileID: -7274016712479325718, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: 1921402865888713703, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: 6910062292031006536, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Damage: 8
+  DamageType: 2
+  CriticalChance: 5
+  Knockback: 1.5
+  AttackSpeed: 0.6
+  CooldownTimer: 0
 --- !u!50 &406046406638903504
 Rigidbody2D:
   serializedVersion: 4

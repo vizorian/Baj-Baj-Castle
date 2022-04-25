@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    public bool isActive;
+    public bool IsActive = false;
+    public Room room;
 
     // attributes
     public float Health;
