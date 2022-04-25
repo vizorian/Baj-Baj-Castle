@@ -46,7 +46,7 @@ public class Item : Collidable
 
     private protected override void OnCollide(Collider2D collider)
     {
-        // Attack cooldown
+        // Cooldown
         if (CooldownTimer > 0)
         {
             CooldownTimer -= Time.deltaTime;
@@ -56,9 +56,9 @@ public class Item : Collidable
         // If item is weapon
         if (Type == ItemType.Weapon)
         {
-            if (collider.gameObject.tag == "Player"
-                || collider.gameObject.tag == "Actor"
-                || collider.gameObject.tag == "Object")
+            if (collider.gameObject.tag == "Actor"
+                || collider.gameObject.tag == "Object"
+                && collider.gameObject.tag != "Player")
             {
                 // get Actor this item is attached to
                 Actor actor = GetComponentInParent<Actor>();
@@ -69,8 +69,8 @@ public class Item : Collidable
                 // check for critical hit
                 var damage = Damage;
                 var knockback = Knockback;
-                bool isCritical = UnityEngine.Random.Range(0f, 100f) <= CriticalChance;
-                var damageData = new DamageData(damage, DamageType, knockback, actor, isCritical);
+                var damageData = new DamageData(damage, DamageType, knockback, actor);
+                damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance;
                 collider.gameObject.SendMessage("TakeDamage", damageData);
             }
         }

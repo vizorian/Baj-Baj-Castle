@@ -47,14 +47,23 @@ public class GameManager : MonoBehaviour
         else
         {
             Instance = this;
-            Instance.GameState = GameState.MainMenu;
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(Instance.GridObject);
         }
     }
 
+    void Start()
+    {
+        // Instance.GameState = GameState.MainMenu;
+    }
+
     void Update()
     {
+        if (Instance.GameState == GameState.Reload)
+        {
+            Instance.Cleanup();
+        }
+
         if (Instance.GameState == GameState.Victory || Instance.GameState == GameState.Defeat)
         {
             if (Instance.isGameOverSet == false)
@@ -68,15 +77,9 @@ public class GameManager : MonoBehaviour
             {
                 if (Input.anyKeyDown)
                 {
-                    QuitToMenu();
+                    Instance.QuitToMenu();
                 }
             }
-
-        }
-
-        if (Instance.GameState == GameState.Reload)
-        {
-            Instance.Cleanup();
         }
 
         if (Instance.GameState != GameState.Loading)
@@ -159,22 +162,12 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        else if (SceneManager.GetActiveScene().name == "GameOver")
-        {
-            if (Input.anyKeyDown)
-            {
-                Loader.Load(Loader.Scene.Menu, GameState.MainMenu);
-            }
-        }
-        else if (SceneManager.GetActiveScene().name == "Menu")
-        {
-
-        }
     }
 
     private void Cleanup()
     {
         Instance.Canvas = GameObject.Find("Canvas");
+
         Instance.Level = 1;
 
         if (Instance.levelManager != null)
@@ -201,8 +194,6 @@ public class GameManager : MonoBehaviour
         Instance.isSaveLoaded = false;
         Instance.GameState = GameState.MainMenu;
     }
-
-
 
     // Saving
     public void SavePlayerData()
@@ -416,7 +407,6 @@ public class GameManager : MonoBehaviour
 
     public void OpenTutorial()
     {
-        Debug.Log("Opening tutorial screen");
         Instance.tutorialDisplayed = true;
         Instance.tutorialScreen = Instantiate(TutorialScreenPrefab, Instance.Canvas.transform);
         Time.timeScale = 0;
@@ -425,7 +415,6 @@ public class GameManager : MonoBehaviour
 
     public void CloseTutorial()
     {
-        Debug.Log("Closing tutorial screen");
         Destroy(Instance.tutorialScreen);
         Time.timeScale = 1;
         Instance.GameState = GameState.Escape;
@@ -449,7 +438,6 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    // TODO death
     // This method is called when the player dies.
     // It brings the player to the GameOver scene.
     public void Defeat()
@@ -458,7 +446,6 @@ public class GameManager : MonoBehaviour
         Loader.Load(Loader.Scene.GameOver, GameState.Defeat);
     }
 
-    // TODO victory
     // This method is called when the player wins.
     // It stops the game and displays a victory message.
     public void Victory()

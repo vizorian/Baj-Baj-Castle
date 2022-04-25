@@ -83,6 +83,7 @@ public class Actor : MonoBehaviour
     // Take damage, called by weapons on collision
     private protected virtual void TakeDamage(DamageData damageData)
     {
+        Debug.Log(gameObject.name + " took taking damage");
         var knockback = damageData.Knockback;
         var damage = damageData.Amount;
 

@@ -89,6 +89,12 @@ public class Player : Actor
         }
     }
 
+    // Actor death
+    private protected override void Die()
+    {
+        GameManager.Instance.Defeat();
+    }
+
     // Get player SaveData
     public SaveData GetSaveData()
     {
@@ -131,30 +137,6 @@ public class Player : Actor
         moveDelta *= MovementSpeed;
         rigidBody.velocity = moveDelta;
     }
-
-    // private protected override void Move()
-    // {
-    //     if (moveDelta != Vector3.zero)
-    //     {
-    //         // Checking for collision on X axis
-    //         var raycast = Physics2D.Raycast(transform.position, Vector2.right * moveDelta.x, moveDelta.magnitude, LayerMask.GetMask("Actor", "Blocking"));
-    //         if (raycast)
-    //         {
-    //             var raycastDistance = Vector2.Distance(transform.position, raycast.point);
-    //             moveDelta.x = raycastDistance;
-    //         }
-
-    //         // Checking for collision on Y axis
-    //         raycast = Physics2D.Raycast(transform.position, Vector2.up * moveDelta.y, moveDelta.magnitude, LayerMask.GetMask("Actor", "Blocking"));
-    //         if (raycast)
-    //         {
-    //             var raycastDistance = Vector2.Distance(transform.position, raycast.point);
-    //             moveDelta.y = raycastDistance;
-    //         }
-
-    //         transform.Translate(moveDelta);
-    //     }
-    // }
 
     private void FindInteractable()
     {

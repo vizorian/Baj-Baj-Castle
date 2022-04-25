@@ -142,6 +142,11 @@ MonoBehaviour:
   FrontSprite: {fileID: -8815059205600961907, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   BackSprite: {fileID: -7444576064390506996, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: -8262991748867391410, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Damage: 4
+  DamageType: 2
+  CriticalChance: 1
+  Knockback: 1
+  AttackSpeed: 0.5
 --- !u!50 &2928345015490232651
 Rigidbody2D:
   serializedVersion: 4

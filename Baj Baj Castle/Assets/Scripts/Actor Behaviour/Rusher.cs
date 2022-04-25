@@ -1,10 +1,17 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Rusher : Actor
 {
+    // Attributes
+    public int Damage;
+    public DamageType DamageType;
+    public float CriticalChance;
+    public float Knockback;
+    public float AttackSpeed;
+    public float CooldownTimer = 0;
+
     private void Update()
     {
         Move();
@@ -15,6 +22,12 @@ public class Rusher : Actor
         else
         {
             CalculateMovement();
+        }
+
+        // Attack cooldown
+        if (CooldownTimer > 0)
+        {
+            CooldownTimer -= Time.deltaTime;
         }
     }
 
@@ -42,12 +55,23 @@ public class Rusher : Actor
     }
 
     // handle collisions
-    private void OnCollide(Collision2D collision)
+    private protected override void OnCollide(Collider2D collider)
     {
-        if (collision.gameObject.tag == "Player")
+
+
+        if (collider.gameObject.tag == "Player")
         {
-            var Damage = 10;
-            collision.gameObject.SendMessage("TakeDamage", Damage);
+            // Attack cooldown
+            if (CooldownTimer > 0)
+            {
+                return;
+            }
+
+            var damageData = new DamageData(Damage, DamageType, Knockback, this);
+            damageData.IsCritical = Random.Range(0, 101) <= CriticalChance;
+            collider.gameObject.SendMessage("TakeDamage", damageData);
+
+            CooldownTimer = AttackSpeed;
         }
     }
 

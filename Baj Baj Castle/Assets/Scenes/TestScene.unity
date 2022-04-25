@@ -280,6 +280,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goblin (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009755002, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: Knockback
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
 --- !u!1001 &425054576
@@ -450,6 +454,10 @@ PrefabInstance:
     - target: {fileID: 3196582786009754998, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
       propertyPath: m_Name
       value: Goblin (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009755002, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: Knockback
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
@@ -836,6 +844,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goblin (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009755002, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: Knockback
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
 --- !u!1001 &799801653
@@ -892,6 +904,10 @@ PrefabInstance:
     - target: {fileID: 3196582786009754998, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
       propertyPath: m_Name
       value: Goblin
+      objectReference: {fileID: 0}
+    - target: {fileID: 3196582786009755002, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}
+      propertyPath: Knockback
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d752ede630b0c5e4588df0957e3afd25, type: 3}

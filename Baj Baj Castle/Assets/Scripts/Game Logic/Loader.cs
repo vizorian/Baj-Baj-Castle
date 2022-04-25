@@ -34,8 +34,8 @@ public static class Loader
     {
         if (onLoaderCallback != null)
         {
-            onLoaderCallback(state);
             GameManager.Instance.GameState = state;
+            onLoaderCallback(state);
             onLoaderCallback = null;
         }
     }
