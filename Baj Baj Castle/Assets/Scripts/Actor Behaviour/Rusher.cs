@@ -59,7 +59,8 @@ public class Rusher : Actor
     // handle collisions
     private protected override void OnCollide(Collider2D collider)
     {
-        if (collider.gameObject.tag == "Player")
+        if (collider.gameObject.tag == "Player"
+            || collider.gameObject.tag == "Object")
         {
             // Attack cooldown
             if (CooldownTimer > 0)

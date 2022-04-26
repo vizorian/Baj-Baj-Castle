@@ -22,9 +22,7 @@ public class Chest : Interactable
         {
             isOpen = true;
             _spriteRenderer.sprite = OpenSprite;
-
             GenerateContent();
-
             return;
         }
 
@@ -70,7 +68,7 @@ public class Chest : Interactable
         }
 
         // Generate gold
-        GoldContained = UnityEngine.Random.Range(1, level * (luck + 1) * 10);
+        GoldContained = UnityEngine.Random.Range(1, level * (luck + 1) * 3);
 
         // Roll for item count based on luck
         var potentialItemCount = UnityEngine.Random.Range(0, level + (luck + 1));
@@ -88,7 +86,6 @@ public class Chest : Interactable
         if (itemCount == 0)
         {
             // 50 % chance
-
             if (UnityEngine.Random.Range(0, 2) == 0)
             {
                 itemCount++;
