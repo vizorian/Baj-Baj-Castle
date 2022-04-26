@@ -19,11 +19,9 @@ public class RoomTrigger : Collidable
         }
         if (ParentRoom.IsActive)
         {
-            Debug.Log(ParentRoom.Actors.Count(a => a != null));
             // check if any ParentRoom.Actors are alive
             if (ParentRoom.Actors.Count(a => a != null) <= 0)
             {
-                Debug.Log("Cleared room");
                 ParentRoom.UnlockDoors();
                 ParentRoom.IsCleared = true;
                 ParentRoom.IsActive = false;

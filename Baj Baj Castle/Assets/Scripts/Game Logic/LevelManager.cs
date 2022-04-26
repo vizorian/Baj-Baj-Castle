@@ -35,6 +35,8 @@ public class LevelManager : MonoBehaviour
     public bool StartingLevelPopulation = false;
     public bool IsPopulated = false;
 
+    public static LevelManager Instance { get; private set; }
+
     private void Update()
     {
         if (!IsGenerated && IsGeneratingLevel)
@@ -50,6 +52,15 @@ public class LevelManager : MonoBehaviour
 
     public void InstantiateComponent(Sprite cellSprite, GameObject gridObject, bool isDebug)
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         this.isDebug = isDebug;
         this.gridObject = gridObject;
         this.cellSprite = cellSprite;
@@ -68,6 +79,11 @@ public class LevelManager : MonoBehaviour
         IsGeneratingLevel = true;
 
         levelGenerator.GenerateLevel(level, isDebug, cellSprite);
+    }
+
+    public void AddItem(GameObject item)
+    {
+        LevelManager.Instance.Items.Add(item);
     }
 
     public void Cleanup()

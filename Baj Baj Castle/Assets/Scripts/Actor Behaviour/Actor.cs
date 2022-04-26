@@ -70,9 +70,6 @@ public class Actor : MonoBehaviour
 
     private protected virtual void OnCollide(Collider2D collider)
     {
-        // var Damage = 10;
-        // collider.gameObject.SendMessage("TakeDamage", Damage);
-        Debug.Log(gameObject.name + " collided with " + collider.name);
     }
 
     // Take damage, called by weapons on collision

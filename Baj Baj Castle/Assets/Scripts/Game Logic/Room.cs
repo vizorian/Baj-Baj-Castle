@@ -58,8 +58,6 @@ public class Room
         // Lock doors
         LockDoors();
 
-        // TODO vision logic
-
         // Activate actors and set room bools
         IsActive = true;
         foreach (var actor in Actors)
@@ -73,36 +71,28 @@ public class Room
         var playerObject = GameManager.Instance.Player.gameObject;
         var doorTile = DoorTiles.OrderBy(door => Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE), playerObject.transform.position)).First();
         var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) - (Vector2)CenterPosition).normalized;
-        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        var move = new Vector3(LevelGenerator.CELL_SIZE, 0);
+        if (direction.x > 0)
         {
-            var move = new Vector3(LevelGenerator.CELL_SIZE, 0);
-            if (direction.x > 0)
-            {
-                playerObject.transform.position -= move;
-            }
-            else
-            {
-                playerObject.transform.position += move;
-            }
+            playerObject.transform.position -= move;
         }
         else
         {
-            var move = new Vector3(0, LevelGenerator.CELL_SIZE);
-            if (direction.y > 0)
-            {
-                playerObject.transform.position -= move;
-            }
-            else
-            {
-                playerObject.transform.position += move;
-            }
+            playerObject.transform.position += move;
+        }
+        move = new Vector3(0, LevelGenerator.CELL_SIZE);
+        if (direction.y > 0)
+        {
+            playerObject.transform.position -= move;
+        }
+        else
+        {
+            playerObject.transform.position += move;
         }
     }
 
     private void LockDoors()
     {
-        Debug.Log("Locking doors");
-        Debug.Log("Door count: " + DoorTiles.Count);
         foreach (var doorTile in DoorTiles)
         {
             tileCreator.AddToCollisionLayer(doorTile);
@@ -111,7 +101,6 @@ public class Room
 
     public void UnlockDoors()
     {
-        Debug.Log("Unlocking doors");
         foreach (var doorTile in DoorTiles)
         {
             tileCreator.RemoveFromCollisionLayer(doorTile);
@@ -241,10 +230,6 @@ public class Room
                 {
                     Tiles.Add(new TileData(i, Y_Min, TileType.None));
                 }
-            }
-            else
-            {
-                Debug.Log("ERROR TILE at CLOSE TILE");
             }
         }
     }

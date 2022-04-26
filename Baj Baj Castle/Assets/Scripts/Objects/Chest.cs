@@ -48,7 +48,8 @@ public class Chest : Interactable
                 var distance = UnityEngine.Random.Range(range, 2 * range);
                 var position = transform.position + direction * distance;
                 // spawn item
-                Instantiate(item, position, Quaternion.identity);
+                var itemObject = Instantiate(item, position, Quaternion.identity);
+                LevelManager.Instance.AddItem(itemObject);
             }
             Contents.Clear();
 

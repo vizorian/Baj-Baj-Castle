@@ -50,7 +50,7 @@ public class Cell
 
     }
 
-    // TODO Fix this
+    // TODO Improve
     // HOW: probably resort to doing real position (world float) instead of cell position (int)
     // check if point is inside the cell's bounds
     public bool IsPointInside(Point point)

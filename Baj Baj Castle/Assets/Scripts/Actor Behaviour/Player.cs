@@ -176,11 +176,4 @@ public class Player : Actor
             .OrderBy(o => Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
             .FirstOrDefault();
     }
-
-    private void OnDrawGizmos()
-    {
-        //if (interactionObject == null) Gizmos.color = Color.yellow;
-        //else Gizmos.color = Color.red;
-        //Gizmos.DrawWireSphere(transform.position, InteractionRange);
-    }
 }

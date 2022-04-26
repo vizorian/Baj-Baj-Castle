@@ -65,7 +65,10 @@ public class GameManager : MonoBehaviour
             {
                 var sceneCanvas = GameObject.Find("Canvas");
                 var sceneText = sceneCanvas.transform.Find("GameOverScreen").Find("Background").Find("Message").GetComponent<TextMeshProUGUI>();
-                sceneText.text = Instance.GameState == GameState.Victory ? "You Escaped!" : "You died.";
+                do
+                {
+                    sceneText.text = Instance.GameState == GameState.Victory ? "You Escaped!" : "You died.";
+                } while (sceneText.text != "You died." && sceneText.text != "You Escaped!");
                 Instance.isGameOverSet = true;
             }
             else

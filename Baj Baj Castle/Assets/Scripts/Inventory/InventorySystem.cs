@@ -34,7 +34,6 @@ public class InventorySystem : MonoBehaviour
     {
         if (hand == null)
             hand = GetComponentInChildren<ActorHand>();
-        //PrintInventory();
     }
 
     private void PrintInventory()
@@ -117,7 +116,8 @@ public class InventorySystem : MonoBehaviour
         if (SelectedItem != null)
         {
             // Drop the actual item in the world
-            Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
+            var itemObject = Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
+            LevelManager.Instance.AddItem(itemObject);
 
             // Remove the item from inventory
             Remove(SelectedItem.Data);

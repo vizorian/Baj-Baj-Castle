@@ -642,7 +642,6 @@ public class LevelGenerator : MonoBehaviour
 
                 var leftPoint = new Point(c1.SimulationCell.transform.position.x, c2.SimulationCell.transform.position.y);
 
-                // TODO cleaner code
                 // check if point is within any of the cells
                 if (!Rooms.Any(c => c.IsPointInside(leftPoint)))
                 {
