@@ -22,6 +22,7 @@ public class LevelManager : MonoBehaviour
     public List<TileData> Hallways;
     public Room StartRoom;
     public Room ExitRoom;
+    private GameObject exitTriggerObject;
     public List<GameObject> Items = new List<GameObject>();
     public List<GameObject> Actors = new List<GameObject>();
     public List<GameObject> Triggers = new List<GameObject>();
@@ -135,16 +136,14 @@ public class LevelManager : MonoBehaviour
         StartingLevelPopulation = false;
     }
 
-    // TODO Fill level with content
     public void PopulateLevel(int level)
     {
-        Debug.Log("Starting population");
         StartingLevelPopulation = true;
 
-        Debug.Log("Creating entrance and exit");
+        // Create entrance, exit and player
         CreateEndpoints();
 
-        Debug.Log("Populating rooms");
+        // Populate all rooms, except starting room
         foreach (var room in Rooms)
         {
             if (room != StartRoom)
@@ -159,7 +158,6 @@ public class LevelManager : MonoBehaviour
     private void PopulateRoom(Room room)
     {
         var limit = room.Area - 9;
-        Debug.Log("Populating room: " + room.Id);
         var level = GameManager.Instance.Level;
 
         // Enemy spawning calculations
@@ -167,22 +165,25 @@ public class LevelManager : MonoBehaviour
         int enemySpawnCount = 0;
         while (UnityEngine.Random.Range(0f, 1f) < enemySpawnChance)
         {
-            if (enemySpawnCount > limit)
+            if (enemySpawnCount >= limit)
             {
                 break;
             }
             enemySpawnCount++;
             enemySpawnChance -= 0.1f;
         }
+        if (enemySpawnCount == 0 && UnityEngine.Random.Range(0, 2) == 0)
+        {
+            enemySpawnCount = 1;
+        }
         limit -= enemySpawnCount;
-        Debug.Log("Enemy spawn count: " + enemySpawnCount);
 
         // Object spawning calculations
         var objectSpawnChance = 0.5f + (level * 0.1f);
         int objectSpawnCount = 0;
         while (UnityEngine.Random.Range(0f, 1f) < objectSpawnChance)
         {
-            if (objectSpawnCount > limit)
+            if (objectSpawnCount >= limit)
             {
                 break;
             }
@@ -193,7 +194,6 @@ public class LevelManager : MonoBehaviour
         {
             objectSpawnCount = 1;
         }
-        Debug.Log("Object spawn count: " + objectSpawnCount);
 
         GameObject prefab;
 
@@ -201,10 +201,9 @@ public class LevelManager : MonoBehaviour
         for (int i = 0; i < enemySpawnCount; i++)
         {
             prefab = GameAssets.Instance.enemyPrefabs[UnityEngine.Random.Range(0, GameAssets.Instance.enemyPrefabs.Count)];
-            // TODO spawn enemy with pricing
-            var enemy = Instantiate(prefab, room.GetRandomTile(), Quaternion.identity);
-            enemy.GetComponent<Actor>().room = room;
+            var enemy = Instantiate(prefab, room.GetRandomTile(2), Quaternion.identity);
             Actors.Add(enemy);
+            room.Actors.Add(enemy.GetComponent<Actor>());
         }
 
         // Object spawning
@@ -221,35 +220,48 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            var object_ = Instantiate(prefab, room.GetRandomTile(), Quaternion.identity);
+            var object_ = Instantiate(prefab, room.GetRandomTile(2), Quaternion.identity);
             Objects.Add(object_);
         }
 
         // Trigger spawning
-        // create a room sized trigger at the center of the room
-        var trigger = Instantiate(GameAssets.Instance.triggers[1], room.CenterPosition, Quaternion.identity);
-        trigger.transform.localScale = new Vector2(room.WidthToWorld, room.HeightToWorld);
+        if (enemySpawnCount > 0)
+        {
+            // create a room sized trigger at the center of the room
+            var triggerObject = Instantiate(GameAssets.Instance.triggers[1], room.CenterPosition, Quaternion.identity);
+            Triggers.Add(triggerObject);
+            var trigger = triggerObject.GetComponent<RoomTrigger>();
+            if (room == ExitRoom)
+            {
+                trigger.Exit = exitTriggerObject.GetComponent<ExitTrigger>();
+            }
+            room.RoomTrigger = trigger;
+            trigger.ParentRoom = room;
 
-        // re-center the trigger to the center of the room
-        var triggerCorner = new Vector2(trigger.transform.position.x - trigger.transform.lossyScale.x / 2,
-                                        trigger.transform.position.y + trigger.transform.lossyScale.y / 2);
+            triggerObject.transform.localScale = new Vector2(room.WidthToWorld, room.HeightToWorld);
 
-        if (triggerCorner.x < room.TopLeftCorner.x) // if trigger is too much left
-        {
-            trigger.transform.position += new Vector3(LevelGenerator.CELL_SIZE / 2, 0);
-        }
-        else if (triggerCorner.x > room.TopLeftCorner.x) // if trigger is too much right
-        {
-            trigger.transform.position += new Vector3(-LevelGenerator.CELL_SIZE / 2, 0);
-        }
+            // re-center the trigger to the center of the room via top left corner tile
+            var moveX = new Vector3(LevelGenerator.CELL_SIZE / 2, 0);
+            while ((triggerObject.transform.position.x - triggerObject.transform.lossyScale.x / 2) > room.TopLeftCorner.x + LevelGenerator.CELL_SIZE / 4)
+            {
+                triggerObject.transform.position -= moveX;
+            }
 
-        if (triggerCorner.y < room.TopLeftCorner.y) // if trigger is too much down
-        {
-            trigger.transform.position += new Vector3(0, LevelGenerator.CELL_SIZE / 2);
-        }
-        else if (triggerCorner.y > room.TopLeftCorner.y) // if trigger is too much up
-        {
-            trigger.transform.position += new Vector3(0, -LevelGenerator.CELL_SIZE / 2);
+            while ((triggerObject.transform.position.x - triggerObject.transform.lossyScale.x / 2) < room.TopLeftCorner.x - LevelGenerator.CELL_SIZE / 4)
+            {
+                triggerObject.transform.position += moveX;
+            }
+
+            var moveY = new Vector3(0, LevelGenerator.CELL_SIZE / 2);
+            while ((triggerObject.transform.position.y + triggerObject.transform.lossyScale.y / 2) > room.TopLeftCorner.y + LevelGenerator.CELL_SIZE / 4)
+            {
+                triggerObject.transform.position -= moveY;
+            }
+
+            while ((triggerObject.transform.position.y + triggerObject.transform.lossyScale.y / 2) < room.TopLeftCorner.y - LevelGenerator.CELL_SIZE / 4)
+            {
+                triggerObject.transform.position += moveY;
+            }
         }
     }
 
@@ -293,7 +305,10 @@ public class LevelManager : MonoBehaviour
         StartRoom.IsCleared = true;
 
         // create exit from level at center of exit room
-        Triggers.Add(Instantiate(GameAssets.Instance.triggers[0], new Vector2(ExitRoom.Center.X * LevelGenerator.CELL_SIZE, ExitRoom.Center.Y * LevelGenerator.CELL_SIZE), Quaternion.identity));
+        exitTriggerObject = Instantiate(GameAssets.Instance.triggers[0],
+                                 new Vector2(ExitRoom.Center.X * LevelGenerator.CELL_SIZE, ExitRoom.Center.Y * LevelGenerator.CELL_SIZE),
+                                 Quaternion.identity);
+        Triggers.Add(exitTriggerObject);
         tileCreator.OverrideTile(ExitRoom.Center, "Exit");
     }
 

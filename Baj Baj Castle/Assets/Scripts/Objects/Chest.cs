@@ -36,7 +36,7 @@ public class Chest : Interactable
 
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.player.Gold += GoldContained;
+                GameManager.Instance.Player.Gold += GoldContained;
             }
             FloatingText.Create("+" + GoldContained.ToString() + "G", Color.yellow, transform.position, 1f, 0.5f, 0.2f);
 

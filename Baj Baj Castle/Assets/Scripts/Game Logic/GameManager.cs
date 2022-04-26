@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     bool isSaveLoaded = false;
     bool isGameOverSet = false;
     // References
-    public Player player;
+    public Player Player;
     // Logic
     public SaveData SaveData;
     public GameState GameState;
@@ -133,12 +133,12 @@ public class GameManager : MonoBehaviour
                 }
                 else if (Instance.levelManager.IsPopulated) // if population is complete
                 {
-                    Instance.player = Instance.levelManager.Player.GetComponent<Player>();
+                    Instance.Player = Instance.levelManager.Player.GetComponent<Player>();
 
                     if (!Instance.isSaveLoaded)
                     {
                         Instance.isSaveLoaded = true;
-                        Instance.player.SetSaveData(Instance.SaveData);
+                        Instance.Player.SetSaveData(Instance.SaveData);
                     }
 
                     Instance.levelManager.IsPopulated = false;
@@ -178,10 +178,10 @@ public class GameManager : MonoBehaviour
             Instance.pauseMenu = null;
         }
 
-        if (Instance.player != null)
+        if (Instance.Player != null)
         {
-            Destroy(Instance.player.gameObject);
-            Instance.player = null;
+            Destroy(Instance.Player.gameObject);
+            Instance.Player = null;
         }
 
         Instance.isNextLevel = false;
@@ -198,9 +198,9 @@ public class GameManager : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         if (!Instance.IsNewGame)
         {
-            if (Instance.player != null)
+            if (Instance.Player != null)
             {
-                Instance.SaveData = Instance.player.GetSaveData();
+                Instance.SaveData = Instance.Player.GetSaveData();
             }
         }
         bf.Serialize(file, Instance.SaveData);

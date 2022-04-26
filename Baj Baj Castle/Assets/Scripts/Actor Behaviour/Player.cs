@@ -13,7 +13,7 @@ public class Player : Actor
     public int LuckUpgradeLevel;
     public int HealthUpgradeLevel;
     public int DefenseUpgradeLevel;
-
+    public float ViewRange = 1f;
     private void Update()
     {
         ProcessInputs();

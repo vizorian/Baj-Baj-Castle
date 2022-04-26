@@ -14,41 +14,43 @@ public class Rusher : Actor
 
     private void Update()
     {
-        Move();
-        if (target == null)
+        if (IsActive)
         {
-            FindAndSetTarget();
-        }
-        else
-        {
-            CalculateMovement();
-        }
+            if (target == null)
+            {
+                FindAndSetTarget();
+            }
+            else
+            {
+                Move();
+                CalculateMovement();
+            }
 
-        // Attack cooldown
-        if (CooldownTimer > 0)
-        {
-            CooldownTimer -= Time.deltaTime;
+            // Attack cooldown
+            if (CooldownTimer > 0)
+            {
+                CooldownTimer -= Time.deltaTime;
+            }
         }
     }
 
     private protected override void FixedUpdate()
     {
-        base.FixedUpdate();
-
-        if (target == null)
+        if (IsActive)
         {
+            base.FixedUpdate();
 
-        }
-        else
-        {
-            LookAt(target.transform.position, ActorType);
-            if (Hand != null)
+            if (target != null)
             {
-                Hand.UpdateCenterPosition(transform.position);
-                if (target != null)
+                LookAt(target.transform.position, ActorType);
+                if (Hand != null)
                 {
-                    Hand.LookTowards(target.transform.position);
+                    Hand.UpdateCenterPosition(transform.position);
+                    if (target != null)
+                    {
+                        Hand.LookTowards(target.transform.position);
 
+                    }
                 }
             }
         }
@@ -57,8 +59,6 @@ public class Rusher : Actor
     // handle collisions
     private protected override void OnCollide(Collider2D collider)
     {
-
-
         if (collider.gameObject.tag == "Player")
         {
             // Attack cooldown
@@ -78,39 +78,7 @@ public class Rusher : Actor
     private void FindAndSetTarget()
     {
         target = null;
-        IsActive = false;
-        var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
-
-        foreach (var t in potentialTargets)
-        {
-            if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
-            {
-                target = t;
-                IsActive = true;
-                return;
-            }
-        }
-
-        potentialTargets = GameObject.FindGameObjectsWithTag("Ally");
-
-        foreach (var t in potentialTargets)
-        {
-            if (Vector3.Distance(transform.position, t.transform.position) <= ViewRange)
-            {
-                target = t;
-                IsActive = true;
-                return;
-            }
-        }
-
+        var player = GameObject.FindGameObjectWithTag("Player");
+        target = player;
     }
-
-    private protected void OnDrawGizmos()
-    {
-        if (target == null) Gizmos.color = Color.yellow;
-        else Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, ViewRange);
-    }
-
-
 }

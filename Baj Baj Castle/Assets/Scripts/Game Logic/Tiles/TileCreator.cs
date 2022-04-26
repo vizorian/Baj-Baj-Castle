@@ -46,7 +46,7 @@ public class TileCreator
                     tilesToAdd.Add(new TileData(x, y, TileType.None));
                 }
             }
-            rooms.Add(new Room(i, tilesToAdd));
+            rooms.Add(new Room(i, tilesToAdd, this));
         }
         return rooms;
     }
@@ -405,6 +405,16 @@ public class TileCreator
                 }
             }
         }
+    }
+
+    public void AddToCollisionLayer(TileData doorTile)
+    {
+        collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), tileDict["Collision"]);
+    }
+
+    public void RemoveFromCollisionLayer(TileData doorTile)
+    {
+        collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), null);
     }
 
     public void OverrideTile(TileData tile, string type)

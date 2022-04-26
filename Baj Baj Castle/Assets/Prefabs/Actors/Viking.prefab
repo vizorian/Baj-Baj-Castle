@@ -135,7 +135,6 @@ MonoBehaviour:
   Luck: 0
   InteractionRange: 0.05
   ReachRange: 0.15
-  ViewRange: 1
   ActorType: 0
   HandPrefab: {fileID: 1538280703414061900, guid: f1051506f71a1784d8f1079c05c9ceb2, type: 3}
   Hand: {fileID: 0}
@@ -145,7 +144,7 @@ MonoBehaviour:
   Damage: 8
   DamageType: 2
   CriticalChance: 5
-  Knockback: 1.5
+  Knockback: 2
   AttackSpeed: 0.6
   CooldownTimer: 0
 --- !u!50 &406046406638903504

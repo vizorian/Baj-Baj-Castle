@@ -5,7 +5,6 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
     public bool IsActive = false;
-    public Room room;
 
     // attributes
     public float Health;
@@ -21,7 +20,6 @@ public class Actor : MonoBehaviour
     // range attributes
     public float InteractionRange;
     public float ReachRange;
-    public float ViewRange;
 
     private protected Rigidbody2D rigidBody;
     private protected BoxCollider2D boxCollider;
@@ -185,16 +183,6 @@ public class Actor : MonoBehaviour
     {
         // Calculating position difference between the target and actor
         Vector3 posDif = lookTarget - transform.position;
-
-        // Out of range
-        if (actorType != ActorType.Player)
-        {
-            if (posDif.magnitude > ViewRange)
-            {
-                target = null;
-                return;
-            }
-        }
 
         // Calculating the angle of the target relative to the actor
         float z = Mathf.Atan2(posDif.y, posDif.x) * Mathf.Rad2Deg;

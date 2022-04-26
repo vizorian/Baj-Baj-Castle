@@ -10,6 +10,9 @@ public class Room
     // game logic
     public bool IsActive = false; // activates actors inside the room
     public bool IsCleared = false; // if all actors are dead
+    public RoomTrigger RoomTrigger;
+    public bool IsTriggered = false;
+    private TileCreator tileCreator;
 
     // stuff inside room
     public List<Actor> Actors = new List<Actor>();
@@ -20,6 +23,7 @@ public class Room
     public List<Room> JointRooms = new List<Room>();
     public List<TileData> Tiles;
     public List<Vector2> DoorPositions = new List<Vector2>();
+    public List<TileData> DoorTiles { get { return Tiles.Where(t => t.Type == TileType.Door).ToList(); } }
     public int X_Max;
     public int X_Min;
     public int Y_Max;
@@ -30,10 +34,9 @@ public class Room
     public int Area { get { return Width * Height; } }
     public float WidthToWorld { get { return (Width + 1) * LevelGenerator.CELL_SIZE; } }
     public float HeightToWorld { get { return (Height + 1) * LevelGenerator.CELL_SIZE; } }
-    // TODO get this as float?
     public Vector3 CenterPosition { get { return new Vector3((X_Max + X_Min) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2, (Y_Max + Y_Min) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2); } }
-    public Vector3 TopLeftCorner { get { return new Vector3(X_Min * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE, Y_Max * LevelGenerator.CELL_SIZE - LevelGenerator.CELL_SIZE); } }
-    public Room(int id, List<TileData> tiles)
+    public Vector3 TopLeftCorner { get { return new Vector3(X_Min * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE, Y_Max * LevelGenerator.CELL_SIZE); } }
+    public Room(int id, List<TileData> tiles, TileCreator tileCreator)
     {
         Id = id;
         Tiles = tiles;
@@ -42,6 +45,77 @@ public class Room
         X_Min = Tiles.Min(x => x.X);
         Y_Min = Tiles.Min(x => x.Y);
         Center = Tiles.First(x => x.X == (X_Max + X_Min) / 2 && x.Y == (Y_Max + Y_Min) / 2);
+        this.tileCreator = tileCreator;
+    }
+
+    public void Trigger()
+    {
+        IsTriggered = true;
+
+        // Move player from closest door tile towards the center of the room
+        MovePlayer();
+
+        // Lock doors
+        LockDoors();
+
+        // TODO vision logic
+
+        // Activate actors and set room bools
+        IsActive = true;
+        foreach (var actor in Actors)
+        {
+            actor.IsActive = IsActive;
+        }
+    }
+
+    private void MovePlayer()
+    {
+        var playerObject = GameManager.Instance.Player.gameObject;
+        var doorTile = DoorTiles.OrderBy(door => Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE), playerObject.transform.position)).First();
+        var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) - (Vector2)CenterPosition).normalized;
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        {
+            var move = new Vector3(LevelGenerator.CELL_SIZE, 0);
+            if (direction.x > 0)
+            {
+                playerObject.transform.position -= move;
+            }
+            else
+            {
+                playerObject.transform.position += move;
+            }
+        }
+        else
+        {
+            var move = new Vector3(0, LevelGenerator.CELL_SIZE);
+            if (direction.y > 0)
+            {
+                playerObject.transform.position -= move;
+            }
+            else
+            {
+                playerObject.transform.position += move;
+            }
+        }
+    }
+
+    private void LockDoors()
+    {
+        Debug.Log("Locking doors");
+        Debug.Log("Door count: " + DoorTiles.Count);
+        foreach (var doorTile in DoorTiles)
+        {
+            tileCreator.AddToCollisionLayer(doorTile);
+        }
+    }
+
+    public void UnlockDoors()
+    {
+        Debug.Log("Unlocking doors");
+        foreach (var doorTile in DoorTiles)
+        {
+            tileCreator.RemoveFromCollisionLayer(doorTile);
+        }
     }
 
     public void SharesWall(Room otherRoom)
@@ -190,12 +264,12 @@ public class Room
         Room other = (Room)obj;
         return this.Id == other.Id;
     }
-
-    public Vector3 GetRandomTile()
+    public Vector3 GetRandomTile(int distanceFromWall = 0)
     {
         Vector3 position = new Vector3();
         var offset = LevelGenerator.CELL_SIZE / 2;
-        var tiles = Tiles.Where(t => t.Type != TileType.Wall && t.Type != TileType.Door).ToList();
+        var tiles = Tiles.Where(t => t.X > X_Min + distanceFromWall && t.X < X_Max - distanceFromWall && t.Y > Y_Min + distanceFromWall && t.Y < Y_Max - distanceFromWall).ToList();
+        tiles = tiles.Where(t => t.Type != TileType.Wall && t.Type != TileType.Door).ToList();
         do
         {
             var randomTile = tiles[UnityEngine.Random.Range(0, tiles.Count)];
@@ -203,7 +277,6 @@ public class Room
         } // check if list of Actors or Objects contains anything at this position
         while (Actors.Any(a => a.transform.position == position) || Objects.Any(o => o.transform.position == position));
 
-        Debug.Log("Random tile: " + position);
         return position;
     }
 
