@@ -185,8 +185,12 @@ public class ActorHand : MonoBehaviour
     private void UpdateHandAttributes(InventoryItem item)
     {
         ResetHandAttributes();
-        HandSpeed += item.Data.ItemProperties.Speed;
-        HandRange += item.Data.ItemProperties.Range * 0.01f;
+        transform.position = bodyPosition;
+        if (item.Data.ItemProperties.Speed != 0)
+        {
+            HandSpeed = item.Data.ItemProperties.Speed;
+        }
+        HandRange *= (100 + item.Data.ItemProperties.Range) / 100;
     }
 
     public void ClearHeldItem()
@@ -216,13 +220,6 @@ public class ActorHand : MonoBehaviour
         //Rotates hand
         if (!IsFreezingHand)
             RotateTowards(lookTarget);
-
-        // FAILURE: Interesting effect for menu
-        //transform.position = Vector2.MoveTowards(transform.position, lookTarget, _range);
-
-        // Calculating the angle of the target relative to the actor
-        //float z = Mathf.Atan2(posDif.y, posDif.x) * Mathf.Rad2Deg;
-        //if (z < 0) z = 180 + (180 - Mathf.Abs(z));
     }
 
     // Move Hand towards target within range
@@ -252,7 +249,6 @@ public class ActorHand : MonoBehaviour
                 // Reduce step size by remaining distance to border
                 float distanceToBorder = HandRange - Vector2.Distance(bodyPosition, oldPos);
                 step -= distanceToBorder;
-                velocity = step;
 
                 // Move position the remaining distance to the border
                 transform.position = Vector2.MoveTowards(transform.position, targetPos, distanceToBorder);

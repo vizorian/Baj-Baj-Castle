@@ -188,15 +188,15 @@ public class LevelManager : MonoBehaviour
             enemySpawnCount++;
             enemySpawnChance -= 0.1f;
         }
-        if (enemySpawnCount == 0 && UnityEngine.Random.Range(0, 2) == 0)
+        if (enemySpawnCount == 0)
         {
-            enemySpawnCount = 1;
+            enemySpawnCount = 1 + UnityEngine.Random.Range(0, 2);
         }
         limit -= enemySpawnCount;
 
         // Object spawning calculations
-        var objectSpawnChance = 0.5f + (level * 0.1f);
-        int objectSpawnCount = 0;
+        var objectSpawnChance = 0.7f + (level * 0.05f);
+        int objectSpawnCount = level + 1;
         while (UnityEngine.Random.Range(0f, 1f) < objectSpawnChance)
         {
             if (objectSpawnCount >= limit)
@@ -204,11 +204,6 @@ public class LevelManager : MonoBehaviour
                 break;
             }
             objectSpawnCount++;
-            objectSpawnChance -= 0.05f;
-        }
-        if (objectSpawnCount == 0)
-        {
-            objectSpawnCount = 1;
         }
 
         GameObject prefab;
@@ -216,14 +211,23 @@ public class LevelManager : MonoBehaviour
         // Enemy spawning
         for (int i = 0; i < enemySpawnCount; i++)
         {
+            var easyEnemies = GameAssets.Instance.enemyPrefabs.Where(e => e.name == "Gobbo" || e.name == "Goblin").ToList();
             prefab = GameAssets.Instance.enemyPrefabs[UnityEngine.Random.Range(0, GameAssets.Instance.enemyPrefabs.Count)];
+            if (!easyEnemies.Any(e => e.name == prefab.name))
+            {
+                if (UnityEngine.Random.Range(0f, 1f) < 9f - level * 0.1f)
+                {
+                    prefab = easyEnemies[UnityEngine.Random.Range(0, easyEnemies.Count)];
+                }
+            }
             var enemy = Instantiate(prefab, room.GetRandomTile(2), Quaternion.identity);
             Actors.Add(enemy);
             room.Actors.Add(enemy.GetComponent<Actor>());
         }
 
         // Object spawning
-        var chestless = GameAssets.Instance.objectPrefabs.Where(x => x.name != "Chest_I").ToList();
+        var crates = GameAssets.Instance.objectPrefabs.Where(o => o.name.Contains("Crate")).ToList();
+        var chestless = GameAssets.Instance.objectPrefabs.Where(o => o.name != "Chest_I").ToList();
         for (int i = 0; i < objectSpawnCount; i++)
         {
             prefab = GameAssets.Instance.objectPrefabs[UnityEngine.Random.Range(0, GameAssets.Instance.objectPrefabs.Count)];
@@ -233,6 +237,13 @@ public class LevelManager : MonoBehaviour
                 if (UnityEngine.Random.Range(0f, 1f) < 0.4f + level * 0.1f)
                 {
                     prefab = chestless[UnityEngine.Random.Range(0, chestless.Count)];
+                }
+            }
+            else if (prefab.name.Contains("Table"))
+            {
+                if (UnityEngine.Random.Range(0f, 1f) < 0.75f)
+                {
+                    prefab = crates[UnityEngine.Random.Range(0, crates.Count)];
                 }
             }
 

@@ -15,6 +15,9 @@ public class Item : Collidable
     public float CooldownTimer;
     public float Knockback;
     public float Range;
+    private bool isCharged = false;
+    private float unchargeTimer = 0;
+    private float unchargeTime = 0.2f;
 
     private protected override void Awake()
     {
@@ -23,6 +26,28 @@ public class Item : Collidable
 
     private protected override void FixedUpdate()
     {
+        var actor = GetComponentInParent<Actor>();
+        var chargingCriteria = actor.Hand.HandSpeed * Time.deltaTime * 5 / 7;
+        if (isCharged)
+        {
+            if (actor.Hand.Velocity < chargingCriteria)
+            {
+                unchargeTimer += Time.deltaTime;
+            }
+            if (unchargeTimer >= unchargeTime)
+            {
+                isCharged = false;
+                unchargeTimer = 0;
+            }
+        }
+        else
+        {
+            if (actor.Hand.Velocity >= chargingCriteria)
+            {
+                isCharged = true;
+            }
+        }
+
         // Cooldown
         if (CooldownTimer > 0)
         {
@@ -63,7 +88,7 @@ public class Item : Collidable
         {
             // get Actor this item is attached to
             Actor actor = GetComponentInParent<Actor>();
-            if (CooldownTimer <= 0 && actor.Hand.Velocity >= actor.Hand.HandSpeed * Time.deltaTime * 3 / 5)
+            if (CooldownTimer <= 0 && isCharged)
             {
                 if (collider.gameObject.tag == "Actor"
                     || collider.gameObject.tag == "Object"
@@ -80,8 +105,10 @@ public class Item : Collidable
                     var damageData = new DamageData(damage, DamageType, knockback, actor);
                     damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance + actor.Luck * 0.5f;
                     collider.gameObject.SendMessage("TakeDamage", damageData);
+                    CooldownTimer = Cooldown;
+                    isCharged = false;
+                    GetComponent<SpriteRenderer>().color = Color.white;
                 }
-                CooldownTimer = Cooldown;
             }
         }
     }

@@ -98,19 +98,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e292b67ab6f5949ae8f2fd4da89471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  IsActive: 0
   Health: 100
   MaxHealth: 100
   MovementSpeed: 1
   Defense: 0
-  Resistance: 0
+  Resistance: 20
   Strength: 0
   Agility: 0
   Intelligence: 0
   Luck: 0
   InteractionRange: 0.15
   ReachRange: 0.1
-  ViewRange: 1
   ActorType: 1
   HandPrefab: {fileID: 4685714322924328532, guid: 3507d8fbae789234f9bff1ee63100521, type: 3}
   Hand: {fileID: 0}
@@ -165,6 +164,7 @@ MonoBehaviour:
   OnInventoryChanged:
     m_PersistentCalls:
       m_Calls: []
+  Capacity: 9
 --- !u!50 &2132937814290551747
 Rigidbody2D:
   serializedVersion: 4
@@ -177,8 +177,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
+  m_Mass: 10
+  m_LinearDrag: 1
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}

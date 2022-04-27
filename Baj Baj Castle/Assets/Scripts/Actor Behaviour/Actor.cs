@@ -84,13 +84,16 @@ public class Actor : MonoBehaviour
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
+        if (damageData.Source.Hand != null)
         {
-            damageData.Type = DamageType.Slashing;
-        }
-        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
-        {
-            damageData.Type = DamageType.Piercing;
+            if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
+            {
+                damageData.Type = DamageType.Slashing;
+            }
+            else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
+            {
+                damageData.Type = DamageType.Piercing;
+            }
         }
 
         // Damage types
@@ -163,7 +166,11 @@ public class Actor : MonoBehaviour
         }
         else
         {
-            var realResistance = 0.1f + Resistance / 100f;
+            var realResistance = Resistance / 100f;
+            if (realResistance == 0)
+            {
+                realResistance = 0.01f;
+            }
             knockbackDirection = Vector3.Lerp(knockbackDirection, Vector3.zero, realResistance);
         }
 

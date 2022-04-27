@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 211b24bc2c2cd6741b3bd21b4216634d, type: 3}
+  m_Name: Maul_Steel
+  m_EditorClassIdentifier: 
+  Id: Maul_Steel
+  DisplayName: Steel Maul
+  MaxStackSize: 1
+  Icon: {fileID: -6738704513589505004, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+  Prefab: {fileID: 8865499550531167265, guid: b6d03dea7a5d0f74488b25508cf43b7f, type: 3}
+  ItemType: 2
+  ItemProperties:
+    Damage: 10
+    DamageType: 2
+    CriticalChance: 8
+    Speed: 0.5
+    Cooldown: 0.6
+    Knockback: 5.5
+    Range: -50

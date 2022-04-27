@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Chest : Interactable
@@ -69,16 +70,16 @@ public class Chest : Interactable
         }
 
         // Generate gold
-        GoldContained = UnityEngine.Random.Range(1, level * (luck + 1) * 3);
+        GoldContained = UnityEngine.Random.Range(1, 5 + level * (luck + 1) * 3);
 
         // Roll for item count based on luck
-        var potentialItemCount = UnityEngine.Random.Range(0, level + (luck + 1));
+        var potentialItemCount = UnityEngine.Random.Range(0, 2 * level + (luck + 2));
         int itemCount = 0;
         // roll 1d100 for item count
         for (var i = 0; i < potentialItemCount; i++)
         {
             var roll = UnityEngine.Random.Range(0, 101);
-            if (roll <= luck * 1.5f + 1 - itemCount)
+            if (roll <= luck * 1.5f + 5 - itemCount)
             {
                 itemCount++;
             }
@@ -94,9 +95,35 @@ public class Chest : Interactable
         }
 
         // Generate items
+        var potions = GameAssets.Instance.itemPrefabs.Where(i => i.name.Contains("Potion")).ToList();
+        var woodenWeapons = GameAssets.Instance.itemPrefabs.Where(i => i.name.Contains("Wooden")).ToList();
+        var ironWeapons = GameAssets.Instance.itemPrefabs.Where(i => i.name.Contains("Iron")).ToList();
+        var steelWeapons = GameAssets.Instance.itemPrefabs.Where(i => i.name.Contains("Steel")).ToList();
+        var goldenWeapons = GameAssets.Instance.itemPrefabs.Where(i => i.name.Contains("Golden")).ToList();
         for (var i = 0; i < itemCount; i++)
         {
-            var item = GameAssets.Instance.itemPrefabs[UnityEngine.Random.Range(0, GameAssets.Instance.itemPrefabs.Count)];
+            GameObject item;
+            if (UnityEngine.Random.Range(0, 3) == 0)
+            {
+                item = potions[UnityEngine.Random.Range(0, potions.Count)];
+            }
+            else if (UnityEngine.Random.Range(0, 101) <= 5 + luck * 0.5f)
+            {
+                item = goldenWeapons[UnityEngine.Random.Range(0, goldenWeapons.Count)];
+            }
+            else if (UnityEngine.Random.Range(0, 101) <= 10 + luck)
+            {
+                item = steelWeapons[UnityEngine.Random.Range(0, steelWeapons.Count)];
+            }
+            else if (UnityEngine.Random.Range(0, 101) <= 20 + luck * 2)
+            {
+                item = ironWeapons[UnityEngine.Random.Range(0, ironWeapons.Count)];
+            }
+            else
+            {
+                item = woodenWeapons[UnityEngine.Random.Range(0, woodenWeapons.Count)];
+            }
+
             Contents.Add(item);
         }
     }

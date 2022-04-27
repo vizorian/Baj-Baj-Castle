@@ -13,7 +13,7 @@ TextureImporter:
     second: WallN
   - first:
       213: -8262991748867391410
-    second: Goblin_S
+    second: Gobo_S
   - first:
       213: -3018825789789838114
     second: Player_F
@@ -22,10 +22,10 @@ TextureImporter:
     second: Player_B
   - first:
       213: -8815059205600961907
-    second: Goblin_F
+    second: Gobo_F
   - first:
       213: -7444576064390506996
-    second: Goblin_B
+    second: Gobo_B
   - first:
       213: 1207821204664722783
     second: TableV
@@ -283,49 +283,49 @@ TextureImporter:
     second: Exit
   - first:
       213: 6837038005728638327
-    second: WallTopNWW
+    second: Goblin_S
   - first:
       213: -8333164581351401487
-    second: WallTopNWC
+    second: Goblin_F
   - first:
       213: -2250974561351227149
-    second: WallTopN
+    second: Goblin_B
   - first:
       213: 6442759165207783438
-    second: WallTopNEN
+    second: Skully_S
   - first:
       213: -2736433307781900204
-    second: WallTopNEC
+    second: Skully_F
   - first:
       213: 1123042526167017597
-    second: WallTopNEE
+    second: Skully_B
   - first:
       213: 3313519428582713004
-    second: WallTopE
+    second: Tusker_S
   - first:
       213: -5646352971795681265
-    second: WallTopSEE
+    second: Tusker_F
   - first:
       213: -8914251629973348874
-    second: WallTopSES
+    second: Tusker_B
   - first:
       213: -1565030404952655266
-    second: WallTopSEC
+    second: Shaman_S
   - first:
       213: -8016247766738197590
-    second: WallTopS
+    second: Shaman_F
   - first:
       213: -8943123808138825353
-    second: WallTopSWS
+    second: Shaman_B
   - first:
       213: -1690039608968722766
-    second: WallTopSWC
+    second: Potion_Healing_S
   - first:
       213: 2158971329023178908
-    second: WallTopSWW
+    second: Potion_Healing_E
   - first:
       213: 491627375347675211
-    second: WallTopW
+    second: Maul_Wooden
   - first:
       213: 4631789285751986274
     second: Door
@@ -335,6 +335,57 @@ TextureImporter:
   - first:
       213: 4114149641635227039
     second: WallNS
+  - first:
+      213: -3719700636236508274
+    second: Maul_Iron
+  - first:
+      213: -6738704513589505004
+    second: Maul_Steel
+  - first:
+      213: 6302989076746981953
+    second: Maul_Golden
+  - first:
+      213: -6326580116840288577
+    second: Broadsword_Wooden
+  - first:
+      213: -2659290925710213021
+    second: Broadsword_Iron
+  - first:
+      213: 7278744089838776784
+    second: Broadsword_Steel
+  - first:
+      213: 782810051488654111
+    second: Broadsword_Golden
+  - first:
+      213: -244748203087612786
+    second: Cleaver_Wooden
+  - first:
+      213: -8146998499042293084
+    second: Cleaver_Iron
+  - first:
+      213: 2613971048449999201
+    second: Cleaver_Steel
+  - first:
+      213: 5031865671874449621
+    second: Cleaver_Golden
+  - first:
+      213: -5983456576978019145
+    second: Katana_Wooden
+  - first:
+      213: 1704265315726606854
+    second: Katana_Iron
+  - first:
+      213: -1438747661594925361
+    second: Katana_Steel
+  - first:
+      213: 3376144154830761159
+    second: Katana_Golden
+  - first:
+      213: -3241539106559859352
+    second: Crate_V
+  - first:
+      213: 6732010226028998675
+    second: Crate_H
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -499,7 +550,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Goblin_S
+      name: Gobbo_S
       rect:
         serializedVersion: 2
         x: 258
@@ -562,7 +613,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Goblin_F
+      name: Gobbo_F
       rect:
         serializedVersion: 2
         x: 270
@@ -583,7 +634,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Goblin_B
+      name: Gobbo_B
       rect:
         serializedVersion: 2
         x: 282
@@ -608,7 +659,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 258
-        y: 400
+        y: 350
         width: 16
         height: 29
       alignment: 0
@@ -629,7 +680,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 276
-        y: 400
+        y: 350
         width: 7
         height: 34
       alignment: 0
@@ -650,7 +701,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 285
-        y: 400
+        y: 350
         width: 16
         height: 22
       alignment: 0
@@ -671,7 +722,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 303
-        y: 400
+        y: 350
         width: 16
         height: 23
       alignment: 0
@@ -692,7 +743,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 258
-        y: 357
+        y: 307
         width: 26
         height: 19
       alignment: 0
@@ -713,7 +764,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 286
-        y: 357
+        y: 307
         width: 26
         height: 20
       alignment: 0
@@ -734,7 +785,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 314
-        y: 357
+        y: 307
         width: 26
         height: 20
       alignment: 0
@@ -755,7 +806,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 342
-        y: 357
+        y: 307
         width: 7
         height: 37
       alignment: 0
@@ -1553,7 +1604,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 261
-        y: 337
+        y: 287
         width: 16
         height: 16
       alignment: 0
@@ -1804,8 +1855,8 @@ TextureImporter:
       name: Potion_Healing_M
       rect:
         serializedVersion: 2
-        x: 117
-        y: 289
+        x: 70
+        y: 307
         width: 7
         height: 11
       alignment: 0
@@ -1825,8 +1876,8 @@ TextureImporter:
       name: Potion_Healing_L
       rect:
         serializedVersion: 2
-        x: 196
-        y: 321
+        x: 79
+        y: 307
         width: 9
         height: 11
       alignment: 0
@@ -1888,8 +1939,8 @@ TextureImporter:
       name: Viking_S
       rect:
         serializedVersion: 2
-        x: 258
-        y: 455
+        x: 307
+        y: 479
         width: 16
         height: 21
       alignment: 0
@@ -1909,8 +1960,8 @@ TextureImporter:
       name: Viking_F
       rect:
         serializedVersion: 2
-        x: 276
-        y: 455
+        x: 325
+        y: 479
         width: 15
         height: 21
       alignment: 0
@@ -1930,8 +1981,8 @@ TextureImporter:
       name: Viking_B
       rect:
         serializedVersion: 2
-        x: 293
-        y: 455
+        x: 342
+        y: 479
         width: 15
         height: 21
       alignment: 0
@@ -1951,8 +2002,8 @@ TextureImporter:
       name: Hand_Armor
       rect:
         serializedVersion: 2
-        x: 310
-        y: 471
+        x: 359
+        y: 495
         width: 5
         height: 5
       alignment: 0
@@ -2376,7 +2427,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2447,6 +2498,678 @@ TextureImporter:
       bones: []
       spriteID: f95e7762d45681930800000000000000
       internalID: 4114149641635227039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_S
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 461
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 775fc4f87d902ee50800000000000000
+      internalID: 6837038005728638327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_F
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 461
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f7dea9d6f6aa5c80800000000000000
+      internalID: -8333164581351401487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_B
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 461
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f82838009ee2c0e0800000000000000
+      internalID: -2250974561351227149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skully_S
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 444
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e082a975357496950800000000000000
+      internalID: 6442759165207783438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skully_F
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 444
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 458dc12a76c360ad0800000000000000
+      internalID: -2736433307781900204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skully_B
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 444
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d78a7d73a39d59f00800000000000000
+      internalID: 1123042526167017597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tusker_S
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 427
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca627015d5cfbfd20800000000000000
+      internalID: 3313519428582713004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tusker_F
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 427
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f00b5a743ef14a1b0800000000000000
+      internalID: -5646352971795681265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tusker_B
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 427
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6fdddfc4f573a4480800000000000000
+      internalID: -8914251629973348874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shaman_S
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 410
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5a7c1a7325e74ae0800000000000000
+      internalID: -1565030404952655266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shaman_F
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 410
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa32d08c02190c090800000000000000
+      internalID: -8016247766738197590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shaman_B
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 410
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 771fb897744a3e380800000000000000
+      internalID: -8943123808138825353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_Healing_S
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 307
+        width: 5
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b6441b0ee5cb88e0800000000000000
+      internalID: -1690039608968722766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_Healing_E
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 303
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c98fdaa2cf436fd10800000000000000
+      internalID: 2158971329023178908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maul_Wooden
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 361
+        width: 10
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b40b47d3e7c92d600800000000000000
+      internalID: 491627375347675211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maul_Iron
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 361
+        width: 10
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e83145aaaf7f06cc0800000000000000
+      internalID: -3719700636236508274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maul_Steel
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 361
+        width: 10
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4141d25b2ff4b72a0800000000000000
+      internalID: -6738704513589505004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maul_Golden
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 361
+        width: 10
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 142dbaeab27b87750800000000000000
+      internalID: 6302989076746981953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Broadsword_Wooden
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 446
+        width: 10
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbe6fa447e87338a0800000000000000
+      internalID: -6326580116840288577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Broadsword_Iron
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 446
+        width: 10
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3608f9a1efc481bd0800000000000000
+      internalID: -2659290925710213021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Broadsword_Steel
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 446
+        width: 10
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d170dd6f2b430560800000000000000
+      internalID: 7278744089838776784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Broadsword_Golden
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 446
+        width: 10
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f13269528991dda00800000000000000
+      internalID: 782810051488654111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cleaver_Wooden
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 446
+        width: 6
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e843c875eca7a9cf0800000000000000
+      internalID: -244748203087612786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cleaver_Iron
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 446
+        width: 6
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4aa81fe970c00fe80800000000000000
+      internalID: -8146998499042293084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cleaver_Steel
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 446
+        width: 6
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1618404b1d0b64420800000000000000
+      internalID: 2613971048449999201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cleaver_Golden
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 446
+        width: 6
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d01f892b27c4d540800000000000000
+      internalID: 5031865671874449621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Katana_Wooden
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 474
+        width: 6
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bc1048e1fd76fca0800000000000000
+      internalID: -5983456576978019145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Katana_Iron
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 474
+        width: 6
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60247ea6644c6a710800000000000000
+      internalID: 1704265315726606854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Katana_Steel
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 474
+        width: 6
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc6e535ef9a880ce0800000000000000
+      internalID: -1438747661594925361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Katana_Golden
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 474
+        width: 6
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7cce233a8397ade20800000000000000
+      internalID: 3376144154830761159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Crate_V
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 384
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86566f36b5db303d0800000000000000
+      internalID: -3241539106559859352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Crate_H
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 384
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31071c202a7ec6d50800000000000000
+      internalID: 6732010226028998675
       vertices: []
       indices: 
       edges: []

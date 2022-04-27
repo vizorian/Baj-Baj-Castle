@@ -10,12 +10,15 @@ public class Rusher : Actor
     public float CriticalChance;
     public float Knockback;
     public float AttackSpeed;
-    public float CooldownTimer = 0;
+    public float PauseTime;
+    private float pauseTimer = 0;
+    private float attackTimer = 0;
+
 
     private protected override void Awake()
     {
         base.Awake();
-
+        PauseTime = AttackSpeed;
         CriticalChance += Luck * 0.5f;
         Knockback += Strength * 0.1f;
         Damage += (int)(Strength * 0.2f);
@@ -31,14 +34,23 @@ public class Rusher : Actor
             }
             else
             {
-                Move();
                 CalculateMovement();
+                if (pauseTimer <= 0)
+                {
+                    Move();
+                }
             }
 
             // Attack cooldown
-            if (CooldownTimer > 0)
+            if (attackTimer > 0)
             {
-                CooldownTimer -= Time.deltaTime;
+                attackTimer -= Time.deltaTime;
+            }
+
+            // Pause cooldown
+            if (pauseTimer > 0)
+            {
+                pauseTimer -= Time.deltaTime;
             }
         }
     }
@@ -72,16 +84,22 @@ public class Rusher : Actor
             || collider.gameObject.tag == "Object")
         {
             // Attack cooldown
-            if (CooldownTimer > 0)
+            if (attackTimer > 0)
             {
                 return;
+            }
+
+            // Pause cooldown
+            if (collider.gameObject.tag == "Player")
+            {
+                pauseTimer = PauseTime;
             }
 
             var damageData = new DamageData(Damage, DamageType, Knockback, this);
             damageData.IsCritical = Random.Range(0, 101) <= CriticalChance;
             collider.gameObject.SendMessage("TakeDamage", damageData);
 
-            CooldownTimer = AttackSpeed;
+            attackTimer = AttackSpeed;
         }
     }
 

@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d87350de3837f7647bcefcc0a718d565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 40
+  Health: 10
   MainSprite: {fileID: -3869741216246091411, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   SideSprite: {fileID: 673160796689557253, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   UpSprite: {fileID: -6913147202214430748, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
