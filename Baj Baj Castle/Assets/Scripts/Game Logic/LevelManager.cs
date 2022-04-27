@@ -215,7 +215,7 @@ public class LevelManager : MonoBehaviour
             prefab = GameAssets.Instance.enemyPrefabs[UnityEngine.Random.Range(0, GameAssets.Instance.enemyPrefabs.Count)];
             if (!easyEnemies.Any(e => e.name == prefab.name))
             {
-                if (UnityEngine.Random.Range(0f, 1f) < 9f - level * 0.1f)
+                if (UnityEngine.Random.Range(0f, 1f) < 1f - level * 0.1f)
                 {
                     prefab = easyEnemies[UnityEngine.Random.Range(0, easyEnemies.Count)];
                 }
