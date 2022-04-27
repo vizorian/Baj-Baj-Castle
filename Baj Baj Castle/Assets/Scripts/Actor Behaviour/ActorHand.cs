@@ -11,15 +11,16 @@ public class ActorHand : MonoBehaviour
     public ItemType HeldItemType;
     private bool newSelection = false;
 
-    private float HandSpeed = 1f;
+    public float HandSpeed = 1f;
     public float HandRange;
     private float oldHandRange;
     private bool handRangeSaved = false;
     private Vector3 bodyPosition;
     private InventoryItem heldItem;
     private Vector3 heldItemHandlePosition;
-
     private GameObject itemObject;
+
+    public float Velocity;
 
     // Hand initialization from Actor
     public void Init(float handRange)
@@ -210,7 +211,7 @@ public class ActorHand : MonoBehaviour
     public void LookTowards(Vector3 lookTarget)
     {
         // Moves hand
-        MoveTowards(lookTarget);
+        Velocity = MoveTowards(lookTarget);
 
         //Rotates hand
         if (!IsFreezingHand)
@@ -225,17 +226,19 @@ public class ActorHand : MonoBehaviour
     }
 
     // Move Hand towards target within range
-    private void MoveTowards(Vector3 target)
+    private float MoveTowards(Vector3 target)
     {
         Vector2 targetPos = target;
         var oldPos = transform.position;
 
+        // Getting step size
+        float step = HandSpeed * Time.deltaTime;
+        float velocity = step;
         // If mouse is out of range
         if (Vector2.Distance(bodyPosition, target) > HandRange)
         {
             // Move towards target
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, HandSpeed * Time.deltaTime);
-
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, step);
             // Post step position is out of range
             if (Vector2.Distance(transform.position, bodyPosition) > HandRange)
             {
@@ -246,12 +249,10 @@ public class ActorHand : MonoBehaviour
                 // Reset position before step
                 transform.position = oldPos;
 
-                // Getting step size
-                float step = HandSpeed * Time.deltaTime;
-
                 // Reduce step size by remaining distance to border
                 float distanceToBorder = HandRange - Vector2.Distance(bodyPosition, oldPos);
                 step -= distanceToBorder;
+                velocity = step;
 
                 // Move position the remaining distance to the border
                 transform.position = Vector2.MoveTowards(transform.position, targetPos, distanceToBorder);
@@ -312,11 +313,15 @@ public class ActorHand : MonoBehaviour
 
                 // Apply final movement
                 Vector2 newTargetPos = bodyPosition - bodyToNewTarget;
+                // TODO
+                velocity = Vector2.Distance(transform.position, newTargetPos);
                 transform.position = Vector2.MoveTowards(transform.position, newTargetPos, Mathf.Infinity);
             }
         }
         else // Move to mouse within range
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, HandSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, step);
+
+        return velocity;
     }
 
     private void RotateTowards(Vector3 target)

@@ -61,14 +61,15 @@ public class Item : Collidable
         // If item is weapon
         if (Type == ItemType.Weapon)
         {
-            if (CooldownTimer <= 0)
+            // get Actor this item is attached to
+            Actor actor = GetComponentInParent<Actor>();
+            if (CooldownTimer <= 0 && actor.Hand.Velocity >= actor.Hand.HandSpeed * Time.deltaTime * 2 / 3)
             {
                 if (collider.gameObject.tag == "Actor"
                     || collider.gameObject.tag == "Object"
                     && collider.gameObject.tag != "Player")
                 {
-                    // get Actor this item is attached to
-                    Actor actor = GetComponentInParent<Actor>();
+
 
                     // if collider is the owner of the item
                     if (collider.gameObject == actor.gameObject) return;

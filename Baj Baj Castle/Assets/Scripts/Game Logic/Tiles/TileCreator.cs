@@ -202,7 +202,7 @@ public class TileCreator
                     isLast = true;
 
                 }
-                if (isLast)
+                if (isLast && i != tempNearbyTiles.Count - 1) // TODO improve logic
                 {
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
@@ -263,7 +263,7 @@ public class TileCreator
                     isLast = true;
 
                 }
-                if (isLast)
+                if (isLast && i != tempNearbyTiles.Count - 1) // TODO improve logic
                 {
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
@@ -324,7 +324,7 @@ public class TileCreator
                     isLast = true;
 
                 }
-                if (isLast)
+                if (isLast && i != tempNearbyTiles.Count - 1) // TODO improve logic
                 {
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
@@ -385,7 +385,7 @@ public class TileCreator
                     isLast = true;
 
                 }
-                if (isLast)
+                if (isLast && i != tempNearbyTiles.Count - 1) // TODO improve logic
                 {
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
