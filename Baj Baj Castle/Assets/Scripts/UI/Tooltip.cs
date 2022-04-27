@@ -13,7 +13,7 @@ public class Tooltip : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance != null)
         {
             Destroy(gameObject);
         }
@@ -26,8 +26,8 @@ public class Tooltip : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         backgroundTransform = transform.Find("Background").GetComponent<RectTransform>();
         text = transform.Find("Text").GetComponent<TextMeshProUGUI>();
-
-        HideTooltip();
+        backgroundTransform.sizeDelta = Vector2.zero;
+        text.text = "";
     }
 
     private void Update()

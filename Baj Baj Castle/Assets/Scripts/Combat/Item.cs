@@ -63,7 +63,7 @@ public class Item : Collidable
         {
             // get Actor this item is attached to
             Actor actor = GetComponentInParent<Actor>();
-            if (CooldownTimer <= 0 && actor.Hand.Velocity >= actor.Hand.HandSpeed * Time.deltaTime * 2 / 3)
+            if (CooldownTimer <= 0 && actor.Hand.Velocity >= actor.Hand.HandSpeed * Time.deltaTime * 3 / 5)
             {
                 if (collider.gameObject.tag == "Actor"
                     || collider.gameObject.tag == "Object"
