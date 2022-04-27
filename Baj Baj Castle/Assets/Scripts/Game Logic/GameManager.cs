@@ -199,12 +199,9 @@ public class GameManager : MonoBehaviour
         string path = Application.persistentDataPath + "/save.dat";
         FileStream file = File.Create(path);
         BinaryFormatter bf = new BinaryFormatter();
-        if (!Instance.IsNewGame)
+        if (Instance.Player != null)
         {
-            if (Instance.Player != null)
-            {
-                Instance.SaveData = Instance.Player.GetSaveData();
-            }
+            Instance.SaveData = Instance.Player.GetSaveData();
         }
         bf.Serialize(file, Instance.SaveData);
         file.Close();
