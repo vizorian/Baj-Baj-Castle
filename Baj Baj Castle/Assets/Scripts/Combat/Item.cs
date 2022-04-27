@@ -74,10 +74,10 @@ public class Item : Collidable
                     if (collider.gameObject == actor.gameObject) return;
 
                     // check for critical hit
-                    var damage = Damage;
-                    var knockback = Knockback;
+                    var damage = Damage + (int)(actor.Strength * 0.2f);
+                    var knockback = Knockback + actor.Strength * 0.1f;
                     var damageData = new DamageData(damage, DamageType, knockback, actor);
-                    damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance;
+                    damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance + actor.Luck * 0.5f;
                     collider.gameObject.SendMessage("TakeDamage", damageData);
                 }
                 CooldownTimer = Cooldown;

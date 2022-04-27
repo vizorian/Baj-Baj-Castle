@@ -6,7 +6,7 @@ public class Actor : MonoBehaviour
 {
     public bool IsActive = false;
 
-    // attributes
+    // Attributes
     public float Health;
     public float MaxHealth;
     public float MovementSpeed;
@@ -17,7 +17,7 @@ public class Actor : MonoBehaviour
     public int Intelligence;
     public int Luck;
 
-    // range attributes
+    // Range attributes
     public float InteractionRange;
     public float ReachRange;
 
@@ -27,7 +27,6 @@ public class Actor : MonoBehaviour
     private protected RaycastHit2D raycastHit;
     private protected ContactFilter2D contactFilter;
     private protected List<Collider2D> _hits = new List<Collider2D>();
-    private protected InventorySystem inventory;
 
     public ActorType ActorType;
     public GameObject HandPrefab;
@@ -41,14 +40,20 @@ public class Actor : MonoBehaviour
     public Sprite BackSprite;
     public Sprite SideSprite;
 
-    private protected void Awake()
+    private protected virtual void Awake()
     {
+        // Atribute usage 
+        MovementSpeed += (Agility * 0.01f);
+        MaxHealth += Strength;
+        Resistance += (int)(Strength + Intelligence * 0.5f);
+        Defense += (int)(Intelligence * 0.2f + Agility * 0.01f);
         Health = MaxHealth;
+
+
         rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(LayerMask.GetMask("Actor"));
         if (HandPrefab != null)
         {
             Hand = Instantiate(HandPrefab, gameObject.transform.position, Quaternion.identity, gameObject.transform).GetComponent<ActorHand>();
@@ -150,9 +155,6 @@ public class Actor : MonoBehaviour
         Destroy(gameObject);
     }
 
-    /// <summary>
-    /// Creates a box cast to check for collisions on both axis and moves the player if there are none
-    /// </summary>
     private protected virtual void Move()
     {
         if (Resistance >= 100)

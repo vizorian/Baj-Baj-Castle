@@ -230,7 +230,7 @@ public class LevelManager : MonoBehaviour
             if (prefab.name == "Chest_I")
             {
                 // chance for chest
-                if (UnityEngine.Random.Range(0f, 1f) < 0.1f + level * 0.1f)
+                if (UnityEngine.Random.Range(0f, 1f) < 0.4f + level * 0.1f)
                 {
                     prefab = chestless[UnityEngine.Random.Range(0, chestless.Count)];
                 }

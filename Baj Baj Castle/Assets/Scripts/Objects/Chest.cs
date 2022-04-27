@@ -78,7 +78,7 @@ public class Chest : Interactable
         for (var i = 0; i < potentialItemCount; i++)
         {
             var roll = UnityEngine.Random.Range(0, 101);
-            if (roll <= luck + 1 - itemCount)
+            if (roll <= luck * 1.5f + 1 - itemCount)
             {
                 itemCount++;
             }

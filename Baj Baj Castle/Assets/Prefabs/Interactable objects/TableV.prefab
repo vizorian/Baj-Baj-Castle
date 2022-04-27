@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3475516755729644120}
   - component: {fileID: 3475516755729644125}
   - component: {fileID: 3475516755729644124}
+  - component: {fileID: 8269287455615080924}
   m_Layer: 7
   m_Name: TableV
   m_TagString: Interactable
@@ -127,3 +128,24 @@ MonoBehaviour:
   SideSprite: {fileID: -7482595089818226769, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   UpSprite: {fileID: -7263881698557325647, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
   DownSprite: {fileID: -4821192350811027162, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
+--- !u!50 &8269287455615080924
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3475516755729644121}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 8
+  m_LinearDrag: 50
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4

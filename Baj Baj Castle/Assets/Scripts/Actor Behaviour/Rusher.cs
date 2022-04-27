@@ -12,6 +12,15 @@ public class Rusher : Actor
     public float AttackSpeed;
     public float CooldownTimer = 0;
 
+    private protected override void Awake()
+    {
+        base.Awake();
+
+        CriticalChance += Luck * 0.5f;
+        Knockback += Strength * 0.1f;
+        Damage += (int)(Strength * 0.2f);
+    }
+
     private void Update()
     {
         if (IsActive)

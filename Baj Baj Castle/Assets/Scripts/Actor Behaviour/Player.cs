@@ -13,7 +13,8 @@ public class Player : Actor
     public int LuckUpgradeLevel;
     public int HealthUpgradeLevel;
     public int DefenseUpgradeLevel;
-    public float ViewRange = 1f;
+    private InventorySystem inventory;
+
     private void Update()
     {
         ProcessInputs();
@@ -34,9 +35,7 @@ public class Player : Actor
         Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
-    /// <summary>
-    /// Processes the incoming inputs
-    /// </summary>
+    // Processes the incoming inputs
     private void ProcessInputs()
     {
         GameState state = GameState.Escape;
@@ -49,8 +48,8 @@ public class Player : Actor
         {
             case GameState.MainMenu:
                 return;
-            case GameState.Escape: ////
-                                   // Getting inputs
+            case GameState.Escape:
+                // Getting inputs
                 float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
 
                 // Scroll wheel
@@ -153,6 +152,12 @@ public class Player : Actor
         Luck += LuckUpgradeLevel;
         MaxHealth += HealthUpgradeLevel;
         Defense += DefenseUpgradeLevel;
+
+        // Atribute usage 
+        MovementSpeed += (Agility * 0.01f);
+        MaxHealth += Strength;
+        Resistance += (int)(Strength + Intelligence * 0.5f);
+        Defense += (int)(Intelligence * 0.04f + Agility * 0.02f);
         Health = MaxHealth;
     }
     private protected override void CalculateMovement()

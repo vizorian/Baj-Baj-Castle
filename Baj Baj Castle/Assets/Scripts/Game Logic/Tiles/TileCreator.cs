@@ -91,9 +91,9 @@ public class TileCreator
         var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
         var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
 
-        SetTiles(doorTiles);
         SetTiles(floorTiles);
         SetTiles(wallTiles, allTiles);
+        SetTiles(doorTiles);
     }
 
     public void Cleanup()
