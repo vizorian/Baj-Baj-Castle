@@ -16,7 +16,7 @@ MonoBehaviour:
   DisplayName: Golden Hammer
   MaxStackSize: 1
   Icon: {fileID: -8644425730230267097, guid: 10600dd5aa641c1479e48bcbb6972bcb, type: 3}
-  Prefab: {fileID: 8865499550531167265, guid: 4a5653ff8572cf642b3a88a3e7c0557a, type: 3}
+  Prefab: {fileID: 8865499550531167265, guid: 031e22a94c205db458d61b9aef6981c0, type: 3}
   ItemType: 2
   ItemProperties:
     Damage: 8

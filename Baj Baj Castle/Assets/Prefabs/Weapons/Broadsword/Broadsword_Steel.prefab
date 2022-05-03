@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: 0
-  ItemData: {fileID: 11400000, guid: 1ebd1213e77456c4a89d5dda8ecdc435, type: 2}
+  ItemData: {fileID: 11400000, guid: e25cbc5d06a76c14c9a117d0658f054a, type: 2}
 --- !u!68 &-3157721622510379643
 EdgeCollider2D:
   m_ObjectHideFlags: 0
