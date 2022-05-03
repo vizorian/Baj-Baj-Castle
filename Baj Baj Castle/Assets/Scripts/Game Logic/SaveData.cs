@@ -3,13 +3,13 @@ using System;
 [Serializable]
 public class SaveData
 {
-    public int Gold;
-    public int StrengthUpgradeLevel;
     public int AgilityUpgradeLevel;
+    public int DefenseUpgradeLevel;
+    public int Gold;
+    public int HealthUpgradeLevel;
     public int IntelligenceUpgradeLevel;
     public int LuckUpgradeLevel;
-    public int HealthUpgradeLevel;
-    public int DefenseUpgradeLevel;
+    public int StrengthUpgradeLevel;
 
     public SaveData()
     {
@@ -24,14 +24,15 @@ public class SaveData
 
     public override string ToString()
     {
-        return string.Format("Gold: {0}, Strength: {1}, Agility: {2}, Intelligence: {3}, Luck: {4}, Health: {5}, Defense {6}",
-                             Gold,
-                             StrengthUpgradeLevel,
-                             AgilityUpgradeLevel,
-                             IntelligenceUpgradeLevel,
-                             LuckUpgradeLevel,
-                             HealthUpgradeLevel,
-                             DefenseUpgradeLevel);
+        return string.Format(
+            "Gold: {0}, Strength: {1}, Agility: {2}, Intelligence: {3}, Luck: {4}, Health: {5}, Defense {6}",
+            Gold,
+            StrengthUpgradeLevel,
+            AgilityUpgradeLevel,
+            IntelligenceUpgradeLevel,
+            LuckUpgradeLevel,
+            HealthUpgradeLevel,
+            DefenseUpgradeLevel);
     }
 
     public int GetStat(string stat)

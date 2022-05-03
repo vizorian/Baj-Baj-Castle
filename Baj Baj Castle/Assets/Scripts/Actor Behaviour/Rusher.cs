@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
+[UsedImplicitly]
 public class Rusher : Actor
 {
+    public float AttackSpeed;
+    private float attackTimer;
+
+    public float CriticalChance;
+
     // Attributes
     public int Damage;
     public DamageType DamageType;
-    public float CriticalChance;
     public float Knockback;
-    public float AttackSpeed;
     public float PauseTime;
-    private float pauseTimer = 0;
-    private float attackTimer = 0;
+    private float pauseTimer;
 
 
     private protected override void Awake()
@@ -21,37 +23,29 @@ public class Rusher : Actor
         PauseTime = AttackSpeed;
         CriticalChance += Luck * 0.5f;
         Knockback += Strength * 0.1f;
-        Damage += (int)(Strength * 0.2f);
+        Damage += (int) (Strength * 0.2f);
     }
 
+    [UsedImplicitly]
     private void Update()
     {
         if (IsActive)
         {
-            if (target == null)
+            if (Target == null)
             {
                 FindAndSetTarget();
             }
             else
             {
                 CalculateMovement();
-                if (pauseTimer <= 0)
-                {
-                    Move();
-                }
+                if (pauseTimer <= 0) Move();
             }
 
             // Attack cooldown
-            if (attackTimer > 0)
-            {
-                attackTimer -= Time.deltaTime;
-            }
+            if (attackTimer > 0) attackTimer -= Time.deltaTime;
 
             // Pause cooldown
-            if (pauseTimer > 0)
-            {
-                pauseTimer -= Time.deltaTime;
-            }
+            if (pauseTimer > 0) pauseTimer -= Time.deltaTime;
         }
     }
 
@@ -61,43 +55,35 @@ public class Rusher : Actor
         {
             base.FixedUpdate();
 
-            if (target != null)
+            if (Target != null)
             {
-                LookAt(target.transform.position, ActorType);
+                LookAt(Target.transform.position, ActorType);
                 if (Hand != null)
                 {
                     Hand.UpdateCenterPosition(transform.position);
-                    if (target != null)
-                    {
-                        Hand.LookTowards(target.transform.position);
-
-                    }
+                    if (Target != null) Hand.LookTowards(Target.transform.position);
                 }
             }
         }
     }
 
     // handle collisions
-    private protected override void OnCollide(Collider2D collider)
+    private protected override void OnCollide(Collider2D otherCollider)
     {
-        if (collider.gameObject.tag == "Player"
-            || collider.gameObject.tag == "Object")
+        if (otherCollider.gameObject.tag == "Player"
+            || otherCollider.gameObject.tag == "Object")
         {
             // Attack cooldown
-            if (attackTimer > 0)
-            {
-                return;
-            }
+            if (attackTimer > 0) return;
 
             // Pause cooldown
-            if (collider.gameObject.tag == "Player")
-            {
-                pauseTimer = PauseTime;
-            }
+            if (otherCollider.gameObject.tag == "Player") pauseTimer = PauseTime;
 
-            var damageData = new DamageData(Damage, DamageType, Knockback, this);
-            damageData.IsCritical = Random.Range(0, 101) <= CriticalChance;
-            collider.gameObject.SendMessage("TakeDamage", damageData);
+            var damageData = new DamageData(Damage, DamageType, Knockback, this)
+            {
+                IsCritical = Random.Range(0, 101) <= CriticalChance
+            };
+            otherCollider.gameObject.SendMessage("TakeDamage", damageData);
 
             attackTimer = AttackSpeed;
         }
@@ -105,8 +91,8 @@ public class Rusher : Actor
 
     private void FindAndSetTarget()
     {
-        target = null;
+        Target = null;
         var player = GameObject.FindGameObjectWithTag("Player");
-        target = player;
+        Target = player;
     }
 }

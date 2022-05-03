@@ -1,41 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
+[UsedImplicitly]
 public class Table : Interactable
 {
-    private bool isFlipped = false;
+    public Sprite DownSprite;
+    private readonly bool isFlipped = false;
 
-    public Sprite MainSprite;
     public Sprite SideSprite;
     public Sprite UpSprite;
-    public Sprite DownSprite;
 
     private protected override void OnInteraction()
     {
         if (!isFlipped)
         {
             gameObject.tag = "Object";
-            _spriteRenderer.flipX = false;
+            SpriteRenderer.flipX = false;
 
-            if (up)
+            if (Up)
             {
-                _spriteRenderer.sprite = UpSprite;
+                SpriteRenderer.sprite = UpSprite;
             }
-            else if (right)
+            else if (Right)
             {
-                _spriteRenderer.sprite = SideSprite;
-                _spriteRenderer.flipX = true;
+                SpriteRenderer.sprite = SideSprite;
+                SpriteRenderer.flipX = true;
             }
-            else if (down)
+            else if (Down)
             {
-                _spriteRenderer.sprite = DownSprite;
+                SpriteRenderer.sprite = DownSprite;
             }
             else
             {
-                _spriteRenderer.sprite = SideSprite;
+                SpriteRenderer.sprite = SideSprite;
             }
-            return;
         }
     }
 }

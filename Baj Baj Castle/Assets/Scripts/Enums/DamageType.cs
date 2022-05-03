@@ -1,9 +1,10 @@
 using System;
+using JetBrains.Annotations;
 
 [Serializable]
 public enum DamageType
 {
-    None,
+    [UsedImplicitly] None,
     Slashing,
     Bludgeoning,
     Piercing

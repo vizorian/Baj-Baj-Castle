@@ -1,26 +1,23 @@
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 
 public class Tooltip : MonoBehaviour
 {
-    public static Tooltip Instance { get; private set; }
+    private RectTransform backgroundTransform;
 
     private RectTransform canvasTransform;
     private RectTransform rectTransform;
     private TextMeshProUGUI text;
-    private RectTransform backgroundTransform;
-    private Vector2 position;
+    public static Tooltip Instance { get; private set; }
 
+    [UsedImplicitly]
     private void Awake()
     {
         if (Instance != null)
-        {
             Destroy(gameObject);
-        }
         else
-        {
             Instance = this;
-        }
 
         canvasTransform = GameObject.Find("GameCanvas").GetComponent<RectTransform>();
         rectTransform = GetComponent<RectTransform>();
@@ -30,6 +27,7 @@ public class Tooltip : MonoBehaviour
         text.text = "";
     }
 
+    [UsedImplicitly]
     private void Update()
     {
         UpdatePosition();
@@ -41,21 +39,16 @@ public class Tooltip : MonoBehaviour
 
         // Check if tooltip is off screen
         if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
-        {
             newPosition.x = canvasTransform.sizeDelta.x - backgroundTransform.sizeDelta.x;
-        }
 
         if (newPosition.y + backgroundTransform.sizeDelta.y > canvasTransform.sizeDelta.y)
-        {
             newPosition.y = canvasTransform.sizeDelta.y - backgroundTransform.sizeDelta.y;
-        }
 
         rectTransform.anchoredPosition = newPosition;
     }
 
     private void ShowTooltip(string text)
     {
-        position = Input.mousePosition / canvasTransform.localScale.x;
         SetText(text);
         UpdatePosition();
         gameObject.SetActive(true);

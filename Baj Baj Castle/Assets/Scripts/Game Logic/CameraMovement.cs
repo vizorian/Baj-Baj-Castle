@@ -1,53 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    public Transform target;
-    public float boundX = 0.1f;
-    public float boundY = 0.5f;
+    public float BoundX = 0.1f;
+    public float BoundY = 0.5f;
+    public Transform Target;
 
-    void FindPlayer()
+    [UsedImplicitly]
+    private void FindPlayer()
     {
-        target = GameObject.Find("Player").transform;
+        Target = GameObject.Find("Player").transform;
     }
 
-    void LateUpdate()
+    [UsedImplicitly]
+    private void LateUpdate()
     {
-        if (target != null)
+        if (Target == null) return;
+
+        var delta = Vector3.zero;
+
+        // Check if in bounds on X axis
+        var deltaX = Target.position.x - transform.position.x;
+        if (deltaX > BoundX || deltaX < -BoundX)
         {
-            Vector3 delta = Vector3.zero;
-
-            // Check if in bounds on X axis
-            float deltaX = target.position.x - transform.position.x;
-            if (deltaX > boundX || deltaX < -boundX)
-            {
-                if (transform.position.x < target.position.x)
-                {
-                    delta.x = deltaX - boundX;
-                }
-                else
-                {
-                    delta.x = deltaX + boundX;
-                }
-            }
-
-            // Check if in bounds on Y axis
-            float deltaY = target.position.y - transform.position.y;
-            if (deltaY > boundY || deltaY < -boundY)
-            {
-                if (transform.position.y < target.position.y)
-                {
-                    delta.y = deltaY - boundY;
-                }
-                else
-                {
-                    delta.y = deltaY + boundY;
-                }
-            }
-
-            transform.position += delta;
+            if (transform.position.x < Target.position.x)
+                delta.x = deltaX - BoundX;
+            else
+                delta.x = deltaX + BoundX;
         }
+
+        // Check if in bounds on Y axis
+        var deltaY = Target.position.y - transform.position.y;
+        if (deltaY > BoundY || deltaY < -BoundY)
+        {
+            if (transform.position.y < Target.position.y)
+                delta.y = deltaY - BoundY;
+            else
+                delta.y = deltaY + BoundY;
+        }
+
+        transform.position += delta;
     }
 }

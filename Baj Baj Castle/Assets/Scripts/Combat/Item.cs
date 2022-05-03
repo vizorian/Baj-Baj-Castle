@@ -1,27 +1,24 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Item : Collidable
 {
-    private EdgeCollider2D _edgeCollider;
-    public ItemType Type;
-    public float Damage;
-    public DamageType DamageType;
-    public float CriticalChance;
-    public float Speed;
     public float Cooldown;
     public float CooldownTimer;
+    public float CriticalChance;
+    public float Damage;
+    public DamageType DamageType;
+    private EdgeCollider2D edgeCollider;
+    private bool isCharged;
     public float Knockback;
     public float Range;
-    private bool isCharged = false;
-    private float unchargeTimer = 0;
-    private float unchargeTime = 0.2f;
+    public float Speed;
+    public ItemType Type;
+    private const float UnchargeTime = 0.2f;
+    private float unchargeTimer;
 
     private protected override void Awake()
     {
-        _edgeCollider = GetComponent<EdgeCollider2D>();
+        edgeCollider = GetComponent<EdgeCollider2D>();
     }
 
     private protected override void FixedUpdate()
@@ -30,11 +27,8 @@ public class Item : Collidable
         var chargingCriteria = actor.Hand.HandSpeed * Time.deltaTime * 5 / 7;
         if (isCharged)
         {
-            if (actor.Hand.Velocity < chargingCriteria)
-            {
-                unchargeTimer += Time.deltaTime;
-            }
-            if (unchargeTimer >= unchargeTime)
+            if (actor.Hand.Velocity < chargingCriteria) unchargeTimer += Time.deltaTime;
+            if (unchargeTimer >= UnchargeTime)
             {
                 isCharged = false;
                 unchargeTimer = 0;
@@ -42,25 +36,19 @@ public class Item : Collidable
         }
         else
         {
-            if (actor.Hand.Velocity >= chargingCriteria)
-            {
-                isCharged = true;
-            }
+            if (actor.Hand.Velocity >= chargingCriteria) isCharged = true;
         }
 
         // Cooldown
-        if (CooldownTimer > 0)
-        {
-            CooldownTimer -= Time.deltaTime;
-        }
+        if (CooldownTimer > 0) CooldownTimer -= Time.deltaTime;
 
         if (Type == ItemType.Weapon)
         {
-            _edgeCollider.OverlapCollider(contactFilter, _hits);
-            for (int i = 0; i < _hits.Count; i++)
+            edgeCollider.OverlapCollider(ContactFilter, Hits);
+            for (var i = 0; i < Hits.Count; i++)
             {
-                OnCollide(_hits[i]);
-                _hits[i] = null;
+                OnCollide(Hits[i]);
+                Hits[i] = null;
             }
         }
     }
@@ -75,41 +63,41 @@ public class Item : Collidable
                 var healingAmount = actor.MaxHealth / 100f * Damage;
                 actor.Heal(healingAmount);
             }
+
             CooldownTimer = Cooldown;
             return true;
         }
+
         return false;
     }
 
-    private protected override void OnCollide(Collider2D collider)
+    private protected override void OnCollide(Collider2D otherCollider)
     {
         // If item is weapon
         if (Type == ItemType.Weapon)
         {
             // get Actor this item is attached to
-            Actor actor = GetComponentInParent<Actor>();
+            var actor = GetComponentInParent<Actor>();
             if (CooldownTimer <= 0 && isCharged)
-            {
-                if (collider.gameObject.tag == "Actor"
-                    || collider.gameObject.tag == "Object"
-                    && collider.gameObject.tag != "Player")
+                if (otherCollider.gameObject.tag == "Actor"
+                    || (otherCollider.gameObject.tag == "Object"
+                        && otherCollider.gameObject.tag != "Player"))
                 {
-
-
-                    // if collider is the owner of the item
-                    if (collider.gameObject == actor.gameObject) return;
+                    // if otherCollider is the owner of the item
+                    if (otherCollider.gameObject == actor.gameObject) return;
 
                     // check for critical hit
-                    var damage = Damage + (int)(actor.Strength * 0.2f);
+                    var damage = Damage + (int) (actor.Strength * 0.2f);
                     var knockback = Knockback + actor.Strength * 0.1f;
-                    var damageData = new DamageData(damage, DamageType, knockback, actor);
-                    damageData.IsCritical = UnityEngine.Random.Range(0, 101) <= CriticalChance + actor.Luck * 0.5f;
-                    collider.gameObject.SendMessage("TakeDamage", damageData);
+                    var damageData = new DamageData(damage, DamageType, knockback, actor)
+                    {
+                        IsCritical = Random.Range(0, 101) <= CriticalChance + actor.Luck * 0.5f
+                    };
+                    otherCollider.gameObject.SendMessage("TakeDamage", damageData);
                     CooldownTimer = Cooldown;
                     isCharged = false;
                     GetComponent<SpriteRenderer>().color = Color.white;
                 }
-            }
         }
     }
 }

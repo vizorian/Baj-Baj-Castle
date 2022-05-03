@@ -1,40 +1,40 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class GameAssets : MonoBehaviour
 {
     private static GameAssets instance;
+    public List<GameObject> EnemyPrefabs;
+
+    public GameObject FloatingTextObject;
+    public List<GameObject> ItemPrefabs;
+    public List<GameObject> ObjectPrefabs;
+
+    public GameObject PlayerPrefab;
+    public Dictionary<string, Tile> Tiles;
+    public List<GameObject> Triggers;
+
     public static GameAssets Instance
     {
         get
         {
             if (instance == null)
             {
-                instance = GameObject.FindObjectOfType<GameAssets>();
+                instance = FindObjectOfType<GameAssets>();
                 DontDestroyOnLoad(instance.gameObject);
             }
+
             return instance;
         }
     }
 
+    [UsedImplicitly]
     public void Awake()
     {
         var tileArray = Resources.LoadAll<Tile>("Art/Levels/Tiles/");
-        tiles = new Dictionary<string, Tile>();
-        foreach (var tile in tileArray)
-        {
-            tiles[tile.name] = tile;
-        }
+        Tiles = new Dictionary<string, Tile>();
+        foreach (var tile in tileArray) Tiles[tile.name] = tile;
     }
-
-    public GameObject floatingTextObject;
-    public Dictionary<string, Tile> tiles;
-
-    public GameObject playerPrefab;
-    public List<GameObject> enemyPrefabs;
-    public List<GameObject> itemPrefabs;
-    public List<GameObject> objectPrefabs;
-    public List<GameObject> triggers;
 }
-

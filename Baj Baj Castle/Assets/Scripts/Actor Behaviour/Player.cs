@@ -1,20 +1,18 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Player : Actor
 {
-    // Attributes
-    public int Gold;
-    public int StrengthUpgradeLevel;
     public int AgilityUpgradeLevel;
+    public int DefenseUpgradeLevel;
+    public int Gold;
+    public int HealthUpgradeLevel;
     public int IntelligenceUpgradeLevel;
     public int LuckUpgradeLevel;
-    public int HealthUpgradeLevel;
-    public int DefenseUpgradeLevel;
-    private InventorySystem inventory;
+    public int StrengthUpgradeLevel;
 
+    [UsedImplicitly]
     private void Update()
     {
         ProcessInputs();
@@ -23,8 +21,8 @@ public class Player : Actor
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition), ActorType);
 
         FindInteractable();
-        if (interactionObject != null)
-            interactionObject.SendMessage("OnCollide", boxCollider);
+        if (InteractionObject != null)
+            InteractionObject.SendMessage("OnCollide", BoxCollider);
     }
 
     private protected override void FixedUpdate()
@@ -38,11 +36,8 @@ public class Player : Actor
     // Processes the incoming inputs
     private void ProcessInputs()
     {
-        GameState state = GameState.Escape;
-        if (GameManager.Instance != null)
-        {
-            state = GameManager.Instance.GameState;
-        }
+        var state = GameState.Escape;
+        if (GameManager.Instance != null) state = GameManager.Instance.GameState;
 
         switch (state)
         {
@@ -50,56 +45,37 @@ public class Player : Actor
                 return;
             case GameState.Escape:
                 // Getting inputs
-                float scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
+                var scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
 
                 // Scroll wheel
                 if (scrollWheelDelta != 0)
                 {
                     if (scrollWheelDelta > 0)
-                    {
                         InventorySystem.Instance.Next();
-                    }
                     else
-                    {
                         InventorySystem.Instance.Previous();
-                    }
                 }
 
                 // Left click
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
                     if (Hand.HoldingItem)
-                    {
                         if (Hand.HeldItemType == ItemType.Consumable)
-                        {
                             Hand.UseHeldItem();
-                        }
-                    }
                     Hand.IsFreezingHand = true;
                 }
 
-                if (Input.GetKeyUp(KeyCode.Mouse0))
-                {
-                    Hand.IsFreezingHand = false;
-                }
+                if (Input.GetKeyUp(KeyCode.Mouse0)) Hand.IsFreezingHand = false;
 
                 // Interaction button
-                if (Input.GetKeyDown(KeyCode.E) && interactionObject != null)
-                {
-                    interactionObject.SendMessage("OnInteraction");
-                }
+                if (Input.GetKeyDown(KeyCode.E) && InteractionObject != null)
+                    InteractionObject.SendMessage("OnInteraction");
 
                 // Drop button
-                if (Input.GetKeyDown(KeyCode.G))
-                {
-                    InventorySystem.Instance.Drop();
-                }
+                if (Input.GetKeyDown(KeyCode.G)) InventorySystem.Instance.Drop();
 
                 // Flip button
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Hand.TurnHeldItem();
-                }
+                if (Input.GetKeyDown(KeyCode.F)) Hand.TurnHeldItem();
                 break;
             case GameState.Tutorial:
                 break;
@@ -125,14 +101,16 @@ public class Player : Actor
     // Get player SaveData
     public SaveData GetSaveData()
     {
-        SaveData data = new SaveData();
-        data.Gold = Gold;
-        data.StrengthUpgradeLevel = StrengthUpgradeLevel;
-        data.AgilityUpgradeLevel = AgilityUpgradeLevel;
-        data.IntelligenceUpgradeLevel = IntelligenceUpgradeLevel;
-        data.LuckUpgradeLevel = LuckUpgradeLevel;
-        data.HealthUpgradeLevel = HealthUpgradeLevel;
-        data.DefenseUpgradeLevel = DefenseUpgradeLevel;
+        var data = new SaveData
+        {
+            Gold = Gold,
+            StrengthUpgradeLevel = StrengthUpgradeLevel,
+            AgilityUpgradeLevel = AgilityUpgradeLevel,
+            IntelligenceUpgradeLevel = IntelligenceUpgradeLevel,
+            LuckUpgradeLevel = LuckUpgradeLevel,
+            HealthUpgradeLevel = HealthUpgradeLevel,
+            DefenseUpgradeLevel = DefenseUpgradeLevel
+        };
         return data;
     }
 
@@ -154,31 +132,34 @@ public class Player : Actor
         Defense += DefenseUpgradeLevel;
 
         // Atribute usage 
-        MovementSpeed += (Agility * 0.01f);
+        MovementSpeed += Agility * 0.01f;
         MaxHealth += Strength;
-        Resistance += (int)(Strength + Intelligence * 0.5f);
-        Defense += (int)(Intelligence * 0.04f + Agility * 0.02f);
+        Resistance += (int) (Strength + Intelligence * 0.5f);
+        Defense += (int) (Intelligence * 0.04f + Agility * 0.02f);
         Health = MaxHealth;
     }
+
     private protected override void CalculateMovement()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        var x = Input.GetAxisRaw("Horizontal");
+        var y = Input.GetAxisRaw("Vertical");
 
-        moveDelta = new Vector2(x, y);
-        moveDelta.Normalize();
-        moveDelta *= MovementSpeed;
-        rigidBody.velocity = moveDelta;
+        MoveDelta = new Vector2(x, y);
+        MoveDelta.Normalize();
+        MoveDelta *= MovementSpeed;
+        RigidBody.velocity = MoveDelta;
     }
 
     private void FindInteractable()
     {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("Interactable");
+        var objects = GameObject.FindGameObjectsWithTag("Interactable");
 
         // Set interactionObject to first closest or null
-        interactionObject = objects.ToList()
-            .Where(o => Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
-            .OrderBy(o => Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
+        InteractionObject = objects.ToList()
+            .Where(o => Vector3.Distance(transform.position,
+                o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
+            .OrderBy(o =>
+                Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
             .FirstOrDefault();
     }
 }
