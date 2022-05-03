@@ -103,35 +103,6 @@ public class Cell
         return true;
     }
 
-    public bool Overlaps(Cell otherCell)
-    {
-        // get cell position from 
-        var x = (int) (SimulationCell.transform.position.x / LevelGenerator.CELL_SIZE);
-        var y = (int) (SimulationCell.transform.position.y / LevelGenerator.CELL_SIZE);
-
-        // get cell size in world converted to int
-        var width = Width / LevelGenerator.TILE_SIZE;
-        var height = Height / LevelGenerator.TILE_SIZE;
-
-        // get cell corner points
-        var topLeft = new Point(x, y);
-        var bottomRight = new Point(x + width, y + height);
-
-        // get other cell size in world converted
-        var otherTopLeft = new Point((int) otherCell.Position.x, (int) otherCell.Position.y);
-        var otherBottomRight = new Point((int) (otherCell.Position.x + otherCell.Width),
-            (int) (otherCell.Position.y + otherCell.Height));
-        // print data
-
-        // check if cells overlapp
-        if (topLeft.X > otherBottomRight.X
-            || otherTopLeft.X > bottomRight.X
-            || bottomRight.Y > otherTopLeft.Y
-            || otherBottomRight.Y > topLeft.Y)
-            return false;
-        return true;
-    }
-
     public void CreateDisplayCellObject(Sprite cellSprite, Color color)
     {
         DisplayCell = new GameObject("Hallway cell");

@@ -7,7 +7,6 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     // Constants
-    public const int TILE_SIZE = 16;
     public const float PIXEL_SIZE = 0.01f;
     public const float CELL_SIZE = 0.16f;
     private readonly List<Cell> cells = new List<Cell>();
