@@ -278,7 +278,7 @@ public class LevelManager : MonoBehaviour
 
         // tileCreator.CreateHallwayTiles(Hallways);
 
-        tileCreator.FindNeighbouringRooms(Rooms);
+        TileCreator.FindNeighbouringRooms(Rooms);
         tileCreator.CreateTiles(Rooms, Hallways);
 
         Level++;

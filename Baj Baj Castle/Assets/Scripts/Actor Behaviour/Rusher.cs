@@ -16,7 +16,6 @@ public class Rusher : Actor
     public float PauseTime;
     private float pauseTimer;
 
-
     private protected override void Awake()
     {
         base.Awake();

@@ -41,3 +41,6 @@ sysinfo.txt
 *.log
 *.psd
 *.psd.meta
+Assembly-CSharpTests/bin/Debug/
+Baj Baj Castle/Packages/
+Assembly-CSharpTests1/bin/Debug/

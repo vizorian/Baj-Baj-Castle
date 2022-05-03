@@ -31,7 +31,7 @@ public class GameAssets : MonoBehaviour
     }
 
     [UsedImplicitly]
-    public void Awake()
+    private void Awake()
     {
         var tileArray = Resources.LoadAll<Tile>("Art/Levels/Tiles/");
         Tiles = new Dictionary<string, Tile>();

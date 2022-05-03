@@ -46,7 +46,7 @@ public class TileCreator
         return rooms;
     }
 
-    public void FindNeighbouringRooms(List<Room> rooms)
+    public static void FindNeighbouringRooms(List<Room> rooms)
     {
         for (var i = 0; i < rooms.Count; i++)
         {

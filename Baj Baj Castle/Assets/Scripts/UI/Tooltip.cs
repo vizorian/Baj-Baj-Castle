@@ -5,10 +5,10 @@ using UnityEngine;
 public class Tooltip : MonoBehaviour
 {
     private RectTransform backgroundTransform;
-
     private RectTransform canvasTransform;
     private RectTransform rectTransform;
     private TextMeshProUGUI text;
+
     public static Tooltip Instance { get; private set; }
 
     [UsedImplicitly]

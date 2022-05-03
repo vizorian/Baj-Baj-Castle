@@ -638,7 +638,6 @@ public class LevelGenerator : MonoBehaviour
     private HashSet<Triangle> Triangulate(HashSet<Point> points)
     {
         var triangulator = new DelaunayTriangulator();
-        triangulator.CreateSupraTriangle(points);
         return triangulator.BowyerWatson(points);
     }
 
@@ -737,7 +736,7 @@ public class LevelGenerator : MonoBehaviour
         return overlappingCellIdList;
     }
 
-    public float RoundNumber(float x, float y)
+    public static float RoundNumber(float x, float y)
     {
         return Mathf.Floor((x + y - 1) / y) * y;
     }
@@ -769,7 +768,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
     // Returns a random number
-    public float RandomGauss(float minValue, float maxValue)
+    public static float RandomGauss(float minValue, float maxValue)
     {
         float x;
         float s;
@@ -790,7 +789,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
     // Returns a random point in an elipse
-    public Vector2 GetRandomPointInElipse(float width, float height)
+    public static Vector2 GetRandomPointInElipse(float width, float height)
     {
         var t = 2 * Mathf.PI * Random.value;
         var u = Random.value + Random.value;

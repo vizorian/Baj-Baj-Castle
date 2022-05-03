@@ -42,7 +42,6 @@ public class InventorySystem : MonoBehaviour
     {
         var success = true;
         var newItem = new InventoryItem(itemData);
-        // probably bad finding
         var existingItem =
             Inventory.Find(item =>
                 item.Data.Id == itemData.Id &&

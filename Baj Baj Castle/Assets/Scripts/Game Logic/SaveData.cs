@@ -24,15 +24,7 @@ public class SaveData
 
     public override string ToString()
     {
-        return string.Format(
-            "Gold: {0}, Strength: {1}, Agility: {2}, Intelligence: {3}, Luck: {4}, Health: {5}, Defense {6}",
-            Gold,
-            StrengthUpgradeLevel,
-            AgilityUpgradeLevel,
-            IntelligenceUpgradeLevel,
-            LuckUpgradeLevel,
-            HealthUpgradeLevel,
-            DefenseUpgradeLevel);
+        return $"Gold: {Gold}, Strength: {StrengthUpgradeLevel}, Agility: {AgilityUpgradeLevel}, Intelligence: {IntelligenceUpgradeLevel}, Luck: {LuckUpgradeLevel}, Health: {HealthUpgradeLevel}, Defense {DefenseUpgradeLevel}";
     }
 
     public int GetStat(string stat)

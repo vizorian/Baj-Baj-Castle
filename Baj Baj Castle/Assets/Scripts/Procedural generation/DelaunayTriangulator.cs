@@ -3,11 +3,10 @@ using System.Linq;
 
 public class DelaunayTriangulator
 {
-    private Triangle supra;
-
     public HashSet<Triangle> BowyerWatson(HashSet<Point> points)
     {
-        var triangulation = new HashSet<Triangle> {supra};
+        var supra = CreateSupraTriangle(points);
+        var triangulation = new HashSet<Triangle> { supra };
 
         foreach (var point in points)
         {
@@ -40,7 +39,7 @@ public class DelaunayTriangulator
             }
         }
 
-        // Remove triangles that contain any supra vertices
+        // Remove triangles that contain any Supra vertices
         triangulation.RemoveWhere(t => t.Vertices.Contains(supra.Vertices[0])
                                        || t.Vertices.Contains(supra.Vertices[1])
                                        || t.Vertices.Contains(supra.Vertices[2]));
@@ -49,13 +48,13 @@ public class DelaunayTriangulator
     }
 
     // Create triangle large enough to contain all points
-    public void CreateSupraTriangle(HashSet<Point> points)
+    private static Triangle CreateSupraTriangle(HashSet<Point> points)
     {
         var minX = (float) points.Min(p => p.X) - 20;
         var minY = (float) points.Min(p => p.Y) - 10;
         var maxX = (float) points.Max(p => p.X) + 20;
         var maxY = (float) points.Max(p => p.Y) + 20;
 
-        supra = new Triangle(new Point(minX, minY), new Point(maxX, minY), new Point((maxX + minX) / 2, maxY));
+        return new Triangle(new Point(minX, minY), new Point(maxX, minY), new Point((maxX + minX) / 2, maxY));
     }
 }
