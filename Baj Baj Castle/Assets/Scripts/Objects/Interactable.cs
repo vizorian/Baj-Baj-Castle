@@ -155,15 +155,18 @@ public class Interactable : Collidable
         var damage = damageData.Amount;
 
         // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
-            damageData.Type = DamageType.Slashing;
-        else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
-            damageData.Type = DamageType.Piercing;
+        if (damageData.Source.Hand != null)
+        {
+            if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
+                damageData.Type = DamageType.Slashing;
+            else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
+                damageData.Type = DamageType.Piercing;
+        }
 
         // Damage types
         if (damageData.Type == DamageType.Piercing)
             damage /= 4;
-        else if (damageData.Type == DamageType.Slashing) damage /= 4;
+        else if (damageData.Type == DamageType.Slashing) damage /= 2;
 
         if (damage < 1)
             damage = 1;
