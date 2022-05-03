@@ -1,28 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 
 public class FloatingText : MonoBehaviour
 {
-    public static void Create(string text, Color color, Vector3 position, float textSize = 1f, float lifeTime = 1f, float speed = 1f)
+    private readonly float fadeSpeed = 1f;
+    private float lifeTime;
+    private float speed;
+    private Color textColor;
+
+    private TextMeshPro textMesh;
+
+    public static void Create(string text, Color color, Vector3 position, float textSize = 1f, float lifeTime = 1f,
+        float speed = 1f)
     {
-        var floatingTextObject = Instantiate(GameAssets.Instance.floatingTextObject, Vector3.zero, Quaternion.identity);
+        var floatingTextObject = Instantiate(GameAssets.Instance.FloatingTextObject, Vector3.zero, Quaternion.identity);
         var floatingText = floatingTextObject.GetComponent<FloatingText>();
         floatingText.Setup(text, color, position, textSize, lifeTime, speed);
     }
 
-    private TextMeshPro textMesh;
-    private float lifeTime;
-    private float speed;
-    private float fadeSpeed = 1f;
-    private Color textColor;
-
+    [UsedImplicitly]
     private void Awake()
     {
         textMesh = GetComponent<TextMeshPro>();
     }
 
+    [UsedImplicitly]
     public void Update()
     {
         transform.position += new Vector3(0, speed) * Time.deltaTime;
@@ -31,10 +34,7 @@ public class FloatingText : MonoBehaviour
         {
             textColor.a -= fadeSpeed * Time.deltaTime;
             textMesh.color = textColor;
-            if (textColor.a <= 0)
-            {
-                Destroy(gameObject);
-            }
+            if (textColor.a <= 0) Destroy(gameObject);
         }
     }
 

@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
+
 public enum ActorType
 {
-    Enemy,
-    Player
+    [UsedImplicitly] Enemy,
+    [UsedImplicitly] Player
 }

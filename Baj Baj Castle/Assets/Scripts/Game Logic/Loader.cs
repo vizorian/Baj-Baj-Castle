@@ -1,13 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class Loader
 {
-    public static GameState loadState;
-
     public enum Scene
     {
         Menu,
@@ -16,16 +11,15 @@ public static class Loader
         Loading
     }
 
+    public static GameState LoadState;
+
     private static Action<GameState> onLoaderCallback;
 
     public static void Load(Scene scene, GameState state)
     {
-        loadState = state;
+        LoadState = state;
         GameManager.Instance.GameState = GameState.Loading;
-        onLoaderCallback = (state) =>
-        {
-            SceneManager.LoadScene(scene.ToString());
-        };
+        onLoaderCallback = gameState => { SceneManager.LoadScene(scene.ToString()); };
 
         SceneManager.LoadScene(Scene.Loading.ToString());
     }

@@ -1,7 +1,7 @@
 public class DisjointSet
 {
-    int[] parent;
-    int[] rank;
+    private readonly int[] parent;
+    private readonly int[] rank;
 
     public DisjointSet(int size)
     {
@@ -16,28 +16,16 @@ public class DisjointSet
 
     public int Find(int x)
     {
-        while (x != parent[x])
-        {
-            x = parent[x];
-        }
+        while (x != parent[x]) x = parent[x];
         return x;
     }
 
-    // while (parent[x] != x)
-    // {
-    //         x = parent[x];
-    // }
-    // return x;
-
     public void Union(int x, int y)
     {
-        int xRoot = Find(x);
-        int yRoot = Find(y);
+        var xRoot = Find(x);
+        var yRoot = Find(y);
 
-        if (xRoot == yRoot)
-        {
-            return;
-        }
+        if (xRoot == yRoot) return;
 
         if (rank[xRoot] > rank[yRoot])
         {
@@ -46,10 +34,7 @@ public class DisjointSet
         else
         {
             parent[xRoot] = yRoot;
-            if (rank[xRoot] == rank[yRoot])
-            {
-                rank[yRoot]++;
-            }
+            if (rank[xRoot] == rank[yRoot]) rank[yRoot]++;
         }
     }
 }

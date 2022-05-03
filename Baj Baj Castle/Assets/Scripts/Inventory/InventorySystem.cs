@@ -1,68 +1,57 @@
-using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class InventorySystem : MonoBehaviour
 {
     // Singleton for a single system
-    private static InventorySystem instance;
-    public static InventorySystem Instance { get { return instance; } }
-    public UnityEvent OnInventoryChanged;
-    public List<InventoryItem> Inventory { get; private set; }
     public int Capacity = 9;
-    public InventoryItem SelectedItem { get; private set; }
-    private int selectedItemIndex;
     private ActorHand hand;
+    public UnityEvent OnInventoryChanged;
+    private int selectedItemIndex;
+    public static InventorySystem Instance { get; private set; }
 
+    public List<InventoryItem> Inventory { get; private set; }
+    public InventoryItem SelectedItem { get; private set; }
+
+    [UsedImplicitly]
     private void Awake()
     {
         Inventory = new List<InventoryItem>();
         SelectedItem = null;
         selectedItemIndex = -1;
 
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
             Destroy(gameObject);
         else
-            instance = this;
+            Instance = this;
 
-        if (OnInventoryChanged == null)
-            OnInventoryChanged = new UnityEvent();
+        OnInventoryChanged ??= new UnityEvent();
     }
 
+    [UsedImplicitly]
     private void Update()
     {
         if (hand == null)
             hand = GetComponentInChildren<ActorHand>();
     }
 
-    private void PrintInventory()
-    {
-        string temp = "";
-        for (int i = 0; i < Inventory.Count; i++)
-        {
-            temp += i + $":{Inventory[i].Data.DisplayName}" + " --- ";
-        }
-        Debug.Log(temp);
-    }
-
     // Adds an item to inventory and invokes OnInventoryChanged
     public bool Add(InventoryItemData itemData)
     {
-        bool success = true;
-        InventoryItem newItem = new InventoryItem(itemData);
-        // probably bad finding
-        var existingItem = Inventory.Find(item => item.Data.Id == itemData.Id && item.StackSize < item.Data.MaxStackSize); // item of same type but not full
+        var success = true;
+        var newItem = new InventoryItem(itemData);
+        var existingItem =
+            Inventory.Find(item =>
+                item.Data.Id == itemData.Id &&
+                item.StackSize < item.Data.MaxStackSize); // item of same type but not full
         if (existingItem == null) // non-full stackable item doesn't exist
         {
             if (Inventory.Count < Capacity)
-            {
                 Inventory.Add(newItem);
-            }
             else
-            {
                 success = false;
-            }
         }
         else // non-full stackable item exists
         {
@@ -92,10 +81,7 @@ public class InventorySystem : MonoBehaviour
 
             if (Inventory.Count != 0) // If more items remain
             {
-                if (selectedItemIndex != 0)
-                {
-                    selectedItemIndex--;
-                }
+                if (selectedItemIndex != 0) selectedItemIndex--;
                 SelectedItem = Inventory[selectedItemIndex];
                 hand.SetHeldItem(SelectedItem);
             }
@@ -107,21 +93,21 @@ public class InventorySystem : MonoBehaviour
                 hand.ClearHeldItem();
             }
         }
+
         OnInventoryChanged.Invoke();
     }
 
     // Drops an item and calls Remove
     public void Drop()
     {
-        if (SelectedItem != null)
-        {
-            // Drop the actual item in the world
-            var itemObject = Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
-            LevelManager.Instance.AddItem(itemObject);
+        if (SelectedItem == null) return;
 
-            // Remove the item from inventory
-            Remove(SelectedItem.Data);
-        }
+        // Drop the actual item in the world
+        var itemObject = Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
+        LevelManager.Instance.AddItem(itemObject);
+
+        // Remove the item from inventory
+        Remove(SelectedItem.Data);
     }
 
     public void Next()

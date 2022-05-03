@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 public enum GameState
 {
     MainMenu,
@@ -8,5 +10,5 @@ public enum GameState
     Victory,
     Defeat,
     Reload,
-    None
+    [UsedImplicitly] None
 }

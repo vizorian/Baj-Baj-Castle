@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-
-// TODO potentially include neighbour bools
 public class TileData
 {
-    public int X;
-    public int Y;
     public TileType Type;
+    public readonly int X;
+    public readonly int Y;
 
     public TileData(int x, int y, TileType type)
     {
@@ -22,23 +18,17 @@ public class TileData
 
     public override bool Equals(object obj)
     {
-        if (obj == null)
-        {
-            return false;
-        }
+        if (obj == null) return false;
 
-        if (obj.GetType() != this.GetType())
-        {
-            return false;
-        }
+        if (obj.GetType() != GetType()) return false;
 
-        TileData other = (TileData)obj;
+        var other = (TileData) obj;
 
         return X == other.X && Y == other.Y && Type == other.Type;
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return X.GetHashCode() ^ Y.GetHashCode();
     }
 }
