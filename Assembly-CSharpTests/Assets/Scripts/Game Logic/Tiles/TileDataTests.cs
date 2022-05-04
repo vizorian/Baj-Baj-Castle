@@ -51,6 +51,11 @@ namespace Tests
             Assert.AreEqual(tileData, otherTileData);
             otherTileData = new TileData(otherX, otherY, otherTileType);
             Assert.AreNotEqual(tileData, otherTileData);
+
+            var number = 50;
+            Assert.IsFalse(tileData.Equals(number));
+            int? nullableNumber = null;
+            Assert.IsFalse(tileData.Equals(nullableNumber));
         }
 
         [TestMethod]

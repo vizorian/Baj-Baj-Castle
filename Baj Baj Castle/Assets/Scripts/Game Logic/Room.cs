@@ -43,8 +43,8 @@ public class Room
         get { return Tiles.Where(t => t.Type == TileType.Door).ToList(); }
     }
 
-    public int Width => Mathf.Abs(XMax - XMin - 2);
-    public int Height => Mathf.Abs(YMax - YMin - 2);
+    public int Width => Mathf.Abs(XMax - XMin) - 1;
+    public int Height => Mathf.Abs(YMax - YMin) - 1;
     public int Area => Width * Height;
     public float WidthToWorld => (Width + 1) * LevelGenerator.CELL_SIZE;
     public float HeightToWorld => (Height + 1) * LevelGenerator.CELL_SIZE;

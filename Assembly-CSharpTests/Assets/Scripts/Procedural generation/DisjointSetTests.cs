@@ -58,5 +58,20 @@ namespace Tests
             otherResult = disjointSet.Find(2);
             Assert.AreEqual(result, otherResult);
         }
+
+        [TestMethod]
+        public void UnionTest2()
+        {
+            var disjointSet = new DisjointSet(2);
+            disjointSet.MakeSet(1);
+            disjointSet.MakeSet(2);
+
+            disjointSet.Union(1, 1);
+            disjointSet.Union(2, 1);
+            disjointSet.Union(1, 2);
+            var result = disjointSet.Find(1);
+            var otherResult = disjointSet.Find(2);
+            Assert.AreEqual(result, otherResult);
+        }
     }
 }

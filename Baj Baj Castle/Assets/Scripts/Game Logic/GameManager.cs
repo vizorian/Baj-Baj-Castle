@@ -195,7 +195,7 @@ public class GameManager : MonoBehaviour
             if (file.Length > 0)
             {
                 var bf = new BinaryFormatter();
-                Instance.SaveData = (SaveData) bf.Deserialize(file);
+                Instance.SaveData = (SaveData)bf.Deserialize(file);
                 file.Close();
                 file.Dispose();
                 Instance.IsNewGame = false;
@@ -241,7 +241,7 @@ public class GameManager : MonoBehaviour
         var treasureCount = upgradeMenu.Find("Header").Find("Subheader").Find("TreasureCount").gameObject
             .GetComponent<TextMeshProUGUI>();
         treasureCount.text = Instance.SaveData.Gold.ToString();
-        string[] stats = {"Strength", "Agility", "Intelligence", "Luck", "Health", "Defense"};
+        string[] stats = { "Strength", "Agility", "Intelligence", "Luck", "Health", "Defense" };
 
         foreach (var stat in stats)
         {
