@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
@@ -129,8 +130,12 @@ public class Cell
 
         // Check if the cell is any of the vertices
         foreach (var vertex in vertices)
-            if (vertex.X == SimulationCell.transform.position.x && vertex.Y == SimulationCell.transform.position.y)
+        {
+            var TOLERANCE = 0.001;
+            if (Math.Abs(vertex.X - SimulationCell.transform.position.x) < TOLERANCE &&
+                Math.Abs(vertex.Y - SimulationCell.transform.position.y) < TOLERANCE)
                 return true;
+        }
 
         return false;
     }

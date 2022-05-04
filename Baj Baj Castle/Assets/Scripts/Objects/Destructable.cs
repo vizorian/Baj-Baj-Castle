@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 [UsedImplicitly]
 public class Destructable : MonoBehaviour

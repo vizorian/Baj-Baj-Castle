@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -91,13 +93,13 @@ public class LevelGenerator : MonoBehaviour
         isProcessed = false;
     }
 
-    public void GenerateLevel(int level, bool isDebug, Sprite cellSprite)
+    public void GenerateLevel(int level, bool newIsDebug, Sprite newCellSprite)
     {
         // Set input variables
-        this.isDebug = isDebug;
-        this.cellSprite = cellSprite;
+        isDebug = newIsDebug;
+        cellSprite = newCellSprite;
         levelSize = (int)(4 + level * 1.4f);
-        if (this.isDebug) Debug.Log("Generating level #" + level);
+        if (isDebug) Debug.Log("Generating level #" + level);
         PrepareForGeneration();
     }
 
@@ -361,7 +363,8 @@ public class LevelGenerator : MonoBehaviour
             var offsetFrom = 1 - trueWidth;
             var offsetTo = 1 + trueWidth;
 
-            if (hallway.P1.X == hallway.P2.X) // hallway is vertical
+            var TOLERANCE = 0.001f;
+            if (Math.Abs(hallway.P1.X - hallway.P2.X) < TOLERANCE) // hallway is vertical
             {
                 if (hallway.P1.Y < hallway.P2.Y) // goes up
                 {
@@ -455,10 +458,11 @@ public class LevelGenerator : MonoBehaviour
         foreach (var edge in levelGraph)
         {
             // find cells that are connected by an edge
-            var c1 = Rooms.First(c => c.SimulationCell.transform.position.x == edge.P1.X
-                                      && c.SimulationCell.transform.position.y == edge.P1.Y);
-            var c2 = Rooms.First(c => c.SimulationCell.transform.position.x == edge.P2.X
-                                      && c.SimulationCell.transform.position.y == edge.P2.Y);
+            var TOLERANCE = 0.001;
+            var c1 = Rooms.First(c => Math.Abs(c.SimulationCell.transform.position.x - edge.P1.X) < TOLERANCE
+                                      && Math.Abs(c.SimulationCell.transform.position.y - edge.P1.Y) < TOLERANCE);
+            var c2 = Rooms.First(c => Math.Abs(c.SimulationCell.transform.position.x - edge.P2.X) < TOLERANCE
+                                      && Math.Abs(c.SimulationCell.transform.position.y - edge.P2.Y) < TOLERANCE);
 
             // calculate midpoint between the two cells
             var midpoint = new Point((edge.P1.X + edge.P2.X) / 2, (edge.P1.Y + edge.P2.Y) / 2);
@@ -502,10 +506,9 @@ public class LevelGenerator : MonoBehaviour
                     && midpoint.X > c2XMin + offset
                     && midpoint.X < c2XMax - offset)
                 {
-                    if (isUp)
-                        hallways.Add(new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax)));
-                    else
-                        hallways.Add(new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
+                    hallways.Add(isUp
+                        ? new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax))
+                        : new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
                     isFound = true;
                 }
             }
@@ -516,10 +519,9 @@ public class LevelGenerator : MonoBehaviour
                     && midpoint.X > c1XMin + offset
                     && midpoint.X < c1XMax - offset)
                 {
-                    if (isUp)
-                        hallways.Add(new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax)));
-                    else
-                        hallways.Add(new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
+                    hallways.Add(isUp
+                        ? new Edge(new Point(midpoint.X, c1YMin), new Point(midpoint.X, c2YMax))
+                        : new Edge(new Point(midpoint.X, c1YMax), new Point(midpoint.X, c2YMin)));
                     isFound = true;
                 }
             }
@@ -533,10 +535,9 @@ public class LevelGenerator : MonoBehaviour
                         && midpoint.Y > c2YMin + offset
                         && midpoint.Y < c2YMax - offset)
                     {
-                        if (isLeft)
-                            hallways.Add(new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y)));
-                        else
-                            hallways.Add(new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
+                        hallways.Add(isLeft
+                            ? new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y))
+                            : new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
                         isFound = true;
                     }
                 }
@@ -547,10 +548,9 @@ public class LevelGenerator : MonoBehaviour
                         && midpoint.Y > c1YMin + offset
                         && midpoint.Y < c1YMax - offset)
                     {
-                        if (isLeft)
-                            hallways.Add(new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y)));
-                        else
-                            hallways.Add(new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
+                        hallways.Add(isLeft
+                            ? new Edge(new Point(c1XMin, midpoint.Y), new Point(c2XMax, midpoint.Y))
+                            : new Edge(new Point(c1XMax, midpoint.Y), new Point(c2XMin, midpoint.Y)));
                         isFound = true;
                     }
                 }

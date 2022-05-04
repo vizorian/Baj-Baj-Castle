@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -5,15 +6,15 @@ using UnityEngine.UI;
 
 public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private Image icon;
+    [SerializeField] [UsedImplicitly] private Image icon;
 
     private InventoryItem item;
 
-    [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] [UsedImplicitly] private TextMeshProUGUI label;
 
-    [SerializeField] private GameObject stackContainer;
+    [SerializeField] [UsedImplicitly] private GameObject stackContainer;
 
-    [SerializeField] private TextMeshProUGUI stackCount;
+    [SerializeField] [UsedImplicitly] private TextMeshProUGUI stackCount;
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
@@ -25,16 +26,16 @@ public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerEx
         Tooltip.HideTooltip_Static();
     }
 
-    public void Set(InventoryItem item)
+    public void Set(InventoryItem newItem)
     {
-        this.item = item;
+        this.item = newItem;
 
-        icon.sprite = item.Data.Icon;
-        label.text = item.Data.DisplayName;
-        if (item.StackSize <= 1)
+        icon.sprite = newItem.Data.Icon;
+        label.text = newItem.Data.DisplayName;
+        if (newItem.StackSize <= 1)
             stackContainer.SetActive(false);
         else
-            stackCount.text = item.StackSize.ToString();
+            stackCount.text = newItem.StackSize.ToString();
     }
 
     private string ToTooltipString()

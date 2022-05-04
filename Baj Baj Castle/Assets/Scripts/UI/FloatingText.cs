@@ -38,14 +38,14 @@ public class FloatingText : MonoBehaviour
         }
     }
 
-    public void Setup(string text, Color color, Vector3 position, float textSize, float lifeTime, float speed)
+    public void Setup(string text, Color color, Vector3 position, float textSize, float newLifeTime, float newSpeed)
     {
         textMesh.SetText(text);
         textMesh.fontSize = textSize;
         textMesh.color = color;
         textColor = color;
         transform.position = position;
-        this.lifeTime = lifeTime;
-        this.speed = speed;
+        lifeTime = newLifeTime;
+        speed = newSpeed;
     }
 }

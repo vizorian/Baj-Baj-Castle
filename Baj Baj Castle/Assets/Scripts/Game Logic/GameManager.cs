@@ -250,10 +250,7 @@ public class GameManager : MonoBehaviour
             var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
             var statLevel = Instance.SaveData.GetStat(stat);
             statCount.text = statLevel.ToString();
-            if (stat == "Health")
-                statCost.text = CalculateCost(statLevel, true).ToString();
-            else
-                statCost.text = CalculateCost(statLevel).ToString();
+            statCost.text = stat == "Health" ? CalculateCost(statLevel, true).ToString() : CalculateCost(statLevel).ToString();
         }
     }
 

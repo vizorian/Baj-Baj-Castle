@@ -9,12 +9,14 @@ namespace Tests
         [TestMethod]
         public void BowyerWatsonTest()
         {
-            var points = new HashSet<Point>();
-            points.Add(new Point(0, 0));
-            points.Add(new Point(0, 4));
-            points.Add(new Point(4, 0));
-            points.Add(new Point(4, 4));
-            points.Add(new Point(2, 2));
+            var points = new HashSet<Point>
+            {
+                new Point(0, 0),
+                new Point(0, 4),
+                new Point(4, 0),
+                new Point(4, 4),
+                new Point(2, 2)
+            };
 
             var triangulator = new DelaunayTriangulator();
             var triangulation = triangulator.BowyerWatson(points);

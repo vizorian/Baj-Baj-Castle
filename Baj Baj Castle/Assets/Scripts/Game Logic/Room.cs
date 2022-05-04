@@ -133,7 +133,7 @@ public class Room
         }
 
         foreach (var tile in matchingTiles)
-            if (first != null && second != null)
+            if (first != null)
                 if (Equals(tile, first) || Equals(tile, second))
                 {
                     otherRoom.Tiles.Remove(tile);

@@ -23,10 +23,7 @@ public class InventoryManager : MonoBehaviour
     private void DrawInventory()
     {
         foreach (var item in InventorySystem.Instance.Inventory)
-            if (item == InventorySystem.Instance.SelectedItem)
-                AddInventorySlot(item, SlotSelectedPrefab);
-            else
-                AddInventorySlot(item, SlotPrefab);
+            AddInventorySlot(item, item == InventorySystem.Instance.SelectedItem ? SlotSelectedPrefab : SlotPrefab);
     }
 
     private void AddInventorySlot(InventoryItem item, GameObject prefab)

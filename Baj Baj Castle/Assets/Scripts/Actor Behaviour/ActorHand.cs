@@ -39,11 +39,8 @@ public class ActorHand : MonoBehaviour
     // Flips the hand and held item based on horizontal position
     private void UpdateHorizontalRendering()
     {
-        if (Vector2.Dot(transform.parent.transform.right, transform.position - bodyPosition) >
-            0) // If to the right of actor
-            transform.localScale = new Vector2(1, 1);
-        else // If to the left of actor
-            transform.localScale = new Vector2(-1, 1);
+        transform.localScale = Vector2.Dot(transform.parent.transform.right, transform.position - bodyPosition) >
+                               0 ? new Vector2(1, 1) : new Vector2(-1, 1);
     }
 
     public void UseHeldItem()

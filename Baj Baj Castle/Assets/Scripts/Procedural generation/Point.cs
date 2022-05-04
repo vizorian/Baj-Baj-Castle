@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Point
@@ -22,7 +23,8 @@ public class Point
         if (obj == null || GetType() != obj.GetType()) return false;
 
         var point = (Point)obj;
-        return X == point.X && Y == point.Y;
+        var TOLERANCE = 0.001;
+        return Math.Abs(X - point.X) < TOLERANCE && Math.Abs(Y - point.Y) < TOLERANCE;
     }
 
     public override int GetHashCode()

@@ -46,23 +46,23 @@ public class LevelManager : MonoBehaviour
             }
     }
 
-    public void InstantiateComponent(Sprite cellSprite, GameObject gridObject, bool isDebug)
+    public void InstantiateComponent(Sprite newCellSprite, GameObject newGridObject, bool newIsDebug)
     {
         if (Instance == null)
             Instance = this;
         else
             Destroy(gameObject);
 
-        this.isDebug = isDebug;
-        this.gridObject = gridObject;
-        this.cellSprite = cellSprite;
+        isDebug = newIsDebug;
+        gridObject = newGridObject;
+        cellSprite = newCellSprite;
 
         levelGenerator = gameObject.AddComponent<LevelGenerator>();
 
         floorTilemap = this.gridObject.transform.Find("Floor").GetComponent<Tilemap>();
         decorationTilemap = this.gridObject.transform.Find("Decoration").GetComponent<Tilemap>();
         collisionTilemap = this.gridObject.transform.Find("Collision").GetComponent<Tilemap>();
-        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap, isDebug);
+        tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap, newIsDebug);
     }
 
     public void GenerateLevel(int level)

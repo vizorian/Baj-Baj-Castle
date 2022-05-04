@@ -115,11 +115,8 @@ public class TileCreator
                     || !room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
                     || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
                 {
-                    if (room.DoorPositions.Any(door =>
-                            Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y))
-                        tile.Type = TileType.Door;
-                    else
-                        tile.Type = TileType.Wall;
+                    tile.Type = room.DoorPositions.Any(door =>
+                        Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y) ? TileType.Door : TileType.Wall;
                 }
                 else
                 {
@@ -411,18 +408,15 @@ public class TileCreator
                     baseName = "Floor";
                     break;
                 case TileType.Door:
-                    tileType = TileType.Door;
                     floorTilemap.SetTile(location, tileDict["Door"]);
                     continue;
             }
 
-            bool hasWest, hasEast, hasNorth, hasSouth;
-
             // check all directionss for tiles
-            hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
-            hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
-            hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
-            hasSouth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y - 1);
+            var hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
+            var hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
+            var hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
+            var hasSouth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y - 1);
 
             var directionalName = ProcessTile(hasWest, hasEast, hasNorth, hasSouth, tileType);
             if (directionalName == "" && tileType == TileType.Wall) // corner

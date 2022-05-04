@@ -1,6 +1,3 @@
-using System;
-using UnityEngine;
-
 public class Edge
 {
     public readonly Point P1;
