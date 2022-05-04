@@ -164,7 +164,7 @@ public class LevelManager : MonoBehaviour
             var easyEnemies = GameAssets.Instance.EnemyPrefabs.Where(e => e.name == "Gobbo" || e.name == "Goblin")
                 .ToList();
             prefab = GameAssets.Instance.EnemyPrefabs[Random.Range(0, GameAssets.Instance.EnemyPrefabs.Count)];
-            if (!easyEnemies.Any(e => e.name == prefab.name))
+            if (easyEnemies.All(e => e.name != prefab.name))
                 if (Random.Range(0f, 1f) < 1f - level * 0.1f)
                     prefab = easyEnemies[Random.Range(0, easyEnemies.Count)];
             var enemy = Instantiate(prefab, room.GetRandomTile(2), Quaternion.identity);

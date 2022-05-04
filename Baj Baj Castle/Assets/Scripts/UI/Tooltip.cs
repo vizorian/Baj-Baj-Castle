@@ -47,9 +47,9 @@ public class Tooltip : MonoBehaviour
         rectTransform.anchoredPosition = newPosition;
     }
 
-    private void ShowTooltip(string text)
+    private void ShowTooltip(string newText)
     {
-        SetText(text);
+        SetText(newText);
         UpdatePosition();
         gameObject.SetActive(true);
     }
@@ -59,9 +59,9 @@ public class Tooltip : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void SetText(string text)
+    private void SetText(string newText)
     {
-        this.text.SetText(text);
+        this.text.SetText(newText);
         this.text.ForceMeshUpdate();
         var textSize = this.text.GetRenderedValues(false);
         var padding = new Vector2(10, 10);
