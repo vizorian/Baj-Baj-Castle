@@ -74,19 +74,19 @@ public class Room
     {
         var playerObject = GameManager.Instance.Player.gameObject;
         var doorTile = DoorTiles.OrderBy(door =>
-            Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE),
-                playerObject.transform.position)).First();
-        var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) -
-                         (Vector2)CenterPosition).normalized;
-        var move = new Vector3(LevelGenerator.CELL_SIZE, 0);
+            Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE), playerObject.transform.position)).First();
+        var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) - (Vector2)CenterPosition).normalized;
+
+        var move = new Vector3(LevelGenerator.CELL_SIZE * 2, 0);
         if (direction.x > 0)
             playerObject.transform.position -= move;
-        else
+        else if (direction.x < 0)
             playerObject.transform.position += move;
-        move = new Vector3(0, LevelGenerator.CELL_SIZE);
+
+        move = new Vector3(0, LevelGenerator.CELL_SIZE * 2);
         if (direction.y > 0)
             playerObject.transform.position -= move;
-        else
+        else if (direction.y < 0)
             playerObject.transform.position += move;
     }
 
