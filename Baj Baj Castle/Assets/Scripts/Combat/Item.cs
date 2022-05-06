@@ -87,7 +87,7 @@ public class Item : Collidable
                     if (otherCollider.gameObject == actor.gameObject) return;
 
                     // check for critical hit
-                    var damage = Damage + (int) (actor.Strength * 0.2f);
+                    var damage = Damage + (int)(actor.Strength * 0.2f);
                     var knockback = Knockback + actor.Strength * 0.1f;
                     var damageData = new DamageData(damage, DamageType, knockback, actor)
                     {

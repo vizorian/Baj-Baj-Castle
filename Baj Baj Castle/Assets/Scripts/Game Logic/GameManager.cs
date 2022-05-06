@@ -250,7 +250,7 @@ public class GameManager : MonoBehaviour
             var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
             var statLevel = Instance.SaveData.GetStat(stat);
             statCount.text = statLevel.ToString();
-            statCost.text = stat == "Health" ? CalculateCost(statLevel, true).ToString() : CalculateCost(statLevel).ToString();
+            statCost.text = stat == "Health" ? CalculateCost(statLevel, true).ToString() : CalculateCost(statLevel, false).ToString();
         }
     }
 
@@ -263,7 +263,7 @@ public class GameManager : MonoBehaviour
         switch (stat)
         {
             case "Strength":
-                var cost = CalculateCost(Instance.SaveData.StrengthUpgradeLevel);
+                var cost = CalculateCost(Instance.SaveData.StrengthUpgradeLevel, false);
                 if (Instance.SaveData.Gold >= cost)
                 {
                     Instance.SaveData.Gold -= cost;
@@ -276,7 +276,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case "Agility":
-                cost = CalculateCost(Instance.SaveData.AgilityUpgradeLevel);
+                cost = CalculateCost(Instance.SaveData.AgilityUpgradeLevel, false);
                 if (Instance.SaveData.Gold >= cost)
                 {
                     Instance.SaveData.Gold -= cost;
@@ -289,7 +289,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case "Intelligence":
-                cost = CalculateCost(Instance.SaveData.IntelligenceUpgradeLevel);
+                cost = CalculateCost(Instance.SaveData.IntelligenceUpgradeLevel, false);
                 if (Instance.SaveData.Gold >= cost)
                 {
                     Instance.SaveData.Gold -= cost;
@@ -302,7 +302,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case "Luck":
-                cost = CalculateCost(Instance.SaveData.LuckUpgradeLevel);
+                cost = CalculateCost(Instance.SaveData.LuckUpgradeLevel, false);
                 if (Instance.SaveData.Gold >= cost)
                 {
                     Instance.SaveData.Gold -= cost;
@@ -328,7 +328,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case "Defense":
-                cost = CalculateCost(Instance.SaveData.DefenseUpgradeLevel);
+                cost = CalculateCost(Instance.SaveData.DefenseUpgradeLevel, false);
                 if (Instance.SaveData.Gold >= cost)
                 {
                     Instance.SaveData.Gold -= cost;
@@ -346,7 +346,7 @@ public class GameManager : MonoBehaviour
         Instance.UpdateUpgradeMenu();
     }
 
-    private int CalculateCost(int level, bool isHealth = false)
+    private int CalculateCost(int level, bool isHealth)
     {
         if (level == 0) return 1;
         if (isHealth)

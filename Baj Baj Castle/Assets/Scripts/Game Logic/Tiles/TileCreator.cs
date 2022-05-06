@@ -38,8 +38,8 @@ public class TileCreator
 
             var tilesToAdd = new List<TileData>();
             for (var x = startingX; x < endingX; x++)
-            for (var y = startingY; y < endingY; y++)
-                tilesToAdd.Add(new TileData(x, y, TileType.None));
+                for (var y = startingY; y < endingY; y++)
+                    tilesToAdd.Add(new TileData(x, y, TileType.None));
             rooms.Add(new Room(i, tilesToAdd, this));
         }
 
@@ -83,9 +83,9 @@ public class TileCreator
         var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
         var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
 
-        SetTiles(floorTiles);
+        SetTiles(floorTiles, null);
         SetTiles(wallTiles, allTiles);
-        SetTiles(doorTiles);
+        SetTiles(doorTiles, null);
     }
 
     public void Cleanup()
@@ -387,7 +387,7 @@ public class TileCreator
         floorTilemap.SetTile(new Vector3Int(tile.X, tile.Y, 0), tileDict[type]);
     }
 
-    private void SetTiles(List<TileData> tiles, List<TileData> tilesToCheck = null)
+    private void SetTiles(List<TileData> tiles, List<TileData> tilesToCheck)
     {
         tilesToCheck ??= tiles;
 
@@ -486,8 +486,8 @@ public class TileCreator
         var tileList = new List<TileData>();
         foreach (var cell in hallwayCells)
         {
-            var x = (int) cell.Position.x - 1;
-            var y = (int) cell.Position.y - 1;
+            var x = (int)cell.Position.x - 1;
+            var y = (int)cell.Position.y - 1;
 
             var tile = new TileData(x, y, TileType.None);
             // if tile is not within any room

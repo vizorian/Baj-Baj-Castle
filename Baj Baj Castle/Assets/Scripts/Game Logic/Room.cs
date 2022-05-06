@@ -209,7 +209,7 @@ public class Room
         return Id == other.Id;
     }
 
-    public Vector3 GetRandomTile(int distanceFromWall = 0)
+    public Vector3 GetRandomTile(int distanceFromWall)
     {
         Vector3 position;
         var offset = LevelGenerator.CELL_SIZE / 2;
