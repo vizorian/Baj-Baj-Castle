@@ -6,16 +6,15 @@ using UnityEngine;
 [UsedImplicitly]
 public class Chest : Interactable
 {
-    public List<GameObject> Contents;
+    public Sprite OpenSprite;
     public Sprite EmptySprite;
-
+    public List<GameObject> Contents;
     public int GoldContained;
 
+    private bool isOpen;
     private bool isLooted;
 
-    private bool isOpen;
-    public Sprite OpenSprite;
-
+    // Handle interaction
     private protected override void OnInteraction()
     {
         if (!isOpen) // On open
@@ -40,11 +39,11 @@ public class Chest : Interactable
                 // Get random 360 degree angle
                 var angle = Random.Range(0, 360);
                 var direction = Quaternion.Euler(0, 0, angle) * Vector3.up;
-                // get random distance away from chest
+                // Get random distance away from chest
                 var range = Mathf.Max(BoxCollider.size.x, BoxCollider.size.y) / 2;
                 var distance = Random.Range(range, 2 * range);
                 var position = transform.position + direction * distance;
-                // spawn item
+                // Spawn item
                 var itemObject = Instantiate(item, position, Quaternion.identity);
                 LevelManager.Instance.AddItem(itemObject);
             }
@@ -53,7 +52,7 @@ public class Chest : Interactable
         }
     }
 
-    // Puts random items in chest, based on level and luck
+    // Generates random items in chest, based on level and luck
     private void GenerateContent()
     {
         var luck = 0;
@@ -102,6 +101,7 @@ public class Chest : Interactable
             else
                 item = woodenWeapons[Random.Range(0, woodenWeapons.Count)];
 
+            // Add to chest contents
             Contents.Add(item);
         }
     }

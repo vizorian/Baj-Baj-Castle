@@ -6,37 +6,35 @@ public class Actor : MonoBehaviour
 {
     private protected List<Collider2D> Hits = new List<Collider2D>();
 
-    public ActorType ActorType;
-    public int Agility;
-    public Sprite BackSprite;
-    private protected BoxCollider2D BoxCollider;
-    private protected ContactFilter2D ContactFilter;
-    public int Defense;
-    public Sprite FrontSprite;
-    public ActorHand Hand;
-    public GameObject HandPrefab;
 
     // Attributes
-    public float Health;
-    public int Intelligence;
-
-    private protected GameObject InteractionObject;
-
-    // Range attributes
-    public float InteractionRange;
-    public bool IsActive = false;
-    private protected Vector3 KnockbackDirection;
-    public int Luck;
     public float MaxHealth;
-    private protected Vector3 MoveDelta;
-    public float MovementSpeed;
-    public float ReachRange;
+    public float Health;
+    public int Defense;
+    public int Strength;
+    public int Agility;
+    public int Intelligence;
+    public int Luck;
     public int Resistance;
 
-    private protected Rigidbody2D RigidBody;
+    public ActorType ActorType;
     public Sprite SideSprite;
+    public Sprite FrontSprite;
+    public Sprite BackSprite;
+    public ActorHand Hand;
+    public GameObject HandPrefab;
+    public float InteractionRange;
+    public float MovementSpeed;
+    public float ReachRange;
+    public bool IsActive = false;
+
+    private protected GameObject InteractionObject;
+    private protected BoxCollider2D BoxCollider;
+    private protected ContactFilter2D ContactFilter;
+    private protected Vector3 KnockbackDirection;
+    private protected Vector3 MoveDelta;
+    private protected Rigidbody2D RigidBody;
     private protected SpriteRenderer SpriteRenderer;
-    public int Strength;
     private protected GameObject Target;
 
     private protected virtual void Awake()
@@ -76,7 +74,8 @@ public class Actor : MonoBehaviour
     {
     }
 
-    // Take damage, called by weapons on collision
+    // Used to receive and process damage
+    // Called by weapons on collision
     [UsedImplicitly]
     private protected virtual void TakeDamage(DamageData damageData)
     {
@@ -114,10 +113,13 @@ public class Actor : MonoBehaviour
         }
 
         CalculateKnockback(damageData.Source.transform.position, knockback);
+
+        // Apply damage
         Health -= damage;
         if (Health <= 0) Die();
     }
 
+    // Used to receive and process healing
     public virtual void Heal(float amount)
     {
         if (Health + amount > MaxHealth)
@@ -128,6 +130,7 @@ public class Actor : MonoBehaviour
         FloatingText.Create(amount.ToString(), Color.green, transform.position, 1f, 0.5f, 0.2f);
     }
 
+    // Used to calculate knocback direction and strength
     private void CalculateKnockback(Vector3 from, float distance)
     {
         KnockbackDirection = transform.position - from;
@@ -135,14 +138,16 @@ public class Actor : MonoBehaviour
         KnockbackDirection *= distance;
     }
 
-    // Actor death
+    // Actor death logic
     private protected virtual void Die()
     {
         Destroy(gameObject);
     }
 
+    // Actor movement logic
     private protected virtual void Move()
     {
+        // Knockback processing
         if (Resistance >= 100)
         {
             KnockbackDirection = Vector3.zero;
@@ -155,9 +160,12 @@ public class Actor : MonoBehaviour
         }
 
         MoveDelta += KnockbackDirection;
+
+        // Final movement
         RigidBody.velocity = MoveDelta;
     }
 
+    // Movement calculation
     private protected virtual void CalculateMovement()
     {
         MoveDelta = Target.transform.position - transform.position;
@@ -165,6 +173,7 @@ public class Actor : MonoBehaviour
         MoveDelta *= MovementSpeed;
     }
 
+    // Actor looking logic
     private protected virtual void LookAt(Vector3 lookTarget, ActorType actorType)
     {
         // Calculating position difference between the target and actor
@@ -174,7 +183,7 @@ public class Actor : MonoBehaviour
         var z = Mathf.Atan2(posDif.y, posDif.x) * Mathf.Rad2Deg;
         if (z < 0) z = 180 + (180 - Mathf.Abs(z));
 
-        // Manipulating sprite to look at target
+        // Updating sprite to look at target
         if (z >= 45 && z < 135)
         {
             SpriteRenderer.sprite = BackSprite;

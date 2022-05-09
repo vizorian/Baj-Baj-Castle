@@ -3,8 +3,10 @@ using System.Linq;
 
 public class DelaunayTriangulator
 {
+    // Do bowyer watson incremental triangulation
     public HashSet<Triangle> BowyerWatson(HashSet<Point> points)
     {
+        // Create super triangle
         var supra = CreateSupraTriangle(points);
         var triangulation = new HashSet<Triangle> { supra };
 
@@ -50,10 +52,10 @@ public class DelaunayTriangulator
     // Create triangle large enough to contain all points
     private static Triangle CreateSupraTriangle(HashSet<Point> points)
     {
-        var minX = (float) points.Min(p => p.X) - 20;
-        var minY = (float) points.Min(p => p.Y) - 10;
-        var maxX = (float) points.Max(p => p.X) + 20;
-        var maxY = (float) points.Max(p => p.Y) + 20;
+        var minX = (float)points.Min(p => p.X) - 20;
+        var minY = (float)points.Min(p => p.Y) - 10;
+        var maxX = (float)points.Max(p => p.X) + 20;
+        var maxY = (float)points.Max(p => p.Y) + 20;
 
         return new Triangle(new Point(minX, minY), new Point(maxX, minY), new Point((maxX + minX) / 2, maxY));
     }

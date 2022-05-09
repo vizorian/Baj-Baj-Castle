@@ -11,6 +11,7 @@ public class FloatingText : MonoBehaviour
 
     private TextMeshPro textMesh;
 
+    // Create a floating text object
     public static void Create(string text, Color color, Vector3 position, float textSize, float lifeTime,
         float speed)
     {
@@ -38,6 +39,7 @@ public class FloatingText : MonoBehaviour
         }
     }
 
+    // Setup the floating text object
     public void Setup(string text, Color color, Vector3 position, float textSize, float newLifeTime, float newSpeed)
     {
         textMesh.SetText(text);

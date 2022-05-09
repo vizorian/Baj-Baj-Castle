@@ -6,6 +6,7 @@ public class Destructable : MonoBehaviour
 {
     public float Health;
 
+    // Used for receiving and processing damage data
     [UsedImplicitly]
     private protected virtual void TakeDamage(DamageData damageData)
     {
@@ -20,7 +21,7 @@ public class Destructable : MonoBehaviour
                 damageData.Type = DamageType.Piercing;
         }
 
-        // Damage types
+        // Damage type calculations
         if (damageData.Type == DamageType.Piercing)
             damage /= 4;
         else if (damageData.Type == DamageType.Slashing) damage /= 2;

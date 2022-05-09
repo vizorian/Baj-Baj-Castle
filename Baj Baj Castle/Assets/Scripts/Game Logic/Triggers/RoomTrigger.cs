@@ -14,8 +14,7 @@ public class RoomTrigger : Collidable
             if (Exit != null)
                 Exit.IsActive = false;
         if (ParentRoom.IsActive)
-            // check if any ParentRoom.Actors are alive
-            if (ParentRoom.Actors.Count(a => a != null) <= 0)
+            if (ParentRoom.Actors.Count(a => a != null) <= 0) // if any ParentRoom.Actors are dead
             {
                 ParentRoom.UnlockDoors();
                 ParentRoom.IsCleared = true;
@@ -32,6 +31,7 @@ public class RoomTrigger : Collidable
         ContactFilter.SetLayerMask(LayerMask.GetMask("Actor"));
     }
 
+    // Handle collision
     private protected override void OnCollide(Collider2D otherCollider)
     {
         if (otherCollider.tag == "Player")

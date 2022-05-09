@@ -13,6 +13,7 @@ public class Triangle
         UpdateCircumcircle();
     }
 
+    // Calculate the circumcircle of the triangle
     private void UpdateCircumcircle()
     {
         var p1 = Vertices[0];
@@ -32,6 +33,7 @@ public class Triangle
                    (Circumcenter.Y - p1.Y) * (Circumcenter.Y - p1.Y);
     }
 
+    // Check if triangle contains edge
     public bool ContainsEdge(Edge edge)
     {
         return edge.Equals(new Edge(Vertices[0], Vertices[1])) ||
@@ -39,6 +41,7 @@ public class Triangle
                edge.Equals(new Edge(Vertices[2], Vertices[0]));
     }
 
+    // Check if point is within triangle circumcircle
     public bool IsWithinCircumcircle(Point p)
     {
         var distSq = (p.X - Circumcenter.X) * (p.X - Circumcenter.X) + (p.Y - Circumcenter.Y) * (p.Y - Circumcenter.Y);

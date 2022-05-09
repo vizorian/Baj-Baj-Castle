@@ -15,7 +15,7 @@ public class Edge
     {
         if (obj == null || GetType() != obj.GetType()) return false;
 
-        var edge = (Edge) obj;
+        var edge = (Edge)obj;
         var identical = P1.Equals(edge.P1) && P2.Equals(edge.P2);
         var identicalReverse = P1.Equals(edge.P2) && P2.Equals(edge.P1);
 
@@ -24,7 +24,7 @@ public class Edge
 
     public override int GetHashCode()
     {
-        var hash = (int) P1.X ^ (int) P1.Y ^ (int) P2.X ^ (int) P2.Y;
+        var hash = (int)P1.X ^ (int)P1.Y ^ (int)P2.X ^ (int)P2.Y;
         return hash.GetHashCode();
     }
 }

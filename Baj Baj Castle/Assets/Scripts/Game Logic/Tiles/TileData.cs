@@ -22,7 +22,7 @@ public class TileData
 
         if (obj.GetType() != GetType()) return false;
 
-        var other = (TileData) obj;
+        var other = (TileData)obj;
 
         return X == other.X && Y == other.Y && Type == other.Type;
     }

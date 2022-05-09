@@ -11,43 +11,42 @@ public class LevelGenerator : MonoBehaviour
     // Constants
     public const float PIXEL_SIZE = 0.01f;
     public const float CELL_SIZE = 0.16f;
-    private readonly List<Cell> cells = new List<Cell>();
-
-    private Sprite cellSprite;
 
     // Inputs
     public int Complexity = 50;
     public int CycleCount = 2000;
-    private HashSet<Edge> delaunayGraph;
+    public int HallwayWidth = 4;
     public float EdgePercentage = 0.1f;
-    private float endTime;
+    public float SimulationDelay = 3f;
     public float FilteringCriteria = 1.0f;
     public float GenerationRegionHeight = 50;
     public float GenerationRegionWidth = 50;
-    public List<Cell> Hallways = new List<Cell>();
-    public int HallwayWidth = 4;
-
-    private bool isDebug;
-    private bool isMapped;
-    private bool isProcessed;
-    private bool isSimulated;
-    private HashSet<Edge> levelGraph;
-    private int levelSize;
     public int RoomHeightMaximum = 20;
     public int RoomHeightMinimum = 6;
-
-    // Outputs
-    public List<Cell> Rooms = new List<Cell>();
     public int RoomWidthMaximum = 30;
     public int RoomWidthMinimum = 6;
-    public float SimulationDelay = 3f;
+
+    public List<Cell> Rooms = new List<Cell>();
+    public List<Cell> Hallways = new List<Cell>();
+
+    private readonly List<Cell> cells = new List<Cell>();
+    private Sprite cellSprite;
+    private HashSet<Edge> delaunayGraph;
+    private HashSet<Edge> levelGraph;
+    private int levelSize;
     private int simulationLoops;
-    private bool startMapping;
-    private bool startProcessing;
+    private bool isDebug;
     private bool startSimulation;
+    private bool startProcessing;
+    private bool startMapping;
+    private bool isSimulated;
+    private bool isProcessed;
+    private bool isMapped;
     private float startTime;
+    private float endTime;
     public bool IsCompleted => isSimulated && isProcessed && isMapped;
 
+    // Cleanup process
     public void Cleanup()
     {
         foreach (var cell in cells)
@@ -93,6 +92,7 @@ public class LevelGenerator : MonoBehaviour
         isProcessed = false;
     }
 
+    // Level generation initialization
     public void GenerateLevel(int level, bool newIsDebug, Sprite newCellSprite)
     {
         // Set input variables
@@ -103,6 +103,7 @@ public class LevelGenerator : MonoBehaviour
         PrepareForGeneration();
     }
 
+    // Prepare for level generation
     private void PrepareForGeneration()
     {
         startTime = Time.realtimeSinceStartup;
@@ -137,17 +138,18 @@ public class LevelGenerator : MonoBehaviour
         if (isProcessed && !isMapped && startMapping) MapCells();
     }
 
+    // Cell simulation process
     private void SimulateCells()
     {
         var simulatedCellsCount = 0;
 
+        // Simulate cells until all cells are simulated or the maximum number of loops is reached
         while (simulatedCellsCount < cells.Count && simulationLoops < CycleCount)
         {
             simulatedCellsCount = 0;
             for (var i = 0; i < cells.Count; i++)
             {
-                // Run on first loop
-                if (simulationLoops == 0)
+                if (simulationLoops == 0) // Run on first loop
                 {
                     AlignSimulationCell(i);
                     continue;
@@ -156,11 +158,13 @@ public class LevelGenerator : MonoBehaviour
                 var cell = cells[i];
                 var overlappingCellIdList = FindOverlaps(cell);
 
+                // Handle overlapping cells
                 if (overlappingCellIdList.Count > 0)
                 {
                     var firstId = overlappingCellIdList[0];
                     var overlappingCell = cells[firstId];
 
+                    // Separate overlapping cells
                     Vector2 direction =
                         (cell.PhysicsCell.transform.position - overlappingCell.PhysicsCell.transform.position)
                         .normalized * PIXEL_SIZE;
@@ -168,9 +172,10 @@ public class LevelGenerator : MonoBehaviour
                     overlappingCell.PhysicsCell.transform.Translate(-direction);
                     cell.PhysicsCell.transform.Translate(direction);
 
+                    // Realign cell tp grid
                     AlignSimulationCell(firstId);
                 }
-                else
+                else // Mark as simulated
                 {
                     simulatedCellsCount++;
                 }
@@ -193,15 +198,17 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    // Cell processing process
     private void ProcessCells()
     {
-        // set cell positions
+        // Set cell positions
         foreach (var cell in cells)
             cell.Position = new Vector2((int)(cell.SimulationCell.transform.position.x / CELL_SIZE),
                 (int)(cell.SimulationCell.transform.position.y / CELL_SIZE));
 
         if (isDebug) startTime = Time.realtimeSinceStartup;
-        // filter out cells that qualify to be rooms
+
+        // Filter out cells that qualify to be rooms
         FilterCells();
 
         if (isDebug)
@@ -210,12 +217,14 @@ public class LevelGenerator : MonoBehaviour
             print("Cell filtering took " + (endTime - startTime) + " seconds.");
         }
 
+        // Graph generation
         Graph();
 
         isProcessed = true;
         if (isDebug) StartCoroutine(DelayMapping(SimulationDelay * 2));
     }
 
+    // Cell filtering process
     private void FilterCells()
     {
         float widthAverage = 0;
@@ -230,6 +239,7 @@ public class LevelGenerator : MonoBehaviour
         widthAverage /= cells.Count;
         heightAverage /= cells.Count;
 
+        // Filtering based on width and height averages
         foreach (var cell in cells)
             if (cell.Width >= widthAverage * FilteringCriteria
                 && cell.Height >= heightAverage * FilteringCriteria)
@@ -245,6 +255,7 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
 
+        // If there are less rooms than the level size, fill with remaining
         if (Rooms.Count < levelSize)
         {
             var sortedCells = cells.OrderByDescending(cell => cell.Width / cell.Height);
@@ -260,21 +271,22 @@ public class LevelGenerator : MonoBehaviour
                 }
         }
 
-        // destroy all simulation cells that are not part of suitableCells
+        // Destroy all simulation cells that are not part of suitable cells
         foreach (var cell in cells)
             if (!Rooms.Contains(cell))
                 Destroy(cell.SimulationCell);
         cells.Clear();
     }
 
+    // Graph generation process
     private void Graph()
     {
-        // get all unique vertices
+        // Get all unique vertices
         var points = new HashSet<Point>();
         foreach (var cell in Rooms)
             points.Add(new Point(cell.SimulationCell.transform.position.x, cell.SimulationCell.transform.position.y));
 
-        // perform triangulation
+        // Perform triangulation
         if (isDebug) startTime = Time.realtimeSinceStartup;
         var triangulation = Triangulate(points);
         if (isDebug)
@@ -285,9 +297,10 @@ public class LevelGenerator : MonoBehaviour
             print("Triangulation: " + triangulation.Count);
         }
 
+        // Cleanup triangulation members
         Cleanup(triangulation);
 
-        // get a minimum spanning tree from triangulation results
+        // Create minimum spanning tree from triangulation results
         if (isDebug) startTime = Time.realtimeSinceStartup;
         levelGraph = MinimumSpanningTree(triangulation, points.ToList());
         if (isDebug)
@@ -297,20 +310,21 @@ public class LevelGenerator : MonoBehaviour
             DrawEdges(levelGraph, Color.green, 3f);
         }
 
-        // add some edges from delaunay graph back to graph
+        // Add some edges from the original graph back
         RefillEdges(EdgePercentage);
 
         if (isDebug) DrawEdges(levelGraph, Color.green, 6f);
     }
 
+    // Cell mapping process
     private void MapCells()
     {
-        // calculate hallways between cells
         if (isDebug)
         {
             startTime = Time.realtimeSinceStartup;
         }
 
+        // Calculate hallways between cells
         var hallways = CalculateHallways();
         if (isDebug)
         {
@@ -321,8 +335,10 @@ public class LevelGenerator : MonoBehaviour
             startTime = Time.realtimeSinceStartup;
         }
 
-        // carve out hallways
+        // Carve out hallways in cells
         var hallwayPoints = GetHallwayPoints(hallways);
+
+        // Create hallways in cells
         CreateHallways(hallwayPoints, Color.cyan);
 
         if (isDebug)
@@ -334,6 +350,7 @@ public class LevelGenerator : MonoBehaviour
         isMapped = true;
     }
 
+    // Create hallway cells
     private void CreateHallways(HashSet<Vector2> positions, Color color)
     {
         foreach (var position in positions)
@@ -398,8 +415,6 @@ public class LevelGenerator : MonoBehaviour
                             isOdd = true;
                             evens++;
                         }
-
-                        // check if point is inside any room
                         hallwayPoints.Add(new Vector2(positionX, y));
                     }
                 }
@@ -438,7 +453,6 @@ public class LevelGenerator : MonoBehaviour
                             isOdd = true;
                             evens++;
                         }
-
                         hallwayPoints.Add(new Vector2(x, positionY));
                     }
                 }
@@ -451,23 +465,23 @@ public class LevelGenerator : MonoBehaviour
     // Converts all graph edges to hallways between rooms
     private HashSet<Edge> CalculateHallways()
     {
-        // offset is to ensure all hallway walls are aligned with the room walls
+        // Offset is to ensure all hallway walls are aligned with the room walls
         var offset = CELL_SIZE * (HallwayWidth / 4 + 1);
 
         var hallways = new HashSet<Edge>();
         foreach (var edge in levelGraph)
         {
-            // find cells that are connected by an edge
+            // Find cells that are connected by an edge
             var TOLERANCE = 0.001;
             var c1 = Rooms.First(c => Math.Abs(c.SimulationCell.transform.position.x - edge.P1.X) < TOLERANCE
                                       && Math.Abs(c.SimulationCell.transform.position.y - edge.P1.Y) < TOLERANCE);
             var c2 = Rooms.First(c => Math.Abs(c.SimulationCell.transform.position.x - edge.P2.X) < TOLERANCE
                                       && Math.Abs(c.SimulationCell.transform.position.y - edge.P2.Y) < TOLERANCE);
 
-            // calculate midpoint between the two cells
+            // Calculate midpoint between the two cells
             var midpoint = new Point((edge.P1.X + edge.P2.X) / 2, (edge.P1.Y + edge.P2.Y) / 2);
 
-            // calculate various offsets and extremes
+            // Calculate various offsets and extremes
             var c1OffsetX = c1.SimulationCell.transform.localScale.x / 2;
             var c1OffsetY = c1.SimulationCell.transform.localScale.y / 2;
 
@@ -556,7 +570,7 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
 
-            // if a straight hallway isn't possible, create a L shaped hallway
+            // If a straight hallway isn't possible, create a L shaped hallway
             if (!isFound)
             {
                 Point c1Point;
@@ -565,7 +579,7 @@ public class LevelGenerator : MonoBehaviour
                 var leftPoint = new Point(c1.SimulationCell.transform.position.x,
                     c2.SimulationCell.transform.position.y);
 
-                // check if point is within any of the cells
+                // Check if point is within any of the cells
                 if (!Rooms.Any(c => c.IsPointInside(leftPoint)))
                 {
                     if (isLeft && isUp)
@@ -626,6 +640,7 @@ public class LevelGenerator : MonoBehaviour
         return hallways;
     }
 
+    // Add backa percentage of original graph edges to the graph
     private void RefillEdges(float edgePercentage)
     {
         var remainingEdges = delaunayGraph.Except(levelGraph);
@@ -652,6 +667,7 @@ public class LevelGenerator : MonoBehaviour
             }
     }
 
+    // Draw triangles for debugging
     private static void DrawTriangles(HashSet<Triangle> triangles)
     {
         foreach (var triangle in triangles)
@@ -666,6 +682,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    // Draw edges for debugging
     private static void DrawEdges(HashSet<Edge> edges, Color color, float duration)
     {
         foreach (var edge in edges)
@@ -676,8 +693,10 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    // Create a minimum spanning tree from triangulation and it's points
     private HashSet<Edge> MinimumSpanningTree(HashSet<Triangle> triangles, List<Point> points)
     {
+        // Recreate graph from triangulation via edges
         delaunayGraph = new HashSet<Edge>();
         foreach (var triangle in triangles)
         {
@@ -690,18 +709,21 @@ public class LevelGenerator : MonoBehaviour
             delaunayGraph.Add(new Edge(p3, p1));
         }
 
+        // Sort edges by their length
         var sortedEdges = delaunayGraph.OrderBy(e => e.Weight).ToList();
 
+        // Create initial tree
         var forest = new DisjointSet(points.Count);
         for (var i = 0; i < points.Count; i++) forest.MakeSet(i);
 
+        // Calculate minimum spanning tree
         var minimumSpanningTree = new HashSet<Edge>();
-
         foreach (var edge in sortedEdges)
         {
             var indexP1 = points.FindIndex(p => p.Equals(edge.P1));
             var indexP2 = points.FindIndex(p => p.Equals(edge.P2));
 
+            // If the two points are in different sets, add the edge to the tree and union the sets
             if (forest.Find(indexP1) != forest.Find(indexP2))
             {
                 minimumSpanningTree.Add(edge);
@@ -724,6 +746,7 @@ public class LevelGenerator : MonoBehaviour
         cell.SimulationCell.transform.localPosition = new Vector2(x, y);
     }
 
+    // Find overlapping cell ids 
     private List<int> FindOverlaps(Cell cell)
     {
         var overlappingCellIdList = new List<int>();
@@ -736,6 +759,7 @@ public class LevelGenerator : MonoBehaviour
         return overlappingCellIdList;
     }
 
+    // Round number to nearest multiple of another number
     public static float RoundNumber(float x, float y)
     {
         return Mathf.Floor((x + y - 1) / y) * y;
@@ -767,7 +791,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    // Returns a random number
+    // Generate random number with gaussian distribution
     public static float RandomGauss(float minValue, float maxValue)
     {
         float x;

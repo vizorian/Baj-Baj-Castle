@@ -9,17 +9,20 @@ public class DisjointSet
         rank = new int[size + 1];
     }
 
+    // Make a set
     public void MakeSet(int x)
     {
         parent[x] = x;
     }
 
+    // Find the representative of a set
     public int Find(int x)
     {
         while (x != parent[x]) x = parent[x];
         return x;
     }
 
+    // Union two sets
     public void Union(int x, int y)
     {
         var xRoot = Find(x);

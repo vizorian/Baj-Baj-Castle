@@ -6,31 +6,32 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
+    public int Level = 1;
+    public List<TileData> Hallways;
+    public List<Room> Rooms;
+    public Room StartRoom;
+    public Room ExitRoom;
     public List<GameObject> Actors = new List<GameObject>();
+    public GameObject Player;
+    public List<GameObject> Items = new List<GameObject>();
+    public List<GameObject> Objects = new List<GameObject>();
+    public List<GameObject> Triggers = new List<GameObject>();
+
+    private LevelGenerator levelGenerator;
+    private TileCreator tileCreator;
     private Sprite cellSprite;
     private Tilemap collisionTilemap;
     private Tilemap decorationTilemap;
-    public Room ExitRoom;
     private GameObject exitTriggerObject;
     private Tilemap floorTilemap;
     private GameObject gridObject;
-    public List<TileData> Hallways;
+
     private bool isDebug;
     public bool IsGenerated;
-
     public bool IsGeneratingLevel;
     public bool IsLoaded;
     public bool IsPopulated;
-    public List<GameObject> Items = new List<GameObject>();
-    public int Level = 1;
-    private LevelGenerator levelGenerator;
-    public List<GameObject> Objects = new List<GameObject>();
-    public GameObject Player;
-    public List<Room> Rooms;
     public bool StartingLevelPopulation;
-    public Room StartRoom;
-    private TileCreator tileCreator;
-    public List<GameObject> Triggers = new List<GameObject>();
 
     public static LevelManager Instance { get; private set; }
 
@@ -65,6 +66,7 @@ public class LevelManager : MonoBehaviour
         tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap, newIsDebug);
     }
 
+    // Generate level
     public void GenerateLevel(int level)
     {
         IsGenerated = false;
@@ -73,11 +75,13 @@ public class LevelManager : MonoBehaviour
         levelGenerator.GenerateLevel(level, isDebug, cellSprite);
     }
 
+    // Add item to item list
     public void AddItem(GameObject item)
     {
         Instance.Items.Add(item);
     }
 
+    // Cleanup process
     public void Cleanup()
     {
         tileCreator.Cleanup();
@@ -105,6 +109,7 @@ public class LevelManager : MonoBehaviour
         foreach (var @object in Objects) Destroy(@object);
         Objects.Clear();
 
+        // Disable player
         if (Player != null) Player.SetActive(false);
 
         IsPopulated = false;
@@ -114,11 +119,12 @@ public class LevelManager : MonoBehaviour
         StartingLevelPopulation = false;
     }
 
+    // Populate level
     public void PopulateLevel(int level)
     {
         StartingLevelPopulation = true;
 
-        // Create entrance, exit and player
+        // Create endpoints
         CreateEndpoints();
 
         // Populate all rooms, except starting room
@@ -129,6 +135,7 @@ public class LevelManager : MonoBehaviour
         IsPopulated = true;
     }
 
+    // Populate room
     private void PopulateRoom(Room room)
     {
         var limit = room.Area - 9;
@@ -219,37 +226,41 @@ public class LevelManager : MonoBehaviour
                room.TopLeftCorner.y - LevelGenerator.CELL_SIZE / 4) triggerObject.transform.position += moveY;
     }
 
+    // Create level endpoints
     private void CreateEndpoints()
     {
-        // set starting room as random room
+        // Set starting room as random room
         StartRoom = Rooms[Random.Range(0, Rooms.Count)];
 
-        // set exit room as random room that is not the starting room and is not a neighbor of the starting room and is furthest away
+        // Set exit room as random room that is not the starting room, is not a neigbour and is furthest away
         do
         {
             ExitRoom = Rooms[Random.Range(0, Rooms.Count)];
         } while (Equals(ExitRoom, StartRoom) || ExitRoom.Neighbours.Contains(StartRoom));
 
-        // spawn player at center of starting room
+        // Move player to center of starting room
         if (Player != null)
         {
             Player.transform.position = new Vector3(StartRoom.Center.X * LevelGenerator.CELL_SIZE,
                 StartRoom.Center.Y * LevelGenerator.CELL_SIZE, 0);
+            // Activate player
             Player.SetActive(true);
         }
         else
         {
+            // Create player
             Player = Instantiate(GameAssets.Instance.PlayerPrefab,
                 new Vector2(StartRoom.Center.X * LevelGenerator.CELL_SIZE,
                     StartRoom.Center.Y * LevelGenerator.CELL_SIZE),
                 Quaternion.identity);
             Camera.main.GetComponent<CameraMovement>().Target = Player.transform;
 
-            // starter weapon
+            // Create starter weapon
             Instantiate(GameAssets.Instance.ItemPrefabs.First(i => i.name.Contains("Knife_Wooden")),
                 new Vector3(Player.transform.position.x + LevelGenerator.CELL_SIZE, Player.transform.position.y),
                 Quaternion.identity);
 
+            // Create display elements
             var gameCanvas = GameObject.Find("GameCanvas");
             gameCanvas.transform.Find("InventoryBar").gameObject.SetActive(true);
             var healthBar = gameCanvas.transform.Find("HealthBar").gameObject;
@@ -259,7 +270,7 @@ public class LevelManager : MonoBehaviour
         StartRoom.IsActive = false;
         StartRoom.IsCleared = true;
 
-        // create exit from level at center of exit room
+        // Create exit from level at center of exit room
         exitTriggerObject = Instantiate(GameAssets.Instance.Triggers[0],
             new Vector2(ExitRoom.Center.X * LevelGenerator.CELL_SIZE, ExitRoom.Center.Y * LevelGenerator.CELL_SIZE),
             Quaternion.identity);
@@ -267,18 +278,23 @@ public class LevelManager : MonoBehaviour
         tileCreator.OverrideTile(ExitRoom.Center, "Exit");
     }
 
+    // Generate level tiles
     public void GenerateLevelTiles()
     {
         var roomCells = levelGenerator.Rooms;
         var hallwayCells = levelGenerator.Hallways;
 
+        // Create rooms from room cells
         Rooms = tileCreator.CreateRooms(roomCells);
+        // Create hallways from hallway cells
         Hallways = tileCreator.CreateHallways(hallwayCells, Rooms);
+        // Cleanup level generator
         levelGenerator.Cleanup();
 
-        // tileCreator.CreateHallwayTiles(Hallways);
-
+        // Find neighbours for rooms
         TileCreator.FindNeighbouringRooms(Rooms);
+
+        // Create tiles
         tileCreator.CreateTiles(Rooms, Hallways);
 
         Level++;

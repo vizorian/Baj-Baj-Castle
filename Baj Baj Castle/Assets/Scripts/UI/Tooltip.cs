@@ -33,11 +33,12 @@ public class Tooltip : MonoBehaviour
         UpdatePosition();
     }
 
+    // Update the position of the tooltip
     private void UpdatePosition()
     {
         var newPosition = Input.mousePosition / canvasTransform.localScale.x;
 
-        // Check if tooltip is off screen
+        // Check if tooltip is off screen and adjust position accordingly
         if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
             newPosition.x = canvasTransform.sizeDelta.x - backgroundTransform.sizeDelta.x;
 
@@ -47,6 +48,7 @@ public class Tooltip : MonoBehaviour
         rectTransform.anchoredPosition = newPosition;
     }
 
+    // Set the tooltip text and activate it
     private void ShowTooltip(string newText)
     {
         SetText(newText);
@@ -54,11 +56,13 @@ public class Tooltip : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    // Disable the tooltip
     private void HideTooltip()
     {
         gameObject.SetActive(false);
     }
 
+    // Set the tooltip text and update the size of the background
     private void SetText(string newText)
     {
         this.text.SetText(newText);

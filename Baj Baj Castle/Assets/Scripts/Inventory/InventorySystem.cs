@@ -5,15 +5,15 @@ using UnityEngine.Events;
 
 public class InventorySystem : MonoBehaviour
 {
-    // Singleton for a single system
-    public int Capacity = 9;
-    private ActorHand hand;
-    public UnityEvent OnInventoryChanged;
-    private int selectedItemIndex;
     public static InventorySystem Instance { get; private set; }
+    public UnityEvent OnInventoryChanged;
 
+    public int Capacity = 9;
     public List<InventoryItem> Inventory { get; private set; }
     public InventoryItem SelectedItem { get; private set; }
+
+    private int selectedItemIndex;
+    private ActorHand hand;
 
     [UsedImplicitly]
     private void Awake()
@@ -45,15 +45,15 @@ public class InventorySystem : MonoBehaviour
         var existingItem =
             Inventory.Find(item =>
                 item.Data.Id == itemData.Id &&
-                item.StackSize < item.Data.MaxStackSize); // item of same type but not full
-        if (existingItem == null) // non-full stackable item doesn't exist
+                item.StackSize < item.Data.MaxStackSize); // Item of same type but not full
+        if (existingItem == null) // Non-full stackable item doesn't exist
         {
             if (Inventory.Count < Capacity)
                 Inventory.Add(newItem);
             else
                 success = false;
         }
-        else // non-full stackable item exists
+        else // Non-full stackable item exists
         {
             existingItem.AddToStack();
         }
@@ -75,7 +75,7 @@ public class InventorySystem : MonoBehaviour
     public void Remove(InventoryItemData itemData)
     {
         SelectedItem.RemoveFromStack();
-        if (SelectedItem.StackSize == 0) // if last item dropped
+        if (SelectedItem.StackSize == 0) // If last item dropped
         {
             Inventory.RemoveAt(selectedItemIndex);
 
@@ -97,7 +97,7 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged.Invoke();
     }
 
-    // Drops an item and calls Remove
+    // Drops an item
     public void Drop()
     {
         if (SelectedItem == null) return;
@@ -110,6 +110,7 @@ public class InventorySystem : MonoBehaviour
         Remove(SelectedItem.Data);
     }
 
+    // Select next item
     public void Next()
     {
         // If inventory has a single item
@@ -122,10 +123,12 @@ public class InventorySystem : MonoBehaviour
 
         SelectedItem = Inventory[selectedItemIndex];
 
+        // Set the selected item in the hand
         hand.SetHeldItem(SelectedItem);
         OnInventoryChanged.Invoke();
     }
 
+    // Select previous item
     public void Previous()
     {
         // If inventory has a single item
@@ -138,6 +141,7 @@ public class InventorySystem : MonoBehaviour
 
         SelectedItem = Inventory[selectedItemIndex];
 
+        // Set the selected item in the hand
         hand.SetHeldItem(SelectedItem);
         OnInventoryChanged.Invoke();
     }

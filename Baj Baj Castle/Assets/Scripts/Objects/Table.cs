@@ -5,11 +5,11 @@ using UnityEngine;
 public class Table : Interactable
 {
     public Sprite DownSprite;
-    private readonly bool isFlipped = false;
-
     public Sprite SideSprite;
     public Sprite UpSprite;
+    private readonly bool isFlipped = false;
 
+    // Handle interaction
     private protected override void OnInteraction()
     {
         if (!isFlipped)

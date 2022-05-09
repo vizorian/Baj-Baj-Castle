@@ -6,26 +6,31 @@ using UnityEngine.UI;
 
 public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] [UsedImplicitly] private Image icon;
+    [SerializeField][UsedImplicitly] private Image icon;
 
     private InventoryItem item;
 
-    [SerializeField] [UsedImplicitly] private TextMeshProUGUI label;
+    [SerializeField][UsedImplicitly] private TextMeshProUGUI label;
 
-    [SerializeField] [UsedImplicitly] private GameObject stackContainer;
+    [SerializeField][UsedImplicitly] private GameObject stackContainer;
 
-    [SerializeField] [UsedImplicitly] private TextMeshProUGUI stackCount;
+    [SerializeField][UsedImplicitly] private TextMeshProUGUI stackCount;
 
+    // pointer enter event handler
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
+        // Show tooltip
         Tooltip.ShowTooltip_Static(ToTooltipString());
     }
 
+    // Pointer exit event handler
     void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
+        // Hide tooltip
         Tooltip.HideTooltip_Static();
     }
 
+    // Set item slot to new item
     public void Set(InventoryItem newItem)
     {
         this.item = newItem;
@@ -38,6 +43,7 @@ public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerEx
             stackCount.text = newItem.StackSize.ToString();
     }
 
+    // Get item data in string form for tooltip
     private string ToTooltipString()
     {
         var tooltip = "";

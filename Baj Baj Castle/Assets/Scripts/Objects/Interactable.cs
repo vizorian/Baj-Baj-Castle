@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class Interactable : Collidable
 {
-    private protected bool Collisions;
-
-    // Attributes
     public float Health;
+
     private protected LineRenderer LineRenderer;
     private protected SpriteRenderer SpriteRenderer;
+    private protected bool Collisions;
     private protected bool Up, Right, Down, Left;
 
     private protected override void Awake()
@@ -27,6 +26,7 @@ public class Interactable : Collidable
         if (!Collisions) LineRenderer.positionCount = 0;
     }
 
+    // Handle collision
     private protected override void OnCollide(Collider2D otherCollider)
     {
         Collisions = true;
@@ -37,6 +37,7 @@ public class Interactable : Collidable
         Collisions = false;
     }
 
+    // Draw directional highlight
     protected virtual void DrawHighlight(GameObject obj)
     {
         var direction = obj.transform.position - transform.position;
@@ -98,6 +99,7 @@ public class Interactable : Collidable
         }
     }
 
+    // Draw complete highlight
     protected virtual void DrawHighlightFull(GameObject obj)
     {
         if (LineRenderer == null) return;
@@ -114,6 +116,7 @@ public class Interactable : Collidable
         LineRenderer.SetPositions(newVertices);
     }
 
+    // Create line renderer component
     private protected void CreateLineRenderer()
     {
         LineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -124,12 +127,14 @@ public class Interactable : Collidable
         LineRenderer.sortingLayerName = "Render";
     }
 
+    // Handle interaction
     [UsedImplicitly]
     private protected virtual void OnInteraction()
     {
         Debug.Log("Interacted with object");
     }
 
+    // Get vertex positions
     private Vector3[] GetVertexPositions(GameObject obj)
     {
         var vertices = new Vector3[4];
@@ -149,6 +154,7 @@ public class Interactable : Collidable
         return vertices;
     }
 
+    // Receive and process damage data
     [UsedImplicitly]
     private protected virtual void TakeDamage(DamageData damageData)
     {
@@ -177,6 +183,7 @@ public class Interactable : Collidable
         if (Health <= 0) Die();
     }
 
+    // Death logic
     private protected virtual void Die()
     {
         Destroy(gameObject);

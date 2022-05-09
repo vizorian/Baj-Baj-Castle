@@ -4,6 +4,7 @@ public class Pickupable : Interactable
 {
     public InventoryItemData ItemData;
 
+    // Handle collision
     private protected override void OnCollide(Collider2D otherCollider)
     {
         Collisions = true;
@@ -13,6 +14,7 @@ public class Pickupable : Interactable
         Collisions = false;
     }
 
+    // Handle interaction
     private protected override void OnInteraction()
     {
         if (InventorySystem.Instance.Add(ItemData))

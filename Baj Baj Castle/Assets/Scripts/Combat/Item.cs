@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class Item : Collidable
 {
-    public float Cooldown;
-    public float CooldownTimer;
-    public float CriticalChance;
+    public ItemType Type;
     public float Damage;
     public DamageType DamageType;
-    private EdgeCollider2D edgeCollider;
-    private bool isCharged;
+    public float Cooldown;
+    public float CriticalChance;
     public float Knockback;
     public float Range;
     public float Speed;
-    public ItemType Type;
+
+    public float CooldownTimer;
+    private EdgeCollider2D edgeCollider;
+    private bool isCharged;
     private const float UnchargeTime = 0.2f;
     private float unchargeTimer;
 
@@ -53,7 +54,7 @@ public class Item : Collidable
         }
     }
 
-    // Use item
+    // Use item on actor
     public bool Use(Actor actor)
     {
         if (CooldownTimer <= 0)
@@ -71,6 +72,7 @@ public class Item : Collidable
         return false;
     }
 
+    // Handle collisions
     private protected override void OnCollide(Collider2D otherCollider)
     {
         // If item is weapon

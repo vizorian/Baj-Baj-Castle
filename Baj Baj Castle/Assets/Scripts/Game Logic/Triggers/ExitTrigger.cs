@@ -11,6 +11,7 @@ public class ExitTrigger : Collidable
         if (BoxCollider == null) BoxCollider = gameObject.AddComponent<BoxCollider2D>();
     }
 
+    // Handle collision
     private protected override void OnCollide(Collider2D otherCollider)
     {
         if (otherCollider.gameObject.tag == "Player" && isUsed && IsActive)

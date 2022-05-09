@@ -46,6 +46,7 @@ public class TileCreator
         return rooms;
     }
 
+    // Finds all shared and nearby rooms
     public static void FindNeighbouringRooms(List<Room> rooms)
     {
         for (var i = 0; i < rooms.Count; i++)
@@ -71,23 +72,30 @@ public class TileCreator
         }
     }
 
+    // Create tiles for rooms and hallways
     public void CreateTiles(List<Room> rooms, List<TileData> hallwayTiles)
     {
         // Setting tile types for all tiles
         SetTileTypes(rooms, hallwayTiles);
 
+        // Getting all tiles for comparison
         var allTiles = rooms.SelectMany(x => x.Tiles).ToList();
         allTiles.AddRange(hallwayTiles);
 
+        // Getting different tile types
         var floorTiles = allTiles.Where(x => x.Type == TileType.Floor).ToList();
         var wallTiles = allTiles.Where(x => x.Type == TileType.Wall).ToList();
         var doorTiles = allTiles.Where(x => x.Type == TileType.Door).ToList();
 
+        // Setting tiles for floors with no references
         SetTiles(floorTiles, null);
+        // Setting tiles for walls with all tiles as a reference
         SetTiles(wallTiles, allTiles);
+        // Setting tiles for doors with no references
         SetTiles(doorTiles, null);
     }
 
+    // Cleanup logic
     public void Cleanup()
     {
         floorTilemap.ClearAllTiles();
@@ -95,8 +103,10 @@ public class TileCreator
         collisionTilemap.ClearAllTiles();
     }
 
+    // Sets tile types for room and hallway tiles
     private void SetTileTypes(List<Room> rooms, List<TileData> hallwayTiles)
     {
+        // Setting room tile types
         for (var i = 0; i < rooms.Count; i++)
         {
             var room = rooms[i];
@@ -104,16 +114,18 @@ public class TileCreator
                 FloatingText.Create(i.ToString(), Color.red,
                     new Vector3((room.XMax + room.XMin) * LevelGenerator.CELL_SIZE / 2,
                         (room.YMax + room.YMin) * LevelGenerator.CELL_SIZE / 2, 0), 4f, 100f, 0f);
+
             foreach (var tile in room.Tiles)
             {
                 if (tile.Type != TileType.None) continue;
 
+                // Determine tile type
                 if (!room.Tiles.Any(t =>
                         t.X == tile.X - 1 &&
-                        t.Y == tile.Y + 1) // If there's no tile diagonally adjacent to this one, it's a wall
+                        t.Y == tile.Y + 1)
                     || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                     || !room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
-                    || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
+                    || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
                 {
                     tile.Type = room.DoorPositions.Any(door =>
                         Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y) ? TileType.Door : TileType.Wall;
@@ -125,18 +137,21 @@ public class TileCreator
             }
         }
 
+        // Setting hallway tile types
         foreach (var tile in hallwayTiles)
             if (!hallwayTiles.Any(t =>
                     t.X == tile.X - 1 &&
-                    t.Y == tile.Y + 1) // If there's no tile diagonally adjacent to this one, it's a wall
+                    t.Y == tile.Y + 1)
                 || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                 || !hallwayTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
-                || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1))
+                || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
                 tile.Type = TileType.Wall;
             else
                 tile.Type = TileType.Floor;
 
-        //for each room, find hallway tiles of type Wall
+        // For each room, find nearby hallway tiles and group them if they are separated
+        // This is done for each side of the room
+        // All groups are then checked to see if they fit a door
         foreach (var room in rooms)
         {
             // Preparation
@@ -372,23 +387,29 @@ public class TileCreator
         }
     }
 
+    // Add door tile to collision layer
     public void AddToCollisionLayer(TileData doorTile)
     {
         collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), tileDict["Collision"]);
     }
 
+    // Remove door tile from collision layer
     public void RemoveFromCollisionLayer(TileData doorTile)
     {
         collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), null);
     }
 
+    // Override tile with new tile
     public void OverrideTile(TileData tile, string type)
     {
         floorTilemap.SetTile(new Vector3Int(tile.X, tile.Y, 0), tileDict[type]);
     }
 
+    // Set tile types for list of tiles
+    // Also use tilesToCheck for correct texture mapping
     private void SetTiles(List<TileData> tiles, List<TileData> tilesToCheck)
     {
+        // If tilesToCheck is empty, use self as reference
         tilesToCheck ??= tiles;
 
         foreach (var tile in tiles)
@@ -412,7 +433,7 @@ public class TileCreator
                     continue;
             }
 
-            // check all directionss for tiles
+            // check all directions for any reference tiles
             var hasWest = tilesToCheck.Any(t => t.X == tile.X - 1 && t.Y == tile.Y);
             var hasEast = tilesToCheck.Any(t => t.X == tile.X + 1 && t.Y == tile.Y);
             var hasNorth = tilesToCheck.Any(t => t.X == tile.X && t.Y == tile.Y + 1);
@@ -452,6 +473,7 @@ public class TileCreator
         }
     }
 
+    // Get tile directional name, based on surrounding tiles
     private string ProcessTile(bool w, bool e, bool n, bool s, TileType tileType)
     {
         if (!w && e && n && s) return "W";

@@ -7,6 +7,7 @@ public class CameraMovement : MonoBehaviour
     public float BoundY = 0.5f;
     public Transform Target;
 
+    // Find a player target
     [UsedImplicitly]
     private void FindPlayer()
     {

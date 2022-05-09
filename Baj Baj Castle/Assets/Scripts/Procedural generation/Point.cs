@@ -12,7 +12,7 @@ public class Point
         Y = y;
     }
 
-    // Return distance to other point
+    // Calculate distance to other point
     public float DistanceTo(Point point)
     {
         return Mathf.Sqrt(Mathf.Pow((float)(X - point.X), 2) + Mathf.Pow((float)(Y - point.Y), 2));

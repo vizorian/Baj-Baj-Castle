@@ -22,7 +22,7 @@ public class Rusher : Actor
         PauseTime = AttackSpeed;
         CriticalChance += Luck * 0.5f;
         Knockback += Strength * 0.1f;
-        Damage += (int) (Strength * 0.2f);
+        Damage += (int)(Strength * 0.2f);
     }
 
     [UsedImplicitly]
@@ -66,7 +66,8 @@ public class Rusher : Actor
         }
     }
 
-    // handle collisions
+    // Handle collisions
+    // Does damage to player and objects
     private protected override void OnCollide(Collider2D otherCollider)
     {
         if (otherCollider.gameObject.tag == "Player"
@@ -88,6 +89,7 @@ public class Rusher : Actor
         }
     }
 
+    // Finds and sets a target
     private void FindAndSetTarget()
     {
         Target = null;

@@ -13,6 +13,7 @@ public class InventoryManager : MonoBehaviour
         InventorySystem.Instance.OnInventoryChanged.AddListener(UpdateInventory);
     }
 
+    // Update the inventory
     private void UpdateInventory()
     {
         foreach (Transform t in transform) Destroy(t.gameObject);
@@ -20,12 +21,14 @@ public class InventoryManager : MonoBehaviour
         DrawInventory();
     }
 
+    // Display inventory slots
     private void DrawInventory()
     {
         foreach (var item in InventorySystem.Instance.Inventory)
             AddInventorySlot(item, item == InventorySystem.Instance.SelectedItem ? SlotSelectedPrefab : SlotPrefab);
     }
 
+    // Add an inventory slot
     private void AddInventorySlot(InventoryItem item, GameObject prefab)
     {
         var obj = Instantiate(prefab);

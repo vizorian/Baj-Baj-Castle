@@ -33,7 +33,7 @@ public class Player : Actor
         Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
-    // Processes the incoming inputs
+    // Processes player inputs
     private void ProcessInputs()
     {
         var state = GameState.Escape;
@@ -92,7 +92,7 @@ public class Player : Actor
         }
     }
 
-    // Actor death
+    // Player death logic
     private protected override void Die()
     {
         GameManager.Instance.Defeat();
@@ -131,14 +131,15 @@ public class Player : Actor
         MaxHealth += HealthUpgradeLevel;
         Defense += DefenseUpgradeLevel;
 
-        // Atribute usage 
+        // Attribute integration
         MovementSpeed += Agility * 0.01f;
         MaxHealth += Strength;
-        Resistance += (int) (Strength + Intelligence * 0.5f);
-        Defense += (int) (Intelligence * 0.04f + Agility * 0.02f);
+        Resistance += (int)(Strength + Intelligence * 0.5f);
+        Defense += (int)(Intelligence * 0.04f + Agility * 0.02f);
         Health = MaxHealth;
     }
 
+    // Player movement calculation
     private protected override void CalculateMovement()
     {
         var x = Input.GetAxisRaw("Horizontal");
@@ -150,6 +151,7 @@ public class Player : Actor
         RigidBody.velocity = MoveDelta;
     }
 
+    // Find closest interactable object to player
     private void FindInteractable()
     {
         var objects = GameObject.FindGameObjectsWithTag("Interactable");

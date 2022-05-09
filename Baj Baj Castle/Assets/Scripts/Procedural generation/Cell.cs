@@ -5,13 +5,12 @@ using Vector2 = UnityEngine.Vector2;
 
 public class Cell
 {
-    public GameObject DisplayCell;
     public int Height;
-    public GameObject PhysicsCell;
-
-    public Vector2 Position;
-    public GameObject SimulationCell;
     public int Width;
+    public Vector2 Position;
+    public GameObject DisplayCell;
+    public GameObject PhysicsCell;
+    public GameObject SimulationCell;
 
     public Cell(Vector2 position, int width, int height)
     {
@@ -20,6 +19,7 @@ public class Cell
         Position = position;
     }
 
+    // Create physics object for cell
     public void CreatePhysicsCellObject(int i, Sprite cellSprite)
     {
         PhysicsCell = new GameObject($"Simulation cell #{i}")
@@ -41,6 +41,7 @@ public class Cell
         rigidbody.freezeRotation = true;
     }
 
+    // Create simulation object for cell
     public void CreateSimulationCellObject(int i, Sprite cellSprite)
     {
         SimulationCell = new GameObject($"Cell #{i}");
@@ -55,9 +56,7 @@ public class Cell
         sprite.sortingLayerName = "Render";
     }
 
-    // TODO Improve
-    // HOW: probably resort to doing real position (world float) instead of cell position (int)
-    // check if point is inside the cell's bounds
+    // Check if point is inside cell bounds
     public bool IsPointInside(Point point)
     {
         // calculate offsets
@@ -65,15 +64,16 @@ public class Cell
         var offsetY = Height / 2;
 
         // find cell bounds
-        var minX = (int) Position.x - offsetX;
-        var maxX = (int) Position.x + offsetX;
-        var minY = (int) Position.y - offsetY;
-        var maxY = (int) Position.y + offsetY;
+        var minX = (int)Position.x - offsetX;
+        var maxX = (int)Position.x + offsetX;
+        var minY = (int)Position.y - offsetY;
+        var maxY = (int)Position.y + offsetY;
 
         // check if point is inside the cell's bounds
         return point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY;
     }
 
+    // Check if cell overlaps with another cell within margin
     public bool Overlaps(GameObject otherCell, float margin)
     {
         var offsetX = Width * LevelGenerator.CELL_SIZE / 2 - margin;
@@ -104,6 +104,7 @@ public class Cell
         return true;
     }
 
+    // Create display object for cell
     public void CreateDisplayCellObject(Sprite cellSprite, Color color)
     {
         DisplayCell = new GameObject("Hallway cell");
@@ -117,6 +118,7 @@ public class Cell
             new Vector2(Width * LevelGenerator.CELL_SIZE, Height * LevelGenerator.CELL_SIZE);
     }
 
+    // Check if cell is part of any triangles
     public bool IsPartOf(HashSet<Triangle> triangles)
     {
         // Get all unique vertices from triangles

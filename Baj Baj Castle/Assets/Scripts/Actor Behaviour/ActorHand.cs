@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class ActorHand : MonoBehaviour
 {
-    private Vector3 bodyPosition;
-    public float HandRange;
-    private bool handRangeSaved;
-
-    public float HandSpeed = 1f;
-    private InventoryItem heldItem;
-    private Vector3 heldItemHandlePosition;
-    public ItemType HeldItemType;
     public bool HoldingItem;
     public bool IsFreezingHand = false;
     public bool IsItemTurned;
+    public float Velocity;
+    public float HandSpeed = 1f;
+    public float HandRange;
+    public ItemType HeldItemType;
+
+    private bool handRangeSaved;
+    private Vector3 bodyPosition;
+    private InventoryItem heldItem;
+    private Vector3 heldItemHandlePosition;
     private GameObject itemObject;
     private bool newSelection;
     private float oldHandRange;
 
-    public float Velocity;
-
-    // Hand initialization from Actor
+    // Hand initialization called from actor
     public void Init(float handRange)
     {
         HandRange = handRange;
@@ -43,6 +42,7 @@ public class ActorHand : MonoBehaviour
                                0 ? new Vector2(1, 1) : new Vector2(-1, 1);
     }
 
+    // Item use logic
     public void UseHeldItem()
     {
         if (itemObject.GetComponent<Item>().Use(transform.parent.gameObject.GetComponent<Actor>()))
@@ -111,9 +111,11 @@ public class ActorHand : MonoBehaviour
             IsItemTurned = false;
         }
 
+        // Realigns the hand and held item
         RealignHeldItem();
     }
 
+    // Creates a new instance of the held item
     private void InstantiateHeldItem()
     {
         // Prefab preparation for actor use
@@ -154,13 +156,14 @@ public class ActorHand : MonoBehaviour
         itemObject.transform.localPosition = localDestination;
     }
 
-    // Realigns the item after a flip so that the handle point is on the hand
+    // Realigns the item after a flip
     private void RealignHeldItem()
     {
         var newPos = new Vector2(-itemObject.transform.localPosition.y, -itemObject.transform.localPosition.x);
         itemObject.transform.localPosition = newPos;
     }
 
+    // Sets held item to new item
     public void SetHeldItem(InventoryItem item)
     {
         heldItem = item;
@@ -179,14 +182,19 @@ public class ActorHand : MonoBehaviour
         newSelection = true;
     }
 
+    // Updates the hand attributes based on new item
     private void UpdateHandAttributes(InventoryItem item)
     {
+        // Reset hand attributes
         ResetHandAttributes();
+        // Reset hand position
         transform.position = bodyPosition;
+
         if (item.Data.ItemProperties.Speed != 0) HandSpeed = item.Data.ItemProperties.Speed;
         HandRange *= (100 + item.Data.ItemProperties.Range) / 100;
     }
 
+    // Clears held item
     public void ClearHeldItem()
     {
         ResetHandAttributes();
@@ -195,28 +203,31 @@ public class ActorHand : MonoBehaviour
         HeldItemType = ItemType.None;
     }
 
+    // Resets hand attributes based on old data
     private void ResetHandAttributes()
     {
         HandSpeed = 1f;
         HandRange = oldHandRange;
     }
 
+    // Updates actor center position, called by actor
     public void UpdateCenterPosition(Vector2 position)
     {
         bodyPosition = position;
     }
 
+    // Looks towards the target position
     public void LookTowards(Vector3 lookTarget)
     {
-        // Moves hand
+        // Moves hand towards target
         Velocity = MoveTowards(lookTarget);
 
-        //Rotates hand
-        if (!IsFreezingHand)
+        //Rotates hand towards target
+        if (!IsFreezingHand) // if hand not frozen
             RotateTowards(lookTarget);
     }
 
-    // Move Hand towards target within range
+    // Move hand towards target within hand range
     private float MoveTowards(Vector3 target)
     {
         Vector2 targetPos = target;
@@ -304,7 +315,6 @@ public class ActorHand : MonoBehaviour
 
                 // Apply final movement
                 Vector2 newTargetPos = bodyPosition - bodyToNewTarget;
-                // TODO
                 velocity = Vector2.Distance(transform.position, newTargetPos);
                 transform.position = Vector2.MoveTowards(transform.position, newTargetPos, Mathf.Infinity);
             }
@@ -317,6 +327,7 @@ public class ActorHand : MonoBehaviour
         return velocity;
     }
 
+    // Rotates hand towards target
     private void RotateTowards(Vector3 target)
     {
         Vector2 direction = target - bodyPosition;

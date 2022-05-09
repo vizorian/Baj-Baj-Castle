@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+// Class used to hold all game assets
 public class GameAssets : MonoBehaviour
 {
     private static GameAssets instance;

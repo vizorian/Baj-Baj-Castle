@@ -6,39 +6,35 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // This class is responsible for managing everything related to the game.
-// It is responsible for generating levels, spawning enemies, and managing the player's health.
-// It is also responsible for managing the game's state.
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    // Resources
+    public Player Player;
+    public SaveData SaveData;
+    public GameObject PauseMenuPrefab;
+    public GameObject TutorialScreenPrefab;
     public GameObject Canvas;
     public Sprite CellSprite;
     public GameState GameState;
     public GameObject GridObject;
+
+    // References
+    private LevelManager levelManager;
+    private GameObject pauseMenu;
+    private GameObject tutorialScreen;
+
+    // Logic
+    public int Level = 1;
+    public int MaxLevels = 3;
+    private bool tutorialDisplayed;
     public bool IsDebug = false;
     private bool isGameOverSet;
     public bool IsNewGame;
     private bool isNextLevel;
     private bool isSaveLoaded;
     private bool isSceneLoaded;
-
-    public int Level = 1;
-
-    // Resources
-    private LevelManager levelManager;
-    public int MaxLevels = 3;
-    private GameObject pauseMenu;
-
-    public GameObject PauseMenuPrefab;
-
-    // References
-    public Player Player;
-
-    // Logic
-    public SaveData SaveData;
-    private bool tutorialDisplayed;
-    private GameObject tutorialScreen;
-    public GameObject TutorialScreenPrefab;
-    public static GameManager Instance { get; private set; }
 
     [UsedImplicitly]
     private void Awake()
@@ -58,9 +54,9 @@ public class GameManager : MonoBehaviour
     [UsedImplicitly]
     private void Update()
     {
-        if (Instance.GameState == GameState.Reload) Instance.Cleanup();
+        if (Instance.GameState == GameState.Reload) Instance.Cleanup(); // Reload
 
-        if (Instance.GameState == GameState.Victory || Instance.GameState == GameState.Defeat)
+        if (Instance.GameState == GameState.Victory || Instance.GameState == GameState.Defeat) // GameOver scene logic
         {
             if (Instance.isGameOverSet == false)
             {
@@ -80,7 +76,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Instance.GameState != GameState.Loading)
+        if (Instance.GameState != GameState.Loading) // Pausing logic
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (Instance.GameState == GameState.Escape && Instance.GameState != GameState.Tutorial)
@@ -108,8 +104,6 @@ public class GameManager : MonoBehaviour
                     Instance.levelManager.GenerateLevel(Instance.Level);
                 }
 
-                // Canvas = GameObject.Find("Canvas");
-                // Canvas.SetActive(false);
                 Instance.Canvas = GameObject.Find("GameCanvas");
                 var loading = Instance.Canvas.transform.Find("Loading").gameObject;
                 if (loading != null) loading.SetActive(true);
@@ -142,6 +136,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Cleanup process
     private void Cleanup()
     {
         Instance.Canvas = GameObject.Find("Canvas");
@@ -173,7 +168,7 @@ public class GameManager : MonoBehaviour
         Instance.GameState = GameState.MainMenu;
     }
 
-    // Saving
+    // Save player data
     public void SavePlayerData()
     {
         var path = Application.persistentDataPath + "/save.dat";
@@ -185,6 +180,7 @@ public class GameManager : MonoBehaviour
         file.Dispose();
     }
 
+    // Load player data
     public bool LoadPlayerData()
     {
         Instance.SaveData = new SaveData();
@@ -207,6 +203,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    // Delete player data
     [UsedImplicitly]
     public void DeletePlayerData()
     {
@@ -216,7 +213,6 @@ public class GameManager : MonoBehaviour
 
     // This method is called when the player presses the "Play" button
     // It loads Castle mode if the player has not yet played the game before
-    // Else, escape mode
     [UsedImplicitly]
     public void PlayGame(bool isForced)
     {
@@ -234,7 +230,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Updates the shop UI with player's data
+    // Updates the upgrade menu UI with player data
     public void UpdateUpgradeMenu()
     {
         var upgradeMenu = Instance.Canvas.transform.Find("UpgradeMenu");
@@ -255,8 +251,6 @@ public class GameManager : MonoBehaviour
     }
 
     // Upgrades specific stat if the player has enough gold
-    // Save data is updated
-    // Calls UpdateUpgradeMenu() to update the shop UI
     [UsedImplicitly]
     public void UpgradeStat(string stat)
     {
@@ -342,10 +336,13 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
+        // Save player data
         Instance.SavePlayerData();
+        // Update upgrade menu UI
         Instance.UpdateUpgradeMenu();
     }
 
+    // Calculates the cost of an upgrade
     private int CalculateCost(int level, bool isHealth)
     {
         if (level == 0) return 1;
@@ -354,51 +351,66 @@ public class GameManager : MonoBehaviour
         return Mathf.RoundToInt(level * (level + 1));
     }
 
+    // Pause the game
     private void PauseGame()
     {
         if (Instance.pauseMenu == null)
             Instance.pauseMenu = Instantiate(PauseMenuPrefab, Instance.Canvas.transform);
         else
             Instance.pauseMenu.SetActive(true);
+
+        // Freeze game
         Time.timeScale = 0;
         Instance.GameState = GameState.Pause;
     }
 
+    // Resume the game
     public void UnpauseGame()
     {
         Instance.pauseMenu.SetActive(false);
+
+        // Unfreeze game
         Time.timeScale = 1;
         Instance.GameState = GameState.Escape;
     }
 
+    // Open tutorial window
     public void OpenTutorial()
     {
         Instance.tutorialDisplayed = true;
         Instance.tutorialScreen = Instantiate(TutorialScreenPrefab, Instance.Canvas.transform);
+
+        // Freeze game
         Time.timeScale = 0;
         Instance.GameState = GameState.Tutorial;
     }
 
+    // Close tutorial window
     public void CloseTutorial()
     {
         Destroy(Instance.tutorialScreen);
+
+        // Unfreeze game
         Time.timeScale = 1;
         Instance.GameState = GameState.Escape;
     }
 
+    // Return to main menu
     public void QuitToMenu()
     {
         Instance.SavePlayerData();
         if (Instance.GameState == GameState.Pause)
         {
             Destroy(Instance.pauseMenu);
+
+            // Unfreeze game
             Time.timeScale = 1;
         }
 
         Loader.Load(Loader.Scene.Menu, GameState.Reload);
     }
 
-    // This method is called when the player presses the "Quit" button
+    // Quit to desktop
     [UsedImplicitly]
     public void QuitToDesktop()
     {
@@ -406,24 +418,22 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    // This method is called when the player dies.
-    // It brings the player to the GameOver scene.
+
+    // End game with defeat
     public void Defeat()
     {
         Instance.SavePlayerData();
         Loader.Load(Loader.Scene.GameOver, GameState.Defeat);
     }
 
-    // This method is called when the player wins.
-    // It stops the game and displays a victory message.
+    // End game with victory
     public void Victory()
     {
         Instance.SavePlayerData();
         Loader.Load(Loader.Scene.GameOver, GameState.Victory);
     }
 
-    // This method is called when the player finishes a level.
-    // It generates a new level.
+    // Begin new level creation
     public void NextLevel()
     {
         Instance.SavePlayerData();

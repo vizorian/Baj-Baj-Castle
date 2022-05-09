@@ -4,27 +4,29 @@ using UnityEngine;
 
 public class Room
 {
-    // stuff inside room
-    public List<Actor> Actors = new List<Actor>();
-    public TileData Center;
-    public List<Vector2> DoorPositions = new List<Vector2>();
-
     public readonly int Id;
-
-    // game logic
-    public bool IsActive; // activates actors inside the room
-    public bool IsCleared = false; // if all actors are dead
-    public bool IsTriggered;
-    public List<Room> JointRooms = new List<Room>();
-    public List<Room> Neighbours = new List<Room>();
-    public List<Interactable> Objects = new List<Interactable>();
-    public RoomTrigger RoomTrigger;
     private readonly TileCreator tileCreator;
+
     public List<TileData> Tiles;
     public int XMax;
     public int XMin;
     public int YMax;
     public int YMin;
+    public List<Room> JointRooms = new List<Room>();
+    public List<Room> Neighbours = new List<Room>();
+    public TileData Center;
+
+    // Room content
+    public List<Actor> Actors = new List<Actor>();
+    public List<Interactable> Objects = new List<Interactable>();
+    public List<Vector2> DoorPositions = new List<Vector2>();
+
+
+    // game logic
+    public RoomTrigger RoomTrigger;
+    public bool IsActive; // activates actors inside the room
+    public bool IsCleared = false; // room clear status
+    public bool IsTriggered;
 
     public Room(int id, List<TileData> tiles, TileCreator tileCreator)
     {
@@ -55,6 +57,7 @@ public class Room
     public Vector3 TopLeftCorner => new Vector3(XMin * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE,
         YMax * LevelGenerator.CELL_SIZE);
 
+    // Activate room
     public void Trigger()
     {
         IsTriggered = true;
@@ -65,11 +68,12 @@ public class Room
         // Lock doors
         LockDoors();
 
-        // Activate actors and set room bools
+        // Activate actors
         IsActive = true;
         foreach (var actor in Actors) actor.IsActive = IsActive;
     }
 
+    // Move player from closest door tile towards the center of the room
     private void MovePlayer()
     {
         var playerObject = GameManager.Instance.Player.gameObject;
@@ -90,16 +94,19 @@ public class Room
             playerObject.transform.position += move;
     }
 
+    // Lock room doors
     private void LockDoors()
     {
         foreach (var doorTile in DoorTiles) tileCreator.AddToCollisionLayer(doorTile);
     }
 
+    // Unlock room doors
     public void UnlockDoors()
     {
         foreach (var doorTile in DoorTiles) tileCreator.RemoveFromCollisionLayer(doorTile);
     }
 
+    // Find shared wall tiles between two rooms and add shared door
     public void SharesWall(Room otherRoom)
     {
         if (Neighbours.Contains(otherRoom) || otherRoom.Neighbours.Contains(this)) return;
@@ -110,6 +117,7 @@ public class Room
             {
                 if (!sharesWall)
                 {
+                    // Define neighbour rooms
                     Neighbours.Add(otherRoom);
                     otherRoom.Neighbours.Add(this);
                     sharesWall = true;
@@ -123,6 +131,7 @@ public class Room
         TileData first = null;
         TileData second = null;
 
+        // Add door if it fits
         if (matchingTiles.Count > 3)
         {
             var middle = matchingTiles.Count / 2;
@@ -132,10 +141,12 @@ public class Room
             DoorPositions.Add(new Vector2(second.X, second.Y));
         }
 
+        // Take over shared tiles
         foreach (var tile in matchingTiles)
             if (first != null)
                 if (Equals(tile, first) || Equals(tile, second))
                 {
+                    // TODO make sure removal does not cause problems
                     otherRoom.Tiles.Remove(tile);
                     Tiles.Remove(tile);
                     tile.Type = TileType.Door;
@@ -144,10 +155,12 @@ public class Room
                 }
     }
 
+    // Find nearby wall tiles between two rooms and merge them
     public void WallNearby(Room otherRoom)
     {
         if (JointRooms.Contains(otherRoom) || otherRoom.JointRooms.Contains(this)) return;
 
+        // Find any nearby wall tile
         TileData closeTile = null;
         var otherRoomOuterTiles = otherRoom.Tiles.Where(t =>
             t.X == otherRoom.XMin || t.X == otherRoom.XMax || t.Y == otherRoom.YMax || t.Y == otherRoom.YMin).ToList();
@@ -173,10 +186,14 @@ public class Room
                 break;
             }
 
+        // If none found, return
         if (closeTile == null) return;
+
+        // Define joined rooms
         JointRooms.Add(otherRoom);
         otherRoom.JointRooms.Add(this);
 
+        // Update room size
         if (closeTile.X > XMax)
         {
             XMax++;
@@ -209,6 +226,7 @@ public class Room
         return Id == other.Id;
     }
 
+    // Get random tile within certain distance from borders
     public Vector3 GetRandomTile(int distanceFromWall)
     {
         Vector3 position;
