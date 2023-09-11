@@ -387,7 +387,7 @@ TextureImporter:
       213: 6732010226028998675
     second: Crate_H
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -404,10 +404,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -446,6 +448,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -457,6 +461,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -469,6 +474,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -481,6 +487,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -565,7 +585,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: e4086ca98c4f35d80800000000000000
-      internalID: -8262991748867391410
+      internalID: -4975824914944544254
       vertices: []
       indices: 
       edges: []
@@ -628,7 +648,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: d8a1e105b5e9aa580800000000000000
-      internalID: -8815059205600961907
+      internalID: -5639244685544391853
       vertices: []
       indices: 
       edges: []
@@ -649,7 +669,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: c06d0a2338d8fa890800000000000000
-      internalID: -7444576064390506996
+      internalID: 4368033760120712260
       vertices: []
       indices: 
       edges: []
@@ -859,7 +879,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 9894a9cefc110b680800000000000000
-      internalID: -8741467292000695927
+      internalID: 4862970783474770560
       vertices: []
       indices: 
       edges: []
@@ -3184,9 +3204,137 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      Background: 1176876918205601351
+      Broadsword_Golden: 782810051488654111
+      Broadsword_Iron: -2659290925710213021
+      Broadsword_Steel: 7278744089838776784
+      Broadsword_Wooden: -6326580116840288577
+      Chest_Iron: -6831849634620629257
+      Chest_Iron_Empty: 4834028603081184271
+      Chest_Iron_Treasure: 7870472087189927950
+      Cleaver_Golden: 5031865671874449621
+      Cleaver_Iron: -8146998499042293084
+      Cleaver_Steel: 2613971048449999201
+      Cleaver_Wooden: -244748203087612786
+      Collision: -7127033491996108885
+      Crate_H: 6732010226028998675
+      Crate_V: -3241539106559859352
+      Dagger_Golden: -2937574088463651223
+      Dagger_Iron: 5861898171080709434
+      Dagger_Steel: -2724787491003435303
+      Dagger_Wooden: 3588716527794228634
+      Door: 4631789285751986274
+      Exit: 6169190223158931066
+      Floor: 8309431686344152707
+      FloorE: 3011829902800805395
+      FloorN: -546629146611392598
+      FloorNE: 1563392895536984208
+      FloorNW: -385190827197881602
+      FloorS: -4214677765077392085
+      FloorSE: 2118876868228655412
+      FloorSW: -2452648021110158787
+      FloorW: 6886709796017190430
+      Floor_1: 9083728258779766058
+      Floor_10: -1809329980962307615
+      Floor_11: 4677545381423451230
+      Floor_12: 7764051324425878470
+      Floor_2: 6501082460322388821
+      Floor_3: -6225495650443104028
+      Floor_4: 4679834421645575535
+      Floor_5: -6487545439548662423
+      Floor_6: -3042962969420530784
+      Floor_7: -4907433216143368490
+      Floor_8: 3134052533682008092
+      Floor_9: 175119275780090427
+      Gobbo_B: 4368033760120712260
+      Gobbo_F: -5639244685544391853
+      Gobbo_S: -4975824914944544254
+      Goblin_B: -2250974561351227149
+      Goblin_F: -8333164581351401487
+      Goblin_S: 6837038005728638327
+      Hammer_Golden: -8644425730230267097
+      Hammer_Iron: -5660665752868388824
+      Hammer_Steel: 6381989427501408616
+      Hammer_Wooden: 7686230718791562498
+      Hand_Armor: 5404827406725263865
+      Hand_Green: -4614970689111593040
+      Hand_Human: -1860037876246359274
+      Katana_Golden: 3376144154830761159
+      Katana_Iron: 1704265315726606854
+      Katana_Steel: -1438747661594925361
+      Katana_Wooden: -5983456576978019145
+      Knife_Golden: 3122454164943141577
+      Knife_Iron: 2903714021680835994
+      Knife_Steel: -6665930254976882886
+      Knife_Wooden: -8934060672885858020
+      Maul_Golden: 6302989076746981953
+      Maul_Iron: -3719700636236508274
+      Maul_Steel: -6738704513589505004
+      Maul_Wooden: 491627375347675211
+      Pillar_0: 1802546204524141988
+      Pillar_1: -2358912643425112656
+      Pillar_2: 2648881646370896272
+      Player_B: 2172585217110231533
+      Player_F: -3018825789789838114
+      Player_S: 6875313188632250476
+      Potion_Healing_E: 2158971329023178908
+      Potion_Healing_L: 3346775860221651040
+      Potion_Healing_M: 9066584806833873983
+      Potion_Healing_S: -1690039608968722766
+      Shaman_B: -8943123808138825353
+      Shaman_F: -8016247766738197590
+      Shaman_S: -1565030404952655266
+      Shortsword_Golden: -6766105293431114615
+      Shortsword_Iron: 2171751120682267967
+      Shortsword_Steel: -9041300629319226145
+      Shortsword_Wooden: 6239359830095756937
+      Skully_B: 1123042526167017597
+      Skully_F: -2736433307781900204
+      Skully_S: 6442759165207783438
+      Spear_Golden: -6082922002079475146
+      Spear_Iron: 6085577203149625780
+      Spear_Steel: -7581564634827056545
+      Spear_Wooden: 9025275662231225976
+      Stairs_0_L: -1226126834247774366
+      Stairs_0_U: -1563426406060857101
+      Stairs_1_L: 6844532617330908815
+      Stairs_1_U: 912692046226977438
+      TableH: -3869741216246091411
+      TableH_B: -6913147202214430748
+      TableH_F: 2559887565751971924
+      TableH_S: 673160796689557253
+      TableV: 1207821204664722783
+      TableV_B: -7263881698557325647
+      TableV_F: -4821192350811027162
+      TableV_S: -7482595089818226769
+      Torch_0: 2449597141633354383
+      Torch_1: -1664133410132322525
+      Torch_2: 6019678277372376374
+      Torch_3: -8811298458993972901
+      Torch_4: -5481140593586616329
+      Torch_5: -1414783532951730059
+      Torch_6: -928512208494028978
+      Torch_7: 2358897135777927823
+      Torch_U: -28271541774690764
+      Tusker_B: -8914251629973348874
+      Tusker_F: -5646352971795681265
+      Tusker_S: 3313519428582713004
+      Viking_B: 1921402865888713703
+      Viking_F: -7274016712479325718
+      Viking_S: 6910062292031006536
+      WallE: 4862970783474770560
+      WallN: 7234583761468912955
+      WallNE: -4955526946697255835
+      WallNS: 4114149641635227039
+      WallNW: -6460368395533782001
+      WallS: -8579496812511856797
+      WallSE: -6997266836488049200
+      WallSW: 2298073905629416631
+      WallW: 4174798708927786481
+      WallWE: -5319939496029795333
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
