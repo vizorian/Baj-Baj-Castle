@@ -1,20 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using Actor_Behaviour;
-using Game_Logic.Tiles;
-using Game_Logic.Triggers;
-using JetBrains.Annotations;
-using Procedural_generation;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-using TileData = Game_Logic.Tiles.TileData;
-
 namespace Game_Logic;
 
 public class LevelManager : MonoBehaviour
 {
     public int Level = 1;
-    public List<TileData> Hallways;
+    public List<TileObjectData> Hallways;
     public List<Room> Rooms;
     public Room StartRoom;
     public Room ExitRoom;

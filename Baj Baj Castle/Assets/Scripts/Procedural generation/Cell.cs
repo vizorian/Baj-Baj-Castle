@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
 namespace Procedural_generation;

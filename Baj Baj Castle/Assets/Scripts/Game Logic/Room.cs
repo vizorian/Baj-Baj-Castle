@@ -1,13 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Actor_Behaviour;
-using Enums;
-using Game_Logic.Tiles;
-using Game_Logic.Triggers;
-using Objects;
-using Procedural_generation;
-using UnityEngine;
-
 namespace Game_Logic;
 
 public class Room
@@ -15,14 +5,14 @@ public class Room
     public readonly int Id;
     private readonly TileCreator tileCreator;
 
-    public List<TileData> Tiles;
+    public List<TileObjectData> Tiles;
     public int XMax;
     public int XMin;
     public int YMax;
     public int YMin;
     public List<Room> JointRooms = new List<Room>();
     public List<Room> Neighbours = new List<Room>();
-    public TileData Center;
+    public TileObjectData Center;
 
     // Room content
     public List<Actor> Actors = new List<Actor>();
@@ -36,7 +26,7 @@ public class Room
     public bool IsCleared = false; // room clear status
     public bool IsTriggered;
 
-    public Room(int id, List<TileData> tiles, TileCreator tileCreator)
+    public Room(int id, List<TileObjectData> tiles, TileCreator tileCreator)
     {
         Id = id;
         Tiles = tiles;
@@ -48,7 +38,7 @@ public class Room
         this.tileCreator = tileCreator;
     }
 
-    public List<TileData> DoorTiles
+    public List<TileObjectData> DoorTiles
     {
         get { return Tiles.Where(t => t.Type == TileType.Door).ToList(); }
     }
@@ -119,7 +109,7 @@ public class Room
     {
         if (Neighbours.Contains(otherRoom) || otherRoom.Neighbours.Contains(this)) return;
         var sharesWall = false;
-        var matchingTiles = new List<TileData>();
+        var matchingTiles = new List<TileObjectData>();
         foreach (var tile in Tiles)
             if (otherRoom.Tiles.Contains(tile))
             {
@@ -136,8 +126,8 @@ public class Room
 
         if (!sharesWall) return;
 
-        TileData first = null;
-        TileData second = null;
+        TileObjectData first = null;
+        TileObjectData second = null;
 
         // Add door if it fits
         if (matchingTiles.Count > 3)
@@ -169,58 +159,58 @@ public class Room
         if (JointRooms.Contains(otherRoom) || otherRoom.JointRooms.Contains(this)) return;
 
         // Find any nearby wall tile
-        TileData closeTile = null;
+        TileObjectData closeTileObject = null;
         var otherRoomOuterTiles = otherRoom.Tiles.Where(t =>
             t.X == otherRoom.XMin || t.X == otherRoom.XMax || t.Y == otherRoom.YMax || t.Y == otherRoom.YMin).ToList();
         foreach (var tile in Tiles)
             if (otherRoomOuterTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y))
             {
-                closeTile = new TileData(tile.X + 1, tile.Y, TileType.None);
+                closeTileObject = new TileObjectData(tile.X + 1, tile.Y, TileType.None);
                 break;
             }
             else if (otherRoomOuterTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y))
             {
-                closeTile = new TileData(tile.X - 1, tile.Y, TileType.None);
+                closeTileObject = new TileObjectData(tile.X - 1, tile.Y, TileType.None);
                 break;
             }
             else if (otherRoomOuterTiles.Any(t => t.X == tile.X && t.Y == tile.Y + 1))
             {
-                closeTile = new TileData(tile.X, tile.Y + 1, TileType.None);
+                closeTileObject = new TileObjectData(tile.X, tile.Y + 1, TileType.None);
                 break;
             }
             else if (otherRoomOuterTiles.Any(t => t.X == tile.X && t.Y == tile.Y - 1))
             {
-                closeTile = new TileData(tile.X, tile.Y - 1, TileType.None);
+                closeTileObject = new TileObjectData(tile.X, tile.Y - 1, TileType.None);
                 break;
             }
 
         // If none found, return
-        if (closeTile == null) return;
+        if (closeTileObject == null) return;
 
         // Define joined rooms
         JointRooms.Add(otherRoom);
         otherRoom.JointRooms.Add(this);
 
         // Update room size
-        if (closeTile.X > XMax)
+        if (closeTileObject.X > XMax)
         {
             XMax++;
-            for (var i = YMin; i <= YMax; i++) Tiles.Add(new TileData(XMax, i, TileType.None));
+            for (var i = YMin; i <= YMax; i++) Tiles.Add(new TileObjectData(XMax, i, TileType.None));
         }
-        else if (closeTile.X < XMin)
+        else if (closeTileObject.X < XMin)
         {
             XMin--;
-            for (var i = YMin; i <= YMax; i++) Tiles.Add(new TileData(XMin, i, TileType.None));
+            for (var i = YMin; i <= YMax; i++) Tiles.Add(new TileObjectData(XMin, i, TileType.None));
         }
-        else if (closeTile.Y > YMax)
+        else if (closeTileObject.Y > YMax)
         {
             YMax++;
-            for (var i = XMin; i <= XMax; i++) Tiles.Add(new TileData(i, YMax, TileType.None));
+            for (var i = XMin; i <= XMax; i++) Tiles.Add(new TileObjectData(i, YMax, TileType.None));
         }
-        else if (closeTile.Y < YMin)
+        else if (closeTileObject.Y < YMin)
         {
             YMin--;
-            for (var i = XMin; i <= XMax; i++) Tiles.Add(new TileData(i, YMin, TileType.None));
+            for (var i = XMin; i <= XMax; i++) Tiles.Add(new TileObjectData(i, YMin, TileType.None));
         }
     }
 

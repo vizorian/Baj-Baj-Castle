@@ -1,6 +1,3 @@
-using JetBrains.Annotations;
-using UnityEngine;
-
 namespace Game_Logic;
 
 public class CameraMovement : MonoBehaviour

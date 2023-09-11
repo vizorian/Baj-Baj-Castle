@@ -1,8 +1,6 @@
-using JetBrains.Annotations;
-
 namespace Enums;
 
-public enum GameState
+public enum GlobalGameState
 {
     MainMenu,
     Escape,

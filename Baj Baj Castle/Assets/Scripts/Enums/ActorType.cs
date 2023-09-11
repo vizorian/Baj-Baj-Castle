@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace Enums;
 
 public enum ActorType

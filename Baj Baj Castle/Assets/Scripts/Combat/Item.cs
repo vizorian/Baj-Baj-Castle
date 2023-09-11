@@ -1,8 +1,3 @@
-using Actor_Behaviour;
-using Enums;
-using Objects;
-using UnityEngine;
-
 namespace Combat;
 
 public class Item : Collidable

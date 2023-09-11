@@ -1,9 +1,3 @@
-using Combat;
-using Enums;
-using JetBrains.Annotations;
-using UI;
-using UnityEngine;
-
 namespace Objects;
 
 public class Interactable : Collidable

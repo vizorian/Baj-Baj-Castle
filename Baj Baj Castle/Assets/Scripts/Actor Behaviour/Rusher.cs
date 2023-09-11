@@ -1,8 +1,3 @@
-using Combat;
-using Enums;
-using JetBrains.Annotations;
-using UnityEngine;
-
 namespace Actor_Behaviour;
 
 [UsedImplicitly]

@@ -1,14 +1,12 @@
-using Enums;
-
 namespace Game_Logic.Tiles;
 
-public class TileData
+public class TileObjectData
 {
     public TileType Type;
     public readonly int X;
     public readonly int Y;
 
-    public TileData(int x, int y, TileType type)
+    public TileObjectData(int x, int y, TileType type)
     {
         X = x;
         Y = y;
@@ -26,7 +24,7 @@ public class TileData
 
         if (obj.GetType() != GetType()) return false;
 
-        var other = (TileData)obj;
+        var other = (TileObjectData)obj;
 
         return X == other.X && Y == other.Y && Type == other.Type;
     }

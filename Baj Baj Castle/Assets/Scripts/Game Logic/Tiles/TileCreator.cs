@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Enums;
-using Procedural_generation;
-using UI;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-
 namespace Game_Logic.Tiles;
 
 public class TileCreator
@@ -41,10 +32,10 @@ public class TileCreator
             var endingX = startingX + cell.Width;
             var endingY = startingY + cell.Height;
 
-            var tilesToAdd = new List<TileData>();
+            var tilesToAdd = new List<TileObjectData>();
             for (var x = startingX; x < endingX; x++)
             for (var y = startingY; y < endingY; y++)
-                tilesToAdd.Add(new TileData(x, y, TileType.None));
+                tilesToAdd.Add(new TileObjectData(x, y, TileType.None));
             rooms.Add(new Room(i, tilesToAdd, this));
         }
 
@@ -78,7 +69,7 @@ public class TileCreator
     }
 
     // Create tiles for rooms and hallways
-    public void CreateTiles(List<Room> rooms, List<TileData> hallwayTiles)
+    public void CreateTiles(List<Room> rooms, List<TileObjectData> hallwayTiles)
     {
         // Setting tile types for all tiles
         SetTileTypes(rooms, hallwayTiles);
@@ -109,7 +100,7 @@ public class TileCreator
     }
 
     // Sets tile types for room and hallway tiles
-    private void SetTileTypes(List<Room> rooms, List<TileData> hallwayTiles)
+    private void SetTileTypes(List<Room> rooms, List<TileObjectData> hallwayTiles)
     {
         // Setting room tile types
         for (var i = 0; i < rooms.Count; i++)
@@ -161,14 +152,14 @@ public class TileCreator
         {
             // Preparation
             var roomWalls = room.Tiles.Where(t => t.Type == TileType.Wall).ToList();
-            var tempNearbyTiles = new List<TileData>();
-            var tempRoomTiles = new List<TileData>();
-            var nearbyGroup = new List<TileData>();
-            var roomGroup = new List<TileData>();
+            var tempNearbyTiles = new List<TileObjectData>();
+            var tempRoomTiles = new List<TileObjectData>();
+            var nearbyGroup = new List<TileObjectData>();
+            var roomGroup = new List<TileObjectData>();
 
             // West wall
-            var westNearbyTileGroups = new List<List<TileData>>();
-            var westTileGroups = new List<List<TileData>>();
+            var westNearbyTileGroups = new List<List<TileObjectData>>();
+            var westTileGroups = new List<List<TileObjectData>>();
             foreach (var wall in roomWalls.Where(w => w.X == room.XMin).ToList()) // looping through all room walls
             {
                 var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X - 1 && t.Y == wall.Y);
@@ -188,8 +179,8 @@ public class TileCreator
                     // create new group
                     westNearbyTileGroups.Add(nearbyGroup);
                     westTileGroups.Add(roomGroup);
-                    nearbyGroup = new List<TileData>();
-                    roomGroup = new List<TileData>();
+                    nearbyGroup = new List<TileObjectData>();
+                    roomGroup = new List<TileObjectData>();
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
                     i++;
@@ -220,12 +211,12 @@ public class TileCreator
                 }
 
             // East wall
-            tempNearbyTiles = new List<TileData>();
-            tempRoomTiles = new List<TileData>();
-            nearbyGroup = new List<TileData>();
-            roomGroup = new List<TileData>();
-            var eastNearbyTileGroups = new List<List<TileData>>();
-            var eastTileGroups = new List<List<TileData>>();
+            tempNearbyTiles = new List<TileObjectData>();
+            tempRoomTiles = new List<TileObjectData>();
+            nearbyGroup = new List<TileObjectData>();
+            roomGroup = new List<TileObjectData>();
+            var eastNearbyTileGroups = new List<List<TileObjectData>>();
+            var eastTileGroups = new List<List<TileObjectData>>();
             foreach (var wall in roomWalls.Where(w => w.X == room.XMax).ToList()) // looping through all room walls
             {
                 var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X + 1 && t.Y == wall.Y);
@@ -245,8 +236,8 @@ public class TileCreator
                     // create new group
                     eastNearbyTileGroups.Add(nearbyGroup);
                     eastTileGroups.Add(roomGroup);
-                    nearbyGroup = new List<TileData>();
-                    roomGroup = new List<TileData>();
+                    nearbyGroup = new List<TileObjectData>();
+                    roomGroup = new List<TileObjectData>();
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
                     i++;
@@ -277,12 +268,12 @@ public class TileCreator
                 }
 
             // North wall
-            tempNearbyTiles = new List<TileData>();
-            tempRoomTiles = new List<TileData>();
-            nearbyGroup = new List<TileData>();
-            roomGroup = new List<TileData>();
-            var northNearbyTileGroups = new List<List<TileData>>();
-            var northTileGroups = new List<List<TileData>>();
+            tempNearbyTiles = new List<TileObjectData>();
+            tempRoomTiles = new List<TileObjectData>();
+            nearbyGroup = new List<TileObjectData>();
+            roomGroup = new List<TileObjectData>();
+            var northNearbyTileGroups = new List<List<TileObjectData>>();
+            var northTileGroups = new List<List<TileObjectData>>();
             foreach (var wall in roomWalls.Where(w => w.Y == room.YMax).ToList()) // looping through all room walls
             {
                 var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X && t.Y == wall.Y + 1);
@@ -302,8 +293,8 @@ public class TileCreator
                     // create new group
                     northNearbyTileGroups.Add(nearbyGroup);
                     northTileGroups.Add(roomGroup);
-                    nearbyGroup = new List<TileData>();
-                    roomGroup = new List<TileData>();
+                    nearbyGroup = new List<TileObjectData>();
+                    roomGroup = new List<TileObjectData>();
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
                     i++;
@@ -334,12 +325,12 @@ public class TileCreator
                 }
 
             // South wall
-            tempNearbyTiles = new List<TileData>();
-            tempRoomTiles = new List<TileData>();
-            nearbyGroup = new List<TileData>();
-            roomGroup = new List<TileData>();
-            var southNearbyTileGroups = new List<List<TileData>>();
-            var southTileGroups = new List<List<TileData>>();
+            tempNearbyTiles = new List<TileObjectData>();
+            tempRoomTiles = new List<TileObjectData>();
+            nearbyGroup = new List<TileObjectData>();
+            roomGroup = new List<TileObjectData>();
+            var southNearbyTileGroups = new List<List<TileObjectData>>();
+            var southTileGroups = new List<List<TileObjectData>>();
             foreach (var wall in roomWalls.Where(w => w.Y == room.YMin).ToList()) // looping through all room walls
             {
                 var nearbyTile = hallwayTiles.FirstOrDefault(t => t.X == wall.X && t.Y == wall.Y - 1);
@@ -359,8 +350,8 @@ public class TileCreator
                     // create new group
                     southNearbyTileGroups.Add(nearbyGroup);
                     southTileGroups.Add(roomGroup);
-                    nearbyGroup = new List<TileData>();
-                    roomGroup = new List<TileData>();
+                    nearbyGroup = new List<TileObjectData>();
+                    roomGroup = new List<TileObjectData>();
                     nearbyGroup.Add(tempNearbyTiles[i + 1]);
                     roomGroup.Add(tempRoomTiles[i + 1]);
                     i++;
@@ -393,26 +384,26 @@ public class TileCreator
     }
 
     // Add door tile to collision layer
-    public void AddToCollisionLayer(TileData doorTile)
+    public void AddToCollisionLayer(TileObjectData doorTileObject)
     {
-        collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), tileDict["Collision"]);
+        collisionTilemap.SetTile(new Vector3Int(doorTileObject.X, doorTileObject.Y, 0), tileDict["Collision"]);
     }
 
     // Remove door tile from collision layer
-    public void RemoveFromCollisionLayer(TileData doorTile)
+    public void RemoveFromCollisionLayer(TileObjectData doorTileObject)
     {
-        collisionTilemap.SetTile(new Vector3Int(doorTile.X, doorTile.Y, 0), null);
+        collisionTilemap.SetTile(new Vector3Int(doorTileObject.X, doorTileObject.Y, 0), null);
     }
 
     // Override tile with new tile
-    public void OverrideTile(TileData tile, string type)
+    public void OverrideTile(TileObjectData tileObject, string type)
     {
-        floorTilemap.SetTile(new Vector3Int(tile.X, tile.Y, 0), tileDict[type]);
+        floorTilemap.SetTile(new Vector3Int(tileObject.X, tileObject.Y, 0), tileDict[type]);
     }
 
     // Set tile types for list of tiles
     // Also use tilesToCheck for correct texture mapping
-    private void SetTiles(List<TileData> tiles, List<TileData> tilesToCheck)
+    private void SetTiles(List<TileObjectData> tiles, List<TileObjectData> tilesToCheck)
     {
         // If tilesToCheck is empty, use self as reference
         tilesToCheck ??= tiles;
@@ -508,17 +499,17 @@ public class TileCreator
     }
 
     // Puts hallways cells into a tiledata list
-    public List<TileData> CreateHallways(List<Cell> hallwayCells, List<Room> rooms)
+    public List<TileObjectData> CreateHallways(List<Cell> hallwayCells, List<Room> rooms)
     {
-        var tileList = new List<TileData>();
+        var tileList = new List<TileObjectData>();
         foreach (var cell in hallwayCells)
         {
             var x = (int)cell.Position.x - 1;
             var y = (int)cell.Position.y - 1;
 
-            var tile = new TileData(x, y, TileType.None);
+            var tile = new TileObjectData(x, y, TileType.None);
             // if tile is not within any room
-            if (!rooms.Any(r => r.Tiles.Contains(tile))) tileList.Add(new TileData(x, y, TileType.None));
+            if (!rooms.Any(r => r.Tiles.Contains(tile))) tileList.Add(new TileObjectData(x, y, TileType.None));
         }
 
         return tileList;

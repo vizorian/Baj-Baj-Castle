@@ -1,8 +1,3 @@
-using System.Linq;
-using JetBrains.Annotations;
-using Objects;
-using UnityEngine;
-
 namespace Game_Logic.Triggers;
 
 public class RoomTrigger : Collidable

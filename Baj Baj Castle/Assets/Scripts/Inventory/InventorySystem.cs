@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using Actor_Behaviour;
-using Game_Logic;
-using JetBrains.Annotations;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace Inventory;

@@ -1,10 +1,3 @@
-using System.Collections.Generic;
-using Combat;
-using Enums;
-using JetBrains.Annotations;
-using UI;
-using UnityEngine;
-
 namespace Actor_Behaviour;
 
 public class Actor : MonoBehaviour

@@ -1,7 +1,3 @@
-using System;
-using Enums;
-using UnityEngine.SceneManagement;
-
 namespace Game_Logic;
 
 public static class Loader
@@ -14,15 +10,15 @@ public static class Loader
         Loading
     }
 
-    public static GameState LoadState;
+    public static GlobalGameState LoadState;
 
-    private static Action<GameState> onLoaderCallback;
+    private static Action<GlobalGameState> onLoaderCallback;
 
     // Loads the specified scene and sets desired game state after loading
-    public static void Load(Scene scene, GameState state)
+    public static void Load(Scene scene, GlobalGameState state)
     {
         LoadState = state;
-        GameManager.Instance.GameState = GameState.Loading;
+        GameManager.Instance.CurrentGlobalGameState = GlobalGameState.Loading;
 
         // Sets the callback to be called after loading
         onLoaderCallback = gameState => { SceneManager.LoadScene(scene.ToString()); };
@@ -32,11 +28,11 @@ public static class Loader
     }
 
     // Callback function
-    public static void LoaderCallback(GameState state)
+    public static void LoaderCallback(GlobalGameState state)
     {
         if (onLoaderCallback != null)
         {
-            GameManager.Instance.GameState = state;
+            GameManager.Instance.CurrentGlobalGameState = state;
             onLoaderCallback(state);
             onLoaderCallback = null;
         }

@@ -1,10 +1,3 @@
-using System.Linq;
-using Enums;
-using Game_Logic;
-using Inventory;
-using JetBrains.Annotations;
-using UnityEngine;
-
 namespace Actor_Behaviour;
 
 public class Player : Actor
@@ -41,14 +34,14 @@ public class Player : Actor
     // Processes player inputs
     private void ProcessInputs()
     {
-        var state = GameState.Escape;
-        if (GameManager.Instance != null) state = GameManager.Instance.GameState;
+        var state = GlobalGameState.Escape;
+        if (GameManager.Instance != null) state = GameManager.Instance.CurrentGlobalGameState;
 
         switch (state)
         {
-            case GameState.MainMenu:
+            case GlobalGameState.MainMenu:
                 return;
-            case GameState.Escape:
+            case GlobalGameState.Escape:
                 // Getting inputs
                 var scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
 
@@ -82,17 +75,17 @@ public class Player : Actor
                 // Flip button
                 if (Input.GetKeyDown(KeyCode.F)) Hand.TurnHeldItem();
                 break;
-            case GameState.Tutorial:
+            case GlobalGameState.Tutorial:
                 break;
-            case GameState.Pause:
+            case GlobalGameState.Pause:
                 break;
-            case GameState.Loading:
+            case GlobalGameState.Loading:
                 return;
-            case GameState.Victory:
+            case GlobalGameState.Victory:
                 return;
-            case GameState.Defeat:
+            case GlobalGameState.Defeat:
                 return;
-            case GameState.Reload:
+            case GlobalGameState.Reload:
                 return;
         }
     }

@@ -1,12 +1,3 @@
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using Actor_Behaviour;
-using Enums;
-using JetBrains.Annotations;
-using TMPro;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
 // This class is responsible for managing everything related to the game.
 namespace Game_Logic;
 
@@ -21,7 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject TutorialScreenPrefab;
     public GameObject Canvas;
     public Sprite CellSprite;
-    public GameState GameState;
+    public GlobalGameState CurrentGlobalGameState;
     public GameObject GridObject;
 
     // References
@@ -58,9 +49,9 @@ public class GameManager : MonoBehaviour
     [UsedImplicitly]
     private void Update()
     {
-        if (Instance.GameState == GameState.Reload) Instance.Cleanup(); // Reload
+        if (Instance.CurrentGlobalGameState == GlobalGameState.Reload) Instance.Cleanup(); // Reload
 
-        if (Instance.GameState == GameState.Victory || Instance.GameState == GameState.Defeat) // GameOver scene logic
+        if (Instance.CurrentGlobalGameState == GlobalGameState.Victory || Instance.CurrentGlobalGameState == GlobalGameState.Defeat) // GameOver scene logic
         {
             if (Instance.isGameOverSet == false)
             {
@@ -69,7 +60,7 @@ public class GameManager : MonoBehaviour
                     .GetComponent<TextMeshProUGUI>();
                 do
                 {
-                    sceneText.text = Instance.GameState == GameState.Victory ? "You Escaped!" : "You died.";
+                    sceneText.text = Instance.CurrentGlobalGameState == GlobalGameState.Victory ? "You Escaped!" : "You died.";
                 } while (sceneText.text != "You died." && sceneText.text != "You Escaped!");
 
                 Instance.isGameOverSet = true;
@@ -80,14 +71,14 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Instance.GameState != GameState.Loading) // Pausing logic
+        if (Instance.CurrentGlobalGameState != GlobalGameState.Loading) // Pausing logic
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (Instance.GameState == GameState.Escape && Instance.GameState != GameState.Tutorial)
+                if (Instance.CurrentGlobalGameState == GlobalGameState.Escape && Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
                     Instance.PauseGame();
-                else if (Instance.GameState == GameState.Pause && Instance.GameState != GameState.Tutorial)
+                else if (Instance.CurrentGlobalGameState == GlobalGameState.Pause && Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
                     Instance.UnpauseGame();
-                else if (Instance.GameState == GameState.Tutorial) Instance.CloseTutorial();
+                else if (Instance.CurrentGlobalGameState == GlobalGameState.Tutorial) Instance.CloseTutorial();
             }
 
         if (SceneManager.GetActiveScene().name == "Game")
@@ -131,7 +122,7 @@ public class GameManager : MonoBehaviour
                     Instance.levelManager.IsPopulated = false;
                     var loading = Instance.Canvas.transform.Find("Loading").gameObject;
                     if (loading != null) loading.SetActive(false);
-                    Instance.GameState = GameState.Escape;
+                    Instance.CurrentGlobalGameState = GlobalGameState.Escape;
 
                     // open tutorial menu
                     if (!Instance.tutorialDisplayed) Instance.OpenTutorial();
@@ -169,7 +160,7 @@ public class GameManager : MonoBehaviour
         Instance.isNextLevel = false;
         Instance.isSceneLoaded = false;
         Instance.isSaveLoaded = false;
-        Instance.GameState = GameState.MainMenu;
+        Instance.CurrentGlobalGameState = GlobalGameState.MainMenu;
     }
 
     // Save player data
@@ -223,7 +214,7 @@ public class GameManager : MonoBehaviour
         var newGame = Instance.LoadPlayerData();
         if (newGame || isForced)
         {
-            Loader.Load(Loader.Scene.Game, GameState.Loading);
+            Loader.Load(Loader.Scene.Game, GlobalGameState.Loading);
         }
         else
         {
@@ -365,7 +356,7 @@ public class GameManager : MonoBehaviour
 
         // Freeze game
         Time.timeScale = 0;
-        Instance.GameState = GameState.Pause;
+        Instance.CurrentGlobalGameState = GlobalGameState.Pause;
     }
 
     // Resume the game
@@ -375,7 +366,7 @@ public class GameManager : MonoBehaviour
 
         // Unfreeze game
         Time.timeScale = 1;
-        Instance.GameState = GameState.Escape;
+        Instance.CurrentGlobalGameState = GlobalGameState.Escape;
     }
 
     // Open tutorial window
@@ -386,7 +377,7 @@ public class GameManager : MonoBehaviour
 
         // Freeze game
         Time.timeScale = 0;
-        Instance.GameState = GameState.Tutorial;
+        Instance.CurrentGlobalGameState = GlobalGameState.Tutorial;
     }
 
     // Close tutorial window
@@ -396,14 +387,14 @@ public class GameManager : MonoBehaviour
 
         // Unfreeze game
         Time.timeScale = 1;
-        Instance.GameState = GameState.Escape;
+        Instance.CurrentGlobalGameState = GlobalGameState.Escape;
     }
 
     // Return to main menu
     public void QuitToMenu()
     {
         Instance.SavePlayerData();
-        if (Instance.GameState == GameState.Pause)
+        if (Instance.CurrentGlobalGameState == GlobalGameState.Pause)
         {
             Destroy(Instance.pauseMenu);
 
@@ -411,7 +402,7 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
         }
 
-        Loader.Load(Loader.Scene.Menu, GameState.Reload);
+        Loader.Load(Loader.Scene.Menu, GlobalGameState.Reload);
     }
 
     // Quit to desktop
@@ -427,14 +418,14 @@ public class GameManager : MonoBehaviour
     public void Defeat()
     {
         Instance.SavePlayerData();
-        Loader.Load(Loader.Scene.GameOver, GameState.Defeat);
+        Loader.Load(Loader.Scene.GameOver, GlobalGameState.Defeat);
     }
 
     // End game with victory
     public void Victory()
     {
         Instance.SavePlayerData();
-        Loader.Load(Loader.Scene.GameOver, GameState.Victory);
+        Loader.Load(Loader.Scene.GameOver, GlobalGameState.Victory);
     }
 
     // Begin new level creation
@@ -443,6 +434,6 @@ public class GameManager : MonoBehaviour
         Instance.SavePlayerData();
         Instance.Level++;
         Instance.isNextLevel = true;
-        Instance.GameState = GameState.Loading;
+        Instance.CurrentGlobalGameState = GlobalGameState.Loading;
     }
 }

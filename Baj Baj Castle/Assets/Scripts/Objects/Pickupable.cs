@@ -1,7 +1,3 @@
-using Inventory;
-using UI;
-using UnityEngine;
-
 namespace Objects;
 
 public class Pickupable : Interactable
