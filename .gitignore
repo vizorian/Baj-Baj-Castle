@@ -1,10 +1,20 @@
+# Jetbrain Rider Cache
+.idea/
+Assets/Plugins/Editor/JetBrains*
+
+# Visual Studio Code
+.vscode/
+
+
+### Unity ###
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
-Baj Baj Castle/Logs
 Assets/AssetStoreTools*
+# Unity local user project setting
+UserSettings/
 
 # Visual Studio cache directory
 .vs/
@@ -36,13 +46,3 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-
-# Custom
-*.log
-*.psd
-*.psd.meta
-Assembly-CSharpTests/bin/Debug/
-Baj Baj Castle/Packages/
-Assembly-CSharpTests1/bin/Debug/
-coverage.dcvr*
-*.cd
