@@ -2,6 +2,7 @@ namespace Combat;
 
 public class Item : Collidable
 {
+    private const float UnchargeTime = 0.2f;
     public ItemType Type;
     public float Damage;
     public DamageType DamageType;
@@ -14,7 +15,6 @@ public class Item : Collidable
     public float CooldownTimer;
     private EdgeCollider2D edgeCollider;
     private bool isCharged;
-    private const float UnchargeTime = 0.2f;
     private float unchargeTimer;
 
     private protected override void Awake()

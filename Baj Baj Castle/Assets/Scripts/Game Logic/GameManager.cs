@@ -1,10 +1,9 @@
 // This class is responsible for managing everything related to the game.
+
 namespace Game_Logic;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
-
     // Resources
     public Player Player;
     public SaveData SaveData;
@@ -15,21 +14,22 @@ public class GameManager : MonoBehaviour
     public GlobalGameState CurrentGlobalGameState;
     public GameObject GridObject;
 
-    // References
-    private LevelManager levelManager;
-    private GameObject pauseMenu;
-    private GameObject tutorialScreen;
-
     // Logic
     public int Level = 1;
     public int MaxLevels = 3;
-    private bool tutorialDisplayed;
-    public bool IsDebug = false;
-    private bool isGameOverSet;
+    public bool IsDebug;
     public bool IsNewGame;
+    private bool isGameOverSet;
     private bool isNextLevel;
     private bool isSaveLoaded;
     private bool isSceneLoaded;
+
+    // References
+    private LevelManager levelManager;
+    private GameObject pauseMenu;
+    private bool tutorialDisplayed;
+    private GameObject tutorialScreen;
+    public static GameManager Instance { get; private set; }
 
     [UsedImplicitly]
     private void Awake()
@@ -51,7 +51,8 @@ public class GameManager : MonoBehaviour
     {
         if (Instance.CurrentGlobalGameState == GlobalGameState.Reload) Instance.Cleanup(); // Reload
 
-        if (Instance.CurrentGlobalGameState == GlobalGameState.Victory || Instance.CurrentGlobalGameState == GlobalGameState.Defeat) // GameOver scene logic
+        if (Instance.CurrentGlobalGameState == GlobalGameState.Victory ||
+            Instance.CurrentGlobalGameState == GlobalGameState.Defeat) // GameOver scene logic
         {
             if (Instance.isGameOverSet == false)
             {
@@ -60,7 +61,9 @@ public class GameManager : MonoBehaviour
                     .GetComponent<TextMeshProUGUI>();
                 do
                 {
-                    sceneText.text = Instance.CurrentGlobalGameState == GlobalGameState.Victory ? "You Escaped!" : "You died.";
+                    sceneText.text = Instance.CurrentGlobalGameState == GlobalGameState.Victory
+                        ? "You Escaped!"
+                        : "You died.";
                 } while (sceneText.text != "You died." && sceneText.text != "You Escaped!");
 
                 Instance.isGameOverSet = true;
@@ -74,9 +77,11 @@ public class GameManager : MonoBehaviour
         if (Instance.CurrentGlobalGameState != GlobalGameState.Loading) // Pausing logic
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (Instance.CurrentGlobalGameState == GlobalGameState.Escape && Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
+                if (Instance.CurrentGlobalGameState == GlobalGameState.Escape &&
+                    Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
                     Instance.PauseGame();
-                else if (Instance.CurrentGlobalGameState == GlobalGameState.Pause && Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
+                else if (Instance.CurrentGlobalGameState == GlobalGameState.Pause &&
+                         Instance.CurrentGlobalGameState != GlobalGameState.Tutorial)
                     Instance.UnpauseGame();
                 else if (Instance.CurrentGlobalGameState == GlobalGameState.Tutorial) Instance.CloseTutorial();
             }
@@ -241,7 +246,9 @@ public class GameManager : MonoBehaviour
             var statCost = statText.Find("Price").Find(stat + "Price").gameObject.GetComponent<TextMeshProUGUI>();
             var statLevel = Instance.SaveData.GetStat(stat);
             statCount.text = statLevel.ToString();
-            statCost.text = stat == "Health" ? CalculateCost(statLevel, true).ToString() : CalculateCost(statLevel, false).ToString();
+            statCost.text = stat == "Health"
+                ? CalculateCost(statLevel, true).ToString()
+                : CalculateCost(statLevel, false).ToString();
         }
     }
 

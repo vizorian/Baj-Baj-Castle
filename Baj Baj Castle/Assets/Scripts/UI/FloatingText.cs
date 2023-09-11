@@ -9,15 +9,6 @@ public class FloatingText : MonoBehaviour
 
     private TextMeshPro textMesh;
 
-    // Create a floating text object
-    public static void Create(string text, Color color, Vector3 position, float textSize, float lifeTime,
-        float speed)
-    {
-        var floatingTextObject = Instantiate(GameAssets.Instance.FloatingTextObject, Vector3.zero, Quaternion.identity);
-        var floatingText = floatingTextObject.GetComponent<FloatingText>();
-        floatingText.Setup(text, color, position, textSize, lifeTime, speed);
-    }
-
     [UsedImplicitly]
     private void Awake()
     {
@@ -35,6 +26,15 @@ public class FloatingText : MonoBehaviour
             textMesh.color = textColor;
             if (textColor.a <= 0) Destroy(gameObject);
         }
+    }
+
+    // Create a floating text object
+    public static void Create(string text, Color color, Vector3 position, float textSize, float lifeTime,
+        float speed)
+    {
+        var floatingTextObject = Instantiate(GameAssets.Instance.FloatingTextObject, Vector3.zero, Quaternion.identity);
+        var floatingText = floatingTextObject.GetComponent<FloatingText>();
+        floatingText.Setup(text, color, position, textSize, lifeTime, speed);
     }
 
     // Setup the floating text object

@@ -2,13 +2,13 @@ namespace Actor_Behaviour;
 
 public class Player : Actor
 {
-    public int AgilityUpgradeLevel;
-    public int DefenseUpgradeLevel;
-    public int Gold;
-    public int HealthUpgradeLevel;
-    public int IntelligenceUpgradeLevel;
-    public int LuckUpgradeLevel;
-    public int StrengthUpgradeLevel;
+    public int AgilityUpgradeLevel { get; set; }
+    public int DefenseUpgradeLevel { get; set; }
+    public int Gold { get; set; }
+    public int HealthUpgradeLevel { get; set; }
+    public int IntelligenceUpgradeLevel { get; set; }
+    public int LuckUpgradeLevel { get; set; }
+    public int StrengthUpgradeLevel { get; set; }
 
     [UsedImplicitly]
     private void Update()

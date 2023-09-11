@@ -2,9 +2,9 @@ namespace Procedural_generation;
 
 public class Triangle
 {
+    public readonly Point[] Vertices = new Point[3];
     public Point Circumcenter;
     public double RadiusSq;
-    public readonly Point[] Vertices = new Point[3];
 
     public Triangle(Point p1, Point p2, Point p3)
     {
@@ -60,7 +60,7 @@ public class Triangle
     {
         if (obj == null || GetType() != obj.GetType()) return false;
 
-        var triangle = (Triangle) obj;
+        var triangle = (Triangle)obj;
         return Vertices[0].Equals(triangle.Vertices[0]) &&
                Vertices[1].Equals(triangle.Vertices[1]) &&
                Vertices[2].Equals(triangle.Vertices[2]);
@@ -68,8 +68,8 @@ public class Triangle
 
     public override int GetHashCode()
     {
-        var hash = (int) Vertices[0].X ^ (int) Vertices[0].Y ^ (int) Vertices[1].X ^ (int) Vertices[1].Y ^
-                   (int) Vertices[2].X ^ (int) Vertices[2].Y;
+        var hash = (int)Vertices[0].X ^ (int)Vertices[0].Y ^ (int)Vertices[1].X ^ (int)Vertices[1].Y ^
+                   (int)Vertices[2].X ^ (int)Vertices[2].Y;
         return hash.GetHashCode();
     }
 }

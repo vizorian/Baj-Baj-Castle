@@ -5,6 +5,13 @@ public class RoomTrigger : Collidable
     public ExitTrigger Exit;
     public Room ParentRoom; // room to trigger
 
+    private protected override void Awake()
+    {
+        BoxCollider = GetComponent<BoxCollider2D>();
+        ContactFilter = new ContactFilter2D();
+        ContactFilter.SetLayerMask(LayerMask.GetMask("Actor"));
+    }
+
     [UsedImplicitly]
     private void Update()
     {
@@ -20,13 +27,6 @@ public class RoomTrigger : Collidable
                 if (Exit != null) Exit.IsActive = true;
                 Destroy(gameObject);
             }
-    }
-
-    private protected override void Awake()
-    {
-        BoxCollider = GetComponent<BoxCollider2D>();
-        ContactFilter = new ContactFilter2D();
-        ContactFilter.SetLayerMask(LayerMask.GetMask("Actor"));
     }
 
     // Handle collision

@@ -121,15 +121,15 @@ public class TileCreator
                         t.Y == tile.Y + 1)
                     || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                     || !room.Tiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
-                    || !room.Tiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
-                {
+                    || !room.Tiles.Any(t =>
+                        t.X == tile.X + 1 &&
+                        t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
                     tile.Type = room.DoorPositions.Any(door =>
-                        Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y) ? TileType.Door : TileType.Wall;
-                }
+                        Mathf.RoundToInt(door.x) == tile.X && Mathf.RoundToInt(door.y) == tile.Y)
+                        ? TileType.Door
+                        : TileType.Wall;
                 else
-                {
                     tile.Type = TileType.Floor;
-                }
             }
         }
 
@@ -140,7 +140,9 @@ public class TileCreator
                     t.Y == tile.Y + 1)
                 || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y + 1)
                 || !hallwayTiles.Any(t => t.X == tile.X - 1 && t.Y == tile.Y - 1)
-                || !hallwayTiles.Any(t => t.X == tile.X + 1 && t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
+                || !hallwayTiles.Any(t =>
+                    t.X == tile.X + 1 &&
+                    t.Y == tile.Y - 1)) // If there's no tile diagonally adjacent to this one, it's a wall
                 tile.Type = TileType.Wall;
             else
                 tile.Type = TileType.Floor;

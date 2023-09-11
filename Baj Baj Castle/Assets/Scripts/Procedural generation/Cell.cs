@@ -1,15 +1,13 @@
-using Vector2 = UnityEngine.Vector2;
-
 namespace Procedural_generation;
 
 public class Cell
 {
-    public int Height;
-    public int Width;
-    public Vector2 Position;
     public GameObject DisplayCell;
+    public int Height;
     public GameObject PhysicsCell;
+    public Vector2 Position;
     public GameObject SimulationCell;
+    public int Width;
 
     public Cell(Vector2 position, int width, int height)
     {
@@ -25,7 +23,8 @@ public class Cell
         {
             transform =
             {
-                localPosition = new Vector2(Position.x * LevelGenerator.CELL_SIZE, Position.y * LevelGenerator.CELL_SIZE),
+                localPosition = new Vector2(Position.x * LevelGenerator.CELL_SIZE,
+                    Position.y * LevelGenerator.CELL_SIZE),
                 localScale = new Vector2(LevelGenerator.CELL_SIZE * Width, LevelGenerator.CELL_SIZE * Height)
             }
         };

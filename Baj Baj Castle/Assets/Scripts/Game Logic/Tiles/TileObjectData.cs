@@ -2,9 +2,9 @@ namespace Game_Logic.Tiles;
 
 public class TileObjectData
 {
-    public TileType Type;
     public readonly int X;
     public readonly int Y;
+    public TileType Type;
 
     public TileObjectData(int x, int y, TileType type)
     {

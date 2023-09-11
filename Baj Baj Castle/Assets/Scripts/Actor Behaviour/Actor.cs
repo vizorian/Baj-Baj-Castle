@@ -2,8 +2,6 @@ namespace Actor_Behaviour;
 
 public class Actor : MonoBehaviour
 {
-    private readonly List<Collider2D> _hits = new();
-
     // Attributes
     public float MaxHealth;
     public float Health;
@@ -23,11 +21,12 @@ public class Actor : MonoBehaviour
     public float InteractionRange;
     public float MovementSpeed;
     public float ReachRange;
-    public bool IsActive = false;
-
-    private protected GameObject InteractionObject;
+    public bool IsActive;
+    private readonly List<Collider2D> _hits = new();
     private protected BoxCollider2D BoxCollider;
     private protected ContactFilter2D ContactFilter;
+
+    private protected GameObject InteractionObject;
     private protected Vector3 KnockbackDirection;
     private protected Vector3 MoveDelta;
     private protected Rigidbody2D RigidBody;

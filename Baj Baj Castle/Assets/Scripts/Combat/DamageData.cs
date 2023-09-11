@@ -3,10 +3,10 @@ namespace Combat;
 public class DamageData
 {
     public float Amount;
-    public DamageType Type;
+    public bool IsCritical = false;
     public float Knockback;
     public Actor Source;
-    public bool IsCritical = false;
+    public DamageType Type;
 
     public DamageData(float amount, DamageType type, float knockback, Actor source)
     {

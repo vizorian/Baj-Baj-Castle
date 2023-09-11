@@ -1,6 +1,5 @@
-
-
 // Class used to hold all game assets
+
 namespace Game_Logic;
 
 public class GameAssets : MonoBehaviour
@@ -13,8 +12,8 @@ public class GameAssets : MonoBehaviour
     public List<GameObject> ObjectPrefabs;
 
     public GameObject PlayerPrefab;
-    public Dictionary<string, Tile> Tiles;
     public List<GameObject> Triggers;
+    public Dictionary<string, Tile> Tiles;
 
     public static GameAssets Instance
     {

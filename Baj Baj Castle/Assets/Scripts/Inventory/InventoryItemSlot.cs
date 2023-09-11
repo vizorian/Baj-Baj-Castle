@@ -5,15 +5,15 @@ namespace Inventory;
 
 public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField][UsedImplicitly] private Image icon;
+    [SerializeField] [UsedImplicitly] private Image icon;
+
+    [SerializeField] [UsedImplicitly] private TextMeshProUGUI label;
+
+    [SerializeField] [UsedImplicitly] private GameObject stackContainer;
+
+    [SerializeField] [UsedImplicitly] private TextMeshProUGUI stackCount;
 
     private InventoryItem item;
-
-    [SerializeField][UsedImplicitly] private TextMeshProUGUI label;
-
-    [SerializeField][UsedImplicitly] private GameObject stackContainer;
-
-    [SerializeField][UsedImplicitly] private TextMeshProUGUI stackCount;
 
     // pointer enter event handler
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -32,7 +32,7 @@ public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerEx
     // Set item slot to new item
     public void Set(InventoryItem newItem)
     {
-        this.item = newItem;
+        item = newItem;
 
         icon.sprite = newItem.Data.Icon;
         label.text = newItem.Data.DisplayName;

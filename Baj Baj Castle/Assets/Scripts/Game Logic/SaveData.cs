@@ -24,7 +24,8 @@ public class SaveData
 
     public override string ToString()
     {
-        return $"Gold: {Gold}, Strength: {StrengthUpgradeLevel}, Agility: {AgilityUpgradeLevel}, Intelligence: {IntelligenceUpgradeLevel}, Luck: {LuckUpgradeLevel}, Health: {HealthUpgradeLevel}, Defense {DefenseUpgradeLevel}";
+        return
+            $"Gold: {Gold}, Strength: {StrengthUpgradeLevel}, Agility: {AgilityUpgradeLevel}, Intelligence: {IntelligenceUpgradeLevel}, Luck: {LuckUpgradeLevel}, Health: {HealthUpgradeLevel}, Defense {DefenseUpgradeLevel}";
     }
 
     public int GetStat(string stat)

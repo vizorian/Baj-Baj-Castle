@@ -3,10 +3,10 @@ namespace Objects;
 public class Interactable : Collidable
 {
     public float Health;
+    private protected bool Collisions;
 
     private protected LineRenderer LineRenderer;
     private protected SpriteRenderer SpriteRenderer;
-    private protected bool Collisions;
     private protected bool Up, Right, Down, Left;
 
     private protected override void Awake()

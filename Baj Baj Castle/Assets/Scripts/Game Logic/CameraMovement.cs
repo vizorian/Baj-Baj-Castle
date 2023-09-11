@@ -6,13 +6,6 @@ public class CameraMovement : MonoBehaviour
     public float BoundY = 0.5f;
     public Transform Target;
 
-    // Find a player target
-    [UsedImplicitly]
-    private void FindPlayer()
-    {
-        Target = GameObject.Find("Player").transform;
-    }
-
     [UsedImplicitly]
     private void LateUpdate()
     {
@@ -41,5 +34,12 @@ public class CameraMovement : MonoBehaviour
         }
 
         transform.position += delta;
+    }
+
+    // Find a player target
+    [UsedImplicitly]
+    private void FindPlayer()
+    {
+        Target = GameObject.Find("Player").transform;
     }
 }

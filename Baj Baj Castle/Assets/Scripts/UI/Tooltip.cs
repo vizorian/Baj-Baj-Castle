@@ -63,9 +63,9 @@ public class Tooltip : MonoBehaviour
     // Set the tooltip text and update the size of the background
     private void SetText(string newText)
     {
-        this.text.SetText(newText);
-        this.text.ForceMeshUpdate();
-        var textSize = this.text.GetRenderedValues(false);
+        text.SetText(newText);
+        text.ForceMeshUpdate();
+        var textSize = text.GetRenderedValues(false);
         var padding = new Vector2(10, 10);
         backgroundTransform.sizeDelta = textSize + padding;
     }

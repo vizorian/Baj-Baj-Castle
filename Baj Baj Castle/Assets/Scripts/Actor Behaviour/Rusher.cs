@@ -4,7 +4,6 @@ namespace Actor_Behaviour;
 public class Rusher : Actor
 {
     public float AttackSpeed;
-    private float attackTimer;
 
     public float CriticalChance;
 
@@ -13,6 +12,7 @@ public class Rusher : Actor
     public DamageType DamageType;
     public float Knockback;
     public float PauseTime;
+    private float attackTimer;
     private float pauseTimer;
 
     private protected override void Awake()

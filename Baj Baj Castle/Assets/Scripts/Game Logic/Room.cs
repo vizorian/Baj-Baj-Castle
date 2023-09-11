@@ -5,26 +5,26 @@ public class Room
     public readonly int Id;
     private readonly TileCreator tileCreator;
 
+    // Room content
+    public List<Actor> Actors = new();
+    public TileObjectData Center;
+    public List<Vector2> DoorPositions = new();
+    public bool IsActive; // activates actors inside the room
+    public bool IsCleared = false; // room clear status
+    public bool IsTriggered;
+    public List<Room> JointRooms = new();
+    public List<Room> Neighbours = new();
+    public List<Interactable> Objects = new();
+
+
+    // game logic
+    public RoomTrigger RoomTrigger;
+
     public List<TileObjectData> Tiles;
     public int XMax;
     public int XMin;
     public int YMax;
     public int YMin;
-    public List<Room> JointRooms = new();
-    public List<Room> Neighbours = new();
-    public TileObjectData Center;
-
-    // Room content
-    public List<Actor> Actors = new();
-    public List<Interactable> Objects = new();
-    public List<Vector2> DoorPositions = new();
-
-
-    // game logic
-    public RoomTrigger RoomTrigger;
-    public bool IsActive; // activates actors inside the room
-    public bool IsCleared = false; // room clear status
-    public bool IsTriggered;
 
     public Room(int id, List<TileObjectData> tiles, TileCreator tileCreator)
     {
@@ -76,8 +76,10 @@ public class Room
     {
         var playerObject = GameManager.Instance.Player.gameObject;
         var doorTile = DoorTiles.OrderBy(door =>
-            Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE), playerObject.transform.position)).First();
-        var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) - (Vector2)CenterPosition).normalized;
+            Vector2.Distance(new Vector2(door.X * LevelGenerator.CELL_SIZE, door.Y * LevelGenerator.CELL_SIZE),
+                playerObject.transform.position)).First();
+        var direction = (new Vector2(doorTile.X * LevelGenerator.CELL_SIZE, doorTile.Y * LevelGenerator.CELL_SIZE) -
+                         (Vector2)CenterPosition).normalized;
 
         var move = new Vector3(LevelGenerator.CELL_SIZE * 2, 0);
         if (direction.x > 0)

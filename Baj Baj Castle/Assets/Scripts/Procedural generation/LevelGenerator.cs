@@ -22,25 +22,35 @@ public class LevelGenerator : MonoBehaviour
     public int RoomWidthMaximum = 30;
     public int RoomWidthMinimum = 6;
 
-    public List<Cell> Rooms = new();
-    public List<Cell> Hallways = new();
-
     private readonly List<Cell> cells = new();
     private Sprite cellSprite;
     private HashSet<Edge> delaunayGraph;
+    private float endTime;
+    public List<Cell> Hallways = new();
+    private bool isDebug;
+    private bool isMapped;
+    private bool isProcessed;
+    private bool isSimulated;
     private HashSet<Edge> levelGraph;
     private int levelSize;
+
+    public List<Cell> Rooms = new();
     private int simulationLoops;
-    private bool isDebug;
-    private bool startSimulation;
-    private bool startProcessing;
     private bool startMapping;
-    private bool isSimulated;
-    private bool isProcessed;
-    private bool isMapped;
+    private bool startProcessing;
+    private bool startSimulation;
     private float startTime;
-    private float endTime;
     public bool IsCompleted => isSimulated && isProcessed && isMapped;
+
+    [UsedImplicitly]
+    private void FixedUpdate()
+    {
+        if (!isSimulated && startSimulation) SimulateCells();
+
+        if (isSimulated && !isProcessed && startProcessing) ProcessCells();
+
+        if (isProcessed && !isMapped && startMapping) MapCells();
+    }
 
     // Cleanup process
     public void Cleanup()
@@ -122,16 +132,6 @@ public class LevelGenerator : MonoBehaviour
         }
 
         StartCoroutine(DelaySimulation(SimulationDelay));
-    }
-
-    [UsedImplicitly]
-    private void FixedUpdate()
-    {
-        if (!isSimulated && startSimulation) SimulateCells();
-
-        if (isSimulated && !isProcessed && startProcessing) ProcessCells();
-
-        if (isProcessed && !isMapped && startMapping) MapCells();
     }
 
     // Cell simulation process
@@ -315,10 +315,7 @@ public class LevelGenerator : MonoBehaviour
     // Cell mapping process
     private void MapCells()
     {
-        if (isDebug)
-        {
-            startTime = Time.realtimeSinceStartup;
-        }
+        if (isDebug) startTime = Time.realtimeSinceStartup;
 
         // Calculate hallways between cells
         var hallways = CalculateHallways();
@@ -411,6 +408,7 @@ public class LevelGenerator : MonoBehaviour
                             isOdd = true;
                             evens++;
                         }
+
                         hallwayPoints.Add(new Vector2(positionX, y));
                     }
                 }
@@ -449,6 +447,7 @@ public class LevelGenerator : MonoBehaviour
                             isOdd = true;
                             evens++;
                         }
+
                         hallwayPoints.Add(new Vector2(x, positionY));
                     }
                 }

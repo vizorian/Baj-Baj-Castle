@@ -4,15 +4,15 @@ namespace Inventory;
 
 public class InventorySystem : MonoBehaviour
 {
-    public static InventorySystem Instance { get; private set; }
     public UnityEvent OnInventoryChanged;
 
     public int Capacity = 9;
-    public List<InventoryItem> Inventory { get; private set; }
-    public InventoryItem SelectedItem { get; private set; }
+    private ActorHand hand;
 
     private int selectedItemIndex;
-    private ActorHand hand;
+    public static InventorySystem Instance { get; private set; }
+    public List<InventoryItem> Inventory { get; private set; }
+    public InventoryItem SelectedItem { get; private set; }
 
     [UsedImplicitly]
     private void Awake()

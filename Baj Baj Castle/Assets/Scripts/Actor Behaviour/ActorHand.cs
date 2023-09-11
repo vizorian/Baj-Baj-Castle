@@ -3,26 +3,20 @@ namespace Actor_Behaviour;
 public class ActorHand : MonoBehaviour
 {
     public bool HoldingItem;
-    public bool IsFreezingHand = false;
+    public bool IsFreezingHand;
     public bool IsItemTurned;
     public float Velocity;
     public float HandSpeed = 1f;
     public float HandRange;
     public ItemType HeldItemType;
+    private Vector3 bodyPosition;
 
     private bool handRangeSaved;
-    private Vector3 bodyPosition;
     private InventoryItem heldItem;
     private Vector3 heldItemHandlePosition;
     private GameObject itemObject;
     private bool newSelection;
     private float oldHandRange;
-
-    // Hand initialization called from actor
-    public void Init(float handRange)
-    {
-        HandRange = handRange;
-    }
 
     [UsedImplicitly]
     private void Update()
@@ -33,11 +27,19 @@ public class ActorHand : MonoBehaviour
             UpdateHorizontalRendering();
     }
 
+    // Hand initialization called from actor
+    public void Init(float handRange)
+    {
+        HandRange = handRange;
+    }
+
     // Flips the hand and held item based on horizontal position
     private void UpdateHorizontalRendering()
     {
         transform.localScale = Vector2.Dot(transform.parent.transform.right, transform.position - bodyPosition) >
-                               0 ? new Vector2(1, 1) : new Vector2(-1, 1);
+                               0
+            ? new Vector2(1, 1)
+            : new Vector2(-1, 1);
     }
 
     // Item use logic

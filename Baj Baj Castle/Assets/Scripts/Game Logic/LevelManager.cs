@@ -3,31 +3,31 @@ namespace Game_Logic;
 public class LevelManager : MonoBehaviour
 {
     public int Level = 1;
-    public List<TileObjectData> Hallways;
-    public List<Room> Rooms;
-    public Room StartRoom;
-    public Room ExitRoom;
     public List<GameObject> Actors = new();
     public GameObject Player;
     public List<GameObject> Items = new();
     public List<GameObject> Objects = new();
     public List<GameObject> Triggers = new();
-
-    private LevelGenerator levelGenerator;
-    private TileCreator tileCreator;
-    private Sprite cellSprite;
-    private Tilemap collisionTilemap;
-    private Tilemap decorationTilemap;
-    private GameObject exitTriggerObject;
-    private Tilemap floorTilemap;
-    private GameObject gridObject;
-
-    private bool isDebug;
     public bool IsGenerated;
     public bool IsGeneratingLevel;
     public bool IsLoaded;
     public bool IsPopulated;
     public bool StartingLevelPopulation;
+    private Sprite cellSprite;
+    private Tilemap collisionTilemap;
+    private Tilemap decorationTilemap;
+    public Room ExitRoom;
+    private GameObject exitTriggerObject;
+    private Tilemap floorTilemap;
+    private GameObject gridObject;
+    public List<TileObjectData> Hallways;
+
+    private bool isDebug;
+
+    private LevelGenerator levelGenerator;
+    public List<Room> Rooms;
+    public Room StartRoom;
+    private TileCreator tileCreator;
 
     public static LevelManager Instance { get; private set; }
 
@@ -56,9 +56,9 @@ public class LevelManager : MonoBehaviour
 
         levelGenerator = gameObject.AddComponent<LevelGenerator>();
 
-        floorTilemap = this.gridObject.transform.Find("Floor").GetComponent<Tilemap>();
-        decorationTilemap = this.gridObject.transform.Find("Decoration").GetComponent<Tilemap>();
-        collisionTilemap = this.gridObject.transform.Find("Collision").GetComponent<Tilemap>();
+        floorTilemap = gridObject.transform.Find("Floor").GetComponent<Tilemap>();
+        decorationTilemap = gridObject.transform.Find("Decoration").GetComponent<Tilemap>();
+        collisionTilemap = gridObject.transform.Find("Collision").GetComponent<Tilemap>();
         tileCreator = new TileCreator(floorTilemap, decorationTilemap, collisionTilemap, newIsDebug);
     }
 

@@ -7,9 +7,9 @@ public class Chest : Interactable
     public Sprite EmptySprite;
     public List<GameObject> Contents;
     public int GoldContained;
+    private bool isLooted;
 
     private bool isOpen;
-    private bool isLooted;
 
     // Handle interaction
     private protected override void OnInteraction()
