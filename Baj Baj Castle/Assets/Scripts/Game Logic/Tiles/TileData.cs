@@ -1,3 +1,7 @@
+using Enums;
+
+namespace Game_Logic.Tiles;
+
 public class TileData
 {
     public TileType Type;

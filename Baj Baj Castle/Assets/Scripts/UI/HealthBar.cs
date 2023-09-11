@@ -1,6 +1,9 @@
+using Actor_Behaviour;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+
+namespace UI;
 
 [UsedImplicitly]
 public class HealthBar : MonoBehaviour

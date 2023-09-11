@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+namespace Procedural_generation;
+
 public class Point
 {
     public double X;

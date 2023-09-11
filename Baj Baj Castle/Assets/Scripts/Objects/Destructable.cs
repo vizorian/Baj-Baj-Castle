@@ -1,5 +1,10 @@
+using Combat;
+using Enums;
 using JetBrains.Annotations;
+using UI;
 using UnityEngine;
+
+namespace Objects;
 
 [UsedImplicitly]
 public class Destructable : MonoBehaviour

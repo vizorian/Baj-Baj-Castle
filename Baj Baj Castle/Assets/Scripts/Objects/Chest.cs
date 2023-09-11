@@ -1,7 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using Game_Logic;
 using JetBrains.Annotations;
+using UI;
 using UnityEngine;
+
+namespace Objects;
 
 [UsedImplicitly]
 public class Chest : Interactable

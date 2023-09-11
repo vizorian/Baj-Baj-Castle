@@ -1,3 +1,5 @@
+namespace Procedural_generation;
+
 public class Edge
 {
     public readonly Point P1;

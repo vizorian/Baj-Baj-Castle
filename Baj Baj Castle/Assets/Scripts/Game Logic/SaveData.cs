@@ -1,5 +1,7 @@
 using System;
 
+namespace Game_Logic;
+
 [Serializable]
 public class SaveData
 {

@@ -1,5 +1,8 @@
 using System;
+using Enums;
 using UnityEngine.SceneManagement;
+
+namespace Game_Logic;
 
 public static class Loader
 {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
+namespace Procedural_generation;
+
 public class Cell
 {
     public int Height;

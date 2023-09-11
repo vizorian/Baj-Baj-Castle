@@ -1,6 +1,11 @@
 using System.Linq;
+using Enums;
+using Game_Logic;
+using Inventory;
 using JetBrains.Annotations;
 using UnityEngine;
+
+namespace Actor_Behaviour;
 
 public class Player : Actor
 {

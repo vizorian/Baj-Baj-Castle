@@ -1,6 +1,9 @@
+using Game_Logic;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+
+namespace UI;
 
 public class FloatingText : MonoBehaviour
 {

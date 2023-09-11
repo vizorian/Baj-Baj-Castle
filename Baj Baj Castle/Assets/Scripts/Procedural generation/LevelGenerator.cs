@@ -6,6 +6,8 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+namespace Procedural_generation;
+
 public class LevelGenerator : MonoBehaviour
 {
     // Constants
@@ -354,7 +356,7 @@ public class LevelGenerator : MonoBehaviour
     private void CreateHallways(HashSet<Vector2> positions, Color color)
     {
         foreach (var position in positions)
-        // if(!roomCells.Any(c => c.IsPointInside(new Point(position.x * cellSize, position.y * cellSize))))
+            // if(!roomCells.Any(c => c.IsPointInside(new Point(position.x * cellSize, position.y * cellSize))))
         {
             // check if cell is inside a room
             // if (!roomCells.Any(c => c.IsPointInside(new Point(position.x, position.y))))

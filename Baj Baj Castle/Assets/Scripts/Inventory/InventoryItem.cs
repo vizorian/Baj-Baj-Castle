@@ -1,5 +1,7 @@
 using System;
 
+namespace Inventory;
+
 [Serializable]
 public class InventoryItem
 {

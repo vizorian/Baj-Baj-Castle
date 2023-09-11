@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
+namespace Objects;
+
 [UsedImplicitly]
 public class Table : Interactable
 {

@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using Actor_Behaviour;
+using Enums;
+using Game_Logic.Tiles;
+using Game_Logic.Triggers;
+using Objects;
+using Procedural_generation;
 using UnityEngine;
+
+namespace Game_Logic;
 
 public class Room
 {

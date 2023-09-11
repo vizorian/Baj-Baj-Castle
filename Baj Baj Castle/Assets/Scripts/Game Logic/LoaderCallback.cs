@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
+namespace Game_Logic;
+
 [UsedImplicitly]
 public class LoaderCallback : MonoBehaviour
 {

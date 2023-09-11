@@ -1,3 +1,5 @@
+namespace Enums;
+
 public enum TileType
 {
     None,

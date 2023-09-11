@@ -1,4 +1,7 @@
+using Objects;
 using UnityEngine;
+
+namespace Game_Logic.Triggers;
 
 public class ExitTrigger : Collidable
 {

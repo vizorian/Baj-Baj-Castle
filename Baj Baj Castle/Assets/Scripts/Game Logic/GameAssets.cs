@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // Class used to hold all game assets
+namespace Game_Logic;
+
 public class GameAssets : MonoBehaviour
 {
     private static GameAssets instance;

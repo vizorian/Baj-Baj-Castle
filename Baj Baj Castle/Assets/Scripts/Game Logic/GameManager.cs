@@ -1,11 +1,15 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Actor_Behaviour;
+using Enums;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // This class is responsible for managing everything related to the game.
+namespace Game_Logic;
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }

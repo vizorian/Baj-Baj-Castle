@@ -1,6 +1,12 @@
 using System;
+using Combat;
+using Enums;
+using Inventory;
 using JetBrains.Annotations;
+using Objects;
 using UnityEngine;
+
+namespace Actor_Behaviour;
 
 public class ActorHand : MonoBehaviour
 {

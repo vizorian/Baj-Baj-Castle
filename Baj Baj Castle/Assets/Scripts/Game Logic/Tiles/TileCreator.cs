@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Enums;
+using Procedural_generation;
+using UI;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+namespace Game_Logic.Tiles;
 
 public class TileCreator
 {
@@ -38,8 +43,8 @@ public class TileCreator
 
             var tilesToAdd = new List<TileData>();
             for (var x = startingX; x < endingX; x++)
-                for (var y = startingY; y < endingY; y++)
-                    tilesToAdd.Add(new TileData(x, y, TileType.None));
+            for (var y = startingY; y < endingY; y++)
+                tilesToAdd.Add(new TileData(x, y, TileType.None));
             rooms.Add(new Room(i, tilesToAdd, this));
         }
 

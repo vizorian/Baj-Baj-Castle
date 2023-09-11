@@ -1,4 +1,8 @@
+using Combat;
+using Enums;
 using UnityEngine;
+
+namespace Inventory;
 
 [CreateAssetMenu(menuName = "Inventory Item Data")]
 public class InventoryItemData : ScriptableObject

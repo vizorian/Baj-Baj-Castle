@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+namespace Procedural_generation;
+
 public class DelaunayTriangulator
 {
     // Do bowyer watson incremental triangulation

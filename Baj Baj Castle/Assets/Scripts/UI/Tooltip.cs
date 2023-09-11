@@ -2,6 +2,8 @@ using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 
+namespace UI;
+
 public class Tooltip : MonoBehaviour
 {
     private RectTransform backgroundTransform;

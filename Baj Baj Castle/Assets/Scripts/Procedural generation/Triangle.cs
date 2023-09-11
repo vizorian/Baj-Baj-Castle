@@ -1,3 +1,5 @@
+namespace Procedural_generation;
+
 public class Triangle
 {
     public Point Circumcenter;

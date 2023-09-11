@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Objects;
+
 public class Collidable : MonoBehaviour
 {
     private protected BoxCollider2D BoxCollider;

@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
+namespace Inventory;
+
 [UsedImplicitly]
 public class InventoryManager : MonoBehaviour
 {
