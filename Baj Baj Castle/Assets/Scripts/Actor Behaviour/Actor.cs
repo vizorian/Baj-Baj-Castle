@@ -2,8 +2,7 @@ namespace Actor_Behaviour;
 
 public class Actor : MonoBehaviour
 {
-    private protected List<Collider2D> Hits = new List<Collider2D>();
-
+    private readonly List<Collider2D> _hits = new();
 
     // Attributes
     public float MaxHealth;
@@ -60,11 +59,11 @@ public class Actor : MonoBehaviour
     private protected virtual void FixedUpdate()
     {
         // Handling collisions
-        BoxCollider.OverlapCollider(ContactFilter, Hits);
-        for (var i = 0; i < Hits.Count; i++)
+        BoxCollider.OverlapCollider(ContactFilter, _hits);
+        for (var i = 0; i < _hits.Count; i++)
         {
-            OnCollide(Hits[i]);
-            Hits[i] = null;
+            OnCollide(_hits[i]);
+            _hits[i] = null;
         }
     }
 

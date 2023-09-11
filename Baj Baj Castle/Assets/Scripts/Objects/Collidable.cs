@@ -4,7 +4,7 @@ public class Collidable : MonoBehaviour
 {
     private protected BoxCollider2D BoxCollider;
     private protected ContactFilter2D ContactFilter;
-    private protected List<Collider2D> Hits = new List<Collider2D>();
+    private protected List<Collider2D> Hits = new();
 
     private protected virtual void Awake()
     {

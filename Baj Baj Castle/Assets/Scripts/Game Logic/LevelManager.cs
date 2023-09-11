@@ -7,11 +7,11 @@ public class LevelManager : MonoBehaviour
     public List<Room> Rooms;
     public Room StartRoom;
     public Room ExitRoom;
-    public List<GameObject> Actors = new List<GameObject>();
+    public List<GameObject> Actors = new();
     public GameObject Player;
-    public List<GameObject> Items = new List<GameObject>();
-    public List<GameObject> Objects = new List<GameObject>();
-    public List<GameObject> Triggers = new List<GameObject>();
+    public List<GameObject> Items = new();
+    public List<GameObject> Objects = new();
+    public List<GameObject> Triggers = new();
 
     private LevelGenerator levelGenerator;
     private TileCreator tileCreator;

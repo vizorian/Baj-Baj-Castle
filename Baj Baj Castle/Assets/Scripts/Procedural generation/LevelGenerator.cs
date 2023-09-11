@@ -22,10 +22,10 @@ public class LevelGenerator : MonoBehaviour
     public int RoomWidthMaximum = 30;
     public int RoomWidthMinimum = 6;
 
-    public List<Cell> Rooms = new List<Cell>();
-    public List<Cell> Hallways = new List<Cell>();
+    public List<Cell> Rooms = new();
+    public List<Cell> Hallways = new();
 
-    private readonly List<Cell> cells = new List<Cell>();
+    private readonly List<Cell> cells = new();
     private Sprite cellSprite;
     private HashSet<Edge> delaunayGraph;
     private HashSet<Edge> levelGraph;

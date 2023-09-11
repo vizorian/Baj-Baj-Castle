@@ -10,14 +10,14 @@ public class Room
     public int XMin;
     public int YMax;
     public int YMin;
-    public List<Room> JointRooms = new List<Room>();
-    public List<Room> Neighbours = new List<Room>();
+    public List<Room> JointRooms = new();
+    public List<Room> Neighbours = new();
     public TileObjectData Center;
 
     // Room content
-    public List<Actor> Actors = new List<Actor>();
-    public List<Interactable> Objects = new List<Interactable>();
-    public List<Vector2> DoorPositions = new List<Vector2>();
+    public List<Actor> Actors = new();
+    public List<Interactable> Objects = new();
+    public List<Vector2> DoorPositions = new();
 
 
     // game logic
@@ -49,10 +49,10 @@ public class Room
     public float WidthToWorld => (Width + 1) * LevelGenerator.CELL_SIZE;
     public float HeightToWorld => (Height + 1) * LevelGenerator.CELL_SIZE;
 
-    public Vector3 CenterPosition => new Vector3((XMax + XMin) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2,
+    public Vector3 CenterPosition => new((XMax + XMin) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2,
         (YMax + YMin) / 2 * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE / 2);
 
-    public Vector3 TopLeftCorner => new Vector3(XMin * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE,
+    public Vector3 TopLeftCorner => new(XMin * LevelGenerator.CELL_SIZE + LevelGenerator.CELL_SIZE,
         YMax * LevelGenerator.CELL_SIZE);
 
     // Activate room
