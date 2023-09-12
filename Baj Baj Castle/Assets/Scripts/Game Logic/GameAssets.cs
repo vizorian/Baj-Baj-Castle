@@ -1,39 +1,45 @@
 // Class used to hold all game assets
 
-namespace Game_Logic;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public class GameAssets : MonoBehaviour
+namespace Game_Logic
 {
-    private static GameAssets instance;
-    public List<GameObject> EnemyPrefabs;
-
-    public GameObject FloatingTextObject;
-    public List<GameObject> ItemPrefabs;
-    public List<GameObject> ObjectPrefabs;
-
-    public GameObject PlayerPrefab;
-    public List<GameObject> Triggers;
-    public Dictionary<string, Tile> Tiles;
-
-    public static GameAssets Instance
+    public class GameAssets : MonoBehaviour
     {
-        get
+        private static GameAssets instance;
+        public List<GameObject> EnemyPrefabs;
+
+        public GameObject FloatingTextObject;
+        public List<GameObject> ItemPrefabs;
+        public List<GameObject> ObjectPrefabs;
+
+        public GameObject PlayerPrefab;
+        public List<GameObject> Triggers;
+        public Dictionary<string, Tile> Tiles;
+
+        public static GameAssets Instance
         {
-            if (instance == null)
+            get
             {
-                instance = FindObjectOfType<GameAssets>();
-                DontDestroyOnLoad(instance.gameObject);
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<GameAssets>();
+                    DontDestroyOnLoad(instance.gameObject);
+                }
+
+                return instance;
             }
-
-            return instance;
         }
-    }
 
-    [UsedImplicitly]
-    private void Awake()
-    {
-        var tileArray = Resources.LoadAll<Tile>("Art/Levels/Tiles/");
-        Tiles = new Dictionary<string, Tile>();
-        foreach (var tile in tileArray) Tiles[tile.name] = tile;
+        [UsedImplicitly]
+        private void Awake()
+        {
+            var tileArray = Resources.LoadAll<Tile>("Art/Levels/Tiles/");
+            Tiles = new Dictionary<string, Tile>();
+            foreach (var tile in tileArray) Tiles[tile.name] = tile;
+        }
     }
 }

@@ -1,82 +1,87 @@
-namespace UI;
+using JetBrains.Annotations;
+using TMPro;
+using UnityEngine;
 
-public class Tooltip : MonoBehaviour
+namespace UI
 {
-    private RectTransform backgroundTransform;
-    private RectTransform canvasTransform;
-    private RectTransform rectTransform;
-    private TextMeshProUGUI text;
-
-    public static Tooltip Instance { get; private set; }
-
-    [UsedImplicitly]
-    private void Awake()
+    public class Tooltip : MonoBehaviour
     {
-        if (Instance != null)
-            Destroy(gameObject);
-        else
-            Instance = this;
+        private RectTransform backgroundTransform;
+        private RectTransform canvasTransform;
+        private RectTransform rectTransform;
+        private TextMeshProUGUI text;
 
-        canvasTransform = GameObject.Find("GameCanvas").GetComponent<RectTransform>();
-        rectTransform = GetComponent<RectTransform>();
-        backgroundTransform = transform.Find("Background").GetComponent<RectTransform>();
-        text = transform.Find("Text").GetComponent<TextMeshProUGUI>();
-        backgroundTransform.sizeDelta = Vector2.zero;
-        text.text = "";
-    }
+        public static Tooltip Instance { get; private set; }
 
-    [UsedImplicitly]
-    private void Update()
-    {
-        UpdatePosition();
-    }
+        [UsedImplicitly]
+        private void Awake()
+        {
+            if (Instance != null)
+                Destroy(gameObject);
+            else
+                Instance = this;
 
-    // Update the position of the tooltip
-    private void UpdatePosition()
-    {
-        var newPosition = Input.mousePosition / canvasTransform.localScale.x;
+            canvasTransform = GameObject.Find("GameCanvas").GetComponent<RectTransform>();
+            rectTransform = GetComponent<RectTransform>();
+            backgroundTransform = transform.Find("Background").GetComponent<RectTransform>();
+            text = transform.Find("Text").GetComponent<TextMeshProUGUI>();
+            backgroundTransform.sizeDelta = Vector2.zero;
+            text.text = "";
+        }
 
-        // Check if tooltip is off screen and adjust position accordingly
-        if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
-            newPosition.x = canvasTransform.sizeDelta.x - backgroundTransform.sizeDelta.x;
+        [UsedImplicitly]
+        private void Update()
+        {
+            UpdatePosition();
+        }
 
-        if (newPosition.y + backgroundTransform.sizeDelta.y > canvasTransform.sizeDelta.y)
-            newPosition.y = canvasTransform.sizeDelta.y - backgroundTransform.sizeDelta.y;
+        // Update the position of the tooltip
+        private void UpdatePosition()
+        {
+            var newPosition = Input.mousePosition / canvasTransform.localScale.x;
 
-        rectTransform.anchoredPosition = newPosition;
-    }
+            // Check if tooltip is off screen and adjust position accordingly
+            if (newPosition.x + backgroundTransform.sizeDelta.x > canvasTransform.sizeDelta.x)
+                newPosition.x = canvasTransform.sizeDelta.x - backgroundTransform.sizeDelta.x;
 
-    // Set the tooltip text and activate it
-    private void ShowTooltip(string newText)
-    {
-        SetText(newText);
-        UpdatePosition();
-        gameObject.SetActive(true);
-    }
+            if (newPosition.y + backgroundTransform.sizeDelta.y > canvasTransform.sizeDelta.y)
+                newPosition.y = canvasTransform.sizeDelta.y - backgroundTransform.sizeDelta.y;
 
-    // Disable the tooltip
-    private void HideTooltip()
-    {
-        gameObject.SetActive(false);
-    }
+            rectTransform.anchoredPosition = newPosition;
+        }
 
-    // Set the tooltip text and update the size of the background
-    private void SetText(string newText)
-    {
-        text.SetText(newText);
-        text.ForceMeshUpdate();
-        var textSize = text.GetRenderedValues(false);
-        var padding = new Vector2(10, 10);
-        backgroundTransform.sizeDelta = textSize + padding;
-    }
+        // Set the tooltip text and activate it
+        private void ShowTooltip(string newText)
+        {
+            SetText(newText);
+            UpdatePosition();
+            gameObject.SetActive(true);
+        }
 
-    public static void ShowTooltip_Static(string text)
-    {
-        Instance.ShowTooltip(text);
-    }
+        // Disable the tooltip
+        private void HideTooltip()
+        {
+            gameObject.SetActive(false);
+        }
 
-    public static void HideTooltip_Static()
-    {
-        Instance.HideTooltip();
+        // Set the tooltip text and update the size of the background
+        private void SetText(string newText)
+        {
+            text.SetText(newText);
+            text.ForceMeshUpdate();
+            var textSize = text.GetRenderedValues(false);
+            var padding = new Vector2(10, 10);
+            backgroundTransform.sizeDelta = textSize + padding;
+        }
+
+        public static void ShowTooltip_Static(string text)
+        {
+            Instance.ShowTooltip(text);
+        }
+
+        public static void HideTooltip_Static()
+        {
+            Instance.HideTooltip();
+        }
     }
 }

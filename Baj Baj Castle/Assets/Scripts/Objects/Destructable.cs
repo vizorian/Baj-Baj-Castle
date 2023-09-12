@@ -1,41 +1,48 @@
-namespace Objects;
+using Combat;
+using Enums;
+using JetBrains.Annotations;
+using UI;
+using UnityEngine;
 
-[UsedImplicitly]
-public class Destructable : MonoBehaviour
+namespace Objects
 {
-    public float Health;
-
-    // Used for receiving and processing damage data
     [UsedImplicitly]
-    private protected virtual void TakeDamage(DamageData damageData)
+    public class Destructable : MonoBehaviour
     {
-        var damage = damageData.Amount;
+        public float Health;
 
-        // Adjust damage based on if the weapon is flipped or not
-        if (damageData.Source.Hand != null)
+        // Used for receiving and processing damage data
+        [UsedImplicitly]
+        private protected virtual void TakeDamage(DamageData damageData)
         {
-            if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
-                damageData.Type = DamageType.Slashing;
-            else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
-                damageData.Type = DamageType.Piercing;
+            var damage = damageData.Amount;
+
+            // Adjust damage based on if the weapon is flipped or not
+            if (damageData.Source.Hand != null)
+            {
+                if (damageData.Type == DamageType.Piercing && damageData.Source.Hand.IsItemTurned)
+                    damageData.Type = DamageType.Slashing;
+                else if (damageData.Type == DamageType.Slashing && damageData.Source.Hand.IsItemTurned)
+                    damageData.Type = DamageType.Piercing;
+            }
+
+            // Damage type calculations
+            if (damageData.Type == DamageType.Piercing)
+                damage /= 4;
+            else if (damageData.Type == DamageType.Slashing) damage /= 2;
+
+            if (damage < 1)
+                damage = 1;
+
+
+            Health -= damage;
+            FloatingText.Create(damage.ToString(), Color.grey, transform.position, 1f, 0.5f, 0.2f);
+            if (Health <= 0) Die();
         }
 
-        // Damage type calculations
-        if (damageData.Type == DamageType.Piercing)
-            damage /= 4;
-        else if (damageData.Type == DamageType.Slashing) damage /= 2;
-
-        if (damage < 1)
-            damage = 1;
-
-
-        Health -= damage;
-        FloatingText.Create(damage.ToString(), Color.grey, transform.position, 1f, 0.5f, 0.2f);
-        if (Health <= 0) Die();
-    }
-
-    private protected virtual void Die()
-    {
-        Destroy(gameObject);
+        private protected virtual void Die()
+        {
+            Destroy(gameObject);
+        }
     }
 }

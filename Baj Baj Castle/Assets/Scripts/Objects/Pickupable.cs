@@ -1,25 +1,30 @@
-namespace Objects;
+using Inventory;
+using UI;
+using UnityEngine;
 
-public class Pickupable : Interactable
+namespace Objects
 {
-    public InventoryItemData ItemData;
-
-    // Handle collision
-    private protected override void OnCollide(Collider2D otherCollider)
+    public class Pickupable : Interactable
     {
-        Collisions = true;
+        public InventoryItemData ItemData;
 
-        if (otherCollider.tag == "Player") DrawHighlightFull(otherCollider.gameObject);
+        // Handle collision
+        private protected override void OnCollide(Collider2D otherCollider)
+        {
+            Collisions = true;
 
-        Collisions = false;
-    }
+            if (otherCollider.tag == "Player") DrawHighlightFull(otherCollider.gameObject);
 
-    // Handle interaction
-    private protected override void OnInteraction()
-    {
-        if (InventorySystem.Instance.Add(ItemData))
-            Destroy(gameObject);
-        else
-            FloatingText.Create("Inventory is full", Color.red, transform.position, 1, 0.5f, 0.5f);
+            Collisions = false;
+        }
+
+        // Handle interaction
+        private protected override void OnInteraction()
+        {
+            if (InventorySystem.Instance.Add(ItemData))
+                Destroy(gameObject);
+            else
+                FloatingText.Create("Inventory is full", Color.red, transform.position, 1, 0.5f, 0.5f);
+        }
     }
 }

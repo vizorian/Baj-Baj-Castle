@@ -1,66 +1,71 @@
+using JetBrains.Annotations;
+using TMPro;
+using UI;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Inventory;
-
-public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+namespace Inventory
 {
-    [SerializeField] [UsedImplicitly] private Image icon;
-
-    [SerializeField] [UsedImplicitly] private TextMeshProUGUI label;
-
-    [SerializeField] [UsedImplicitly] private GameObject stackContainer;
-
-    [SerializeField] [UsedImplicitly] private TextMeshProUGUI stackCount;
-
-    private InventoryItem item;
-
-    // pointer enter event handler
-    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+    public class InventoryItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        // Show tooltip
-        Tooltip.ShowTooltip_Static(ToTooltipString());
-    }
+        [SerializeField] [UsedImplicitly] private Image icon;
 
-    // Pointer exit event handler
-    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-    {
-        // Hide tooltip
-        Tooltip.HideTooltip_Static();
-    }
+        [SerializeField] [UsedImplicitly] private TextMeshProUGUI label;
 
-    // Set item slot to new item
-    public void Set(InventoryItem newItem)
-    {
-        item = newItem;
+        [SerializeField] [UsedImplicitly] private GameObject stackContainer;
 
-        icon.sprite = newItem.Data.Icon;
-        label.text = newItem.Data.DisplayName;
-        if (newItem.StackSize <= 1)
-            stackContainer.SetActive(false);
-        else
-            stackCount.text = newItem.StackSize.ToString();
-    }
+        [SerializeField] [UsedImplicitly] private TextMeshProUGUI stackCount;
 
-    // Get item data in string form for tooltip
-    private string ToTooltipString()
-    {
-        var tooltip = "";
+        private InventoryItem item;
 
-        if (item == null) return tooltip;
+        // pointer enter event handler
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+        {
+            // Show tooltip
+            Tooltip.ShowTooltip_Static(ToTooltipString());
+        }
 
-        // name
-        tooltip += item.Data.DisplayName + "\n";
-        tooltip += new string('-', item.Data.DisplayName.Length) + "\n";
-        // description
-        tooltip += "Damage: " + item.Data.ItemProperties.Damage + " " + item.Data.ItemProperties.DamageType +
-                   " damage\n";
-        tooltip += "Attack speed: " + item.Data.ItemProperties.Cooldown + " attacks per second\n";
-        tooltip += "Critical chance: " + item.Data.ItemProperties.CriticalChance + "%\n";
-        tooltip += "Reach: " + item.Data.ItemProperties.Range + " units\n";
-        tooltip += "Speed: " + item.Data.ItemProperties.Speed + " units\n";
-        tooltip += "Knockback: " + item.Data.ItemProperties.Knockback + "\n";
+        // Pointer exit event handler
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
+        {
+            // Hide tooltip
+            Tooltip.HideTooltip_Static();
+        }
 
-        return tooltip;
+        // Set item slot to new item
+        public void Set(InventoryItem newItem)
+        {
+            item = newItem;
+
+            icon.sprite = newItem.Data.Icon;
+            label.text = newItem.Data.DisplayName;
+            if (newItem.StackSize <= 1)
+                stackContainer.SetActive(false);
+            else
+                stackCount.text = newItem.StackSize.ToString();
+        }
+
+        // Get item data in string form for tooltip
+        private string ToTooltipString()
+        {
+            var tooltip = "";
+
+            if (item == null) return tooltip;
+
+            // name
+            tooltip += item.Data.DisplayName + "\n";
+            tooltip += new string('-', item.Data.DisplayName.Length) + "\n";
+            // description
+            tooltip += "Damage: " + item.Data.ItemProperties.Damage + " " + item.Data.ItemProperties.DamageType +
+                       " damage\n";
+            tooltip += "Attack speed: " + item.Data.ItemProperties.Cooldown + " attacks per second\n";
+            tooltip += "Critical chance: " + item.Data.ItemProperties.CriticalChance + "%\n";
+            tooltip += "Reach: " + item.Data.ItemProperties.Range + " units\n";
+            tooltip += "Speed: " + item.Data.ItemProperties.Speed + " units\n";
+            tooltip += "Knockback: " + item.Data.ItemProperties.Knockback + "\n";
+
+            return tooltip;
+        }
     }
 }

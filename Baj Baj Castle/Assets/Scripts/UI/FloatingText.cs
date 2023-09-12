@@ -1,51 +1,57 @@
-namespace UI;
+using Game_Logic;
+using JetBrains.Annotations;
+using TMPro;
+using UnityEngine;
 
-public class FloatingText : MonoBehaviour
+namespace UI
 {
-    private readonly float fadeSpeed = 1f;
-    private float lifeTime;
-    private float speed;
-    private Color textColor;
-
-    private TextMeshPro textMesh;
-
-    [UsedImplicitly]
-    private void Awake()
+    public class FloatingText : MonoBehaviour
     {
-        textMesh = GetComponent<TextMeshPro>();
-    }
+        private readonly float fadeSpeed = 1f;
+        private float lifeTime;
+        private float speed;
+        private Color textColor;
 
-    [UsedImplicitly]
-    public void Update()
-    {
-        transform.position += new Vector3(0, speed) * Time.deltaTime;
-        lifeTime -= Time.deltaTime;
-        if (lifeTime <= 0)
+        private TextMeshPro textMesh;
+
+        [UsedImplicitly]
+        private void Awake()
         {
-            textColor.a -= fadeSpeed * Time.deltaTime;
-            textMesh.color = textColor;
-            if (textColor.a <= 0) Destroy(gameObject);
+            textMesh = GetComponent<TextMeshPro>();
         }
-    }
 
-    // Create a floating text object
-    public static void Create(string text, Color color, Vector3 position, float textSize, float lifeTime,
-        float speed)
-    {
-        var floatingTextObject = Instantiate(GameAssets.Instance.FloatingTextObject, Vector3.zero, Quaternion.identity);
-        var floatingText = floatingTextObject.GetComponent<FloatingText>();
-        floatingText.Setup(text, color, position, textSize, lifeTime, speed);
-    }
+        [UsedImplicitly]
+        public void Update()
+        {
+            transform.position += new Vector3(0, speed) * Time.deltaTime;
+            lifeTime -= Time.deltaTime;
+            if (lifeTime <= 0)
+            {
+                textColor.a -= fadeSpeed * Time.deltaTime;
+                textMesh.color = textColor;
+                if (textColor.a <= 0) Destroy(gameObject);
+            }
+        }
 
-    // Setup the floating text object
-    public void Setup(string text, Color color, Vector3 position, float textSize, float newLifeTime, float newSpeed)
-    {
-        textMesh.SetText(text);
-        textMesh.fontSize = textSize;
-        textMesh.color = color;
-        textColor = color;
-        transform.position = position;
-        lifeTime = newLifeTime;
-        speed = newSpeed;
+        // Create a floating text object
+        public static void Create(string text, Color color, Vector3 position, float textSize, float lifeTime,
+            float speed)
+        {
+            var floatingTextObject = Instantiate(GameAssets.Instance.FloatingTextObject, Vector3.zero, Quaternion.identity);
+            var floatingText = floatingTextObject.GetComponent<FloatingText>();
+            floatingText.Setup(text, color, position, textSize, lifeTime, speed);
+        }
+
+        // Setup the floating text object
+        public void Setup(string text, Color color, Vector3 position, float textSize, float newLifeTime, float newSpeed)
+        {
+            textMesh.SetText(text);
+            textMesh.fontSize = textSize;
+            textMesh.color = color;
+            textColor = color;
+            transform.position = position;
+            lifeTime = newLifeTime;
+            speed = newSpeed;
+        }
     }
 }

@@ -1,7 +1,10 @@
-namespace Enums;
+using JetBrains.Annotations;
 
-public enum ActorType
+namespace Enums
 {
-    [UsedImplicitly] Enemy,
-    [UsedImplicitly] Player
+    public enum ActorType
+    {
+        [UsedImplicitly] Enemy,
+        [UsedImplicitly] Player
+    }
 }

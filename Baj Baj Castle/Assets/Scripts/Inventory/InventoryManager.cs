@@ -1,39 +1,43 @@
-namespace Inventory;
+using JetBrains.Annotations;
+using UnityEngine;
 
-[UsedImplicitly]
-public class InventoryManager : MonoBehaviour
+namespace Inventory
 {
-    public GameObject SlotPrefab;
-    public GameObject SlotSelectedPrefab;
-
     [UsedImplicitly]
-    private void Start()
+    public class InventoryManager : MonoBehaviour
     {
-        InventorySystem.Instance.OnInventoryChanged.AddListener(UpdateInventory);
-    }
+        public GameObject SlotPrefab;
+        public GameObject SlotSelectedPrefab;
 
-    // Update the inventory
-    private void UpdateInventory()
-    {
-        foreach (Transform t in transform) Destroy(t.gameObject);
+        [UsedImplicitly]
+        private void Start()
+        {
+            InventorySystem.Instance.OnInventoryChanged.AddListener(UpdateInventory);
+        }
 
-        DrawInventory();
-    }
+        // Update the inventory
+        private void UpdateInventory()
+        {
+            foreach (Transform t in transform) Destroy(t.gameObject);
 
-    // Display inventory slots
-    private void DrawInventory()
-    {
-        foreach (var item in InventorySystem.Instance.Inventory)
-            AddInventorySlot(item, item == InventorySystem.Instance.SelectedItem ? SlotSelectedPrefab : SlotPrefab);
-    }
+            DrawInventory();
+        }
 
-    // Add an inventory slot
-    private void AddInventorySlot(InventoryItem item, GameObject prefab)
-    {
-        var obj = Instantiate(prefab);
-        obj.transform.SetParent(transform, false);
+        // Display inventory slots
+        private void DrawInventory()
+        {
+            foreach (var item in InventorySystem.Instance.Inventory)
+                AddInventorySlot(item, item == InventorySystem.Instance.SelectedItem ? SlotSelectedPrefab : SlotPrefab);
+        }
 
-        var slot = obj.GetComponent<InventoryItemSlot>();
-        slot.Set(item);
+        // Add an inventory slot
+        private void AddInventorySlot(InventoryItem item, GameObject prefab)
+        {
+            var obj = Instantiate(prefab);
+            obj.transform.SetParent(transform, false);
+
+            var slot = obj.GetComponent<InventoryItemSlot>();
+            slot.Set(item);
+        }
     }
 }

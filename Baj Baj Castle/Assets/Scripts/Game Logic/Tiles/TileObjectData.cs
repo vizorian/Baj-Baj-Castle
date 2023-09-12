@@ -1,36 +1,39 @@
-namespace Game_Logic.Tiles;
+using Enums;
 
-public class TileObjectData
+namespace Game_Logic.Tiles
 {
-    public readonly int X;
-    public readonly int Y;
-    public TileType Type;
-
-    public TileObjectData(int x, int y, TileType type)
+    public class TileObjectData
     {
-        X = x;
-        Y = y;
-        Type = type;
-    }
+        public readonly int X;
+        public readonly int Y;
+        public TileType Type;
 
-    public override string ToString()
-    {
-        return $"{X}, {Y}, {Type}";
-    }
+        public TileObjectData(int x, int y, TileType type)
+        {
+            X = x;
+            Y = y;
+            Type = type;
+        }
 
-    public override bool Equals(object obj)
-    {
-        if (obj == null) return false;
+        public override string ToString()
+        {
+            return $"{X}, {Y}, {Type}";
+        }
 
-        if (obj.GetType() != GetType()) return false;
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
 
-        var other = (TileObjectData)obj;
+            if (obj.GetType() != GetType()) return false;
 
-        return X == other.X && Y == other.Y && Type == other.Type;
-    }
+            var other = (TileObjectData)obj;
 
-    public override int GetHashCode()
-    {
-        return X.GetHashCode() ^ Y.GetHashCode();
+            return X == other.X && Y == other.Y && Type == other.Type;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
     }
 }

@@ -1,18 +1,22 @@
-namespace Combat;
+using CreatureBehavior;
+using Enums;
 
-public class DamageData
+namespace Combat
 {
-    public float Amount;
-    public bool IsCritical = false;
-    public float Knockback;
-    public Actor Source;
-    public DamageType Type;
-
-    public DamageData(float amount, DamageType type, float knockback, Actor source)
+    public class DamageData
     {
-        Amount = amount;
-        Type = type;
-        Knockback = knockback;
-        Source = source;
+        public float Amount;
+        public bool IsCritical = false;
+        public float Knockback;
+        public CreatureOld Source;
+        public DamageType Type;
+
+        public DamageData(float amount, DamageType type, float knockback, CreatureOld source)
+        {
+            Amount = amount;
+            Type = type;
+            Knockback = knockback;
+            Source = source;
+        }
     }
 }

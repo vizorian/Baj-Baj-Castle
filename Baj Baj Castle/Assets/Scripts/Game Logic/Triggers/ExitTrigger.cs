@@ -1,26 +1,30 @@
-namespace Game_Logic.Triggers;
+using Objects;
+using UnityEngine;
 
-public class ExitTrigger : Collidable
+namespace Game_Logic.Triggers
 {
-    public bool IsActive = true;
-    private bool isUsed = true;
-
-    private protected override void Awake()
+    public class ExitTrigger : Collidable
     {
-        BoxCollider = GetComponent<BoxCollider2D>();
-        if (BoxCollider == null) BoxCollider = gameObject.AddComponent<BoxCollider2D>();
-    }
+        public bool IsActive = true;
+        private bool isUsed = true;
 
-    // Handle collision
-    private protected override void OnCollide(Collider2D otherCollider)
-    {
-        if (otherCollider.gameObject.tag == "Player" && isUsed && IsActive)
+        private protected override void Awake()
         {
-            isUsed = false;
-            if (GameManager.Instance.Level == GameManager.Instance.MaxLevels)
-                GameManager.Instance.Victory();
-            else
-                GameManager.Instance.NextLevel();
+            BoxCollider = GetComponent<BoxCollider2D>();
+            if (BoxCollider == null) BoxCollider = gameObject.AddComponent<BoxCollider2D>();
+        }
+
+        // Handle collision
+        private protected override void OnCollide(Collider2D otherCollider)
+        {
+            if (otherCollider.gameObject.tag == "Player" && isUsed && IsActive)
+            {
+                isUsed = false;
+                if (GameManager.Instance.Level == GameManager.Instance.MaxLevels)
+                    GameManager.Instance.Victory();
+                else
+                    GameManager.Instance.NextLevel();
+            }
         }
     }
 }

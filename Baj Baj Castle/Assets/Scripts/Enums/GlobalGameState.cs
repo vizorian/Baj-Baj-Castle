@@ -1,14 +1,17 @@
-namespace Enums;
+using JetBrains.Annotations;
 
-public enum GlobalGameState
+namespace Enums
 {
-    MainMenu,
-    Escape,
-    Tutorial,
-    Pause,
-    Loading,
-    Victory,
-    Defeat,
-    Reload,
-    [UsedImplicitly] None
+    public enum GlobalGameState
+    {
+        MainMenu,
+        Escape,
+        Tutorial,
+        Pause,
+        Loading,
+        Victory,
+        Defeat,
+        Reload,
+        [UsedImplicitly] None
+    }
 }

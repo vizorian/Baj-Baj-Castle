@@ -1,9 +1,12 @@
-namespace Enums;
+using JetBrains.Annotations;
 
-public enum ItemType
+namespace Enums
 {
-    None,
-    Consumable,
-    Weapon,
-    [UsedImplicitly] Misc
+    public enum ItemType
+    {
+        None,
+        Consumable,
+        Weapon,
+        [UsedImplicitly] Misc
+    }
 }

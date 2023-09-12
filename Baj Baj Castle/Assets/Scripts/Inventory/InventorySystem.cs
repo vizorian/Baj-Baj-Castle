@@ -1,147 +1,153 @@
+using System.Collections.Generic;
+using CreatureBehavior;
+using Game_Logic;
+using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace Inventory;
-
-public class InventorySystem : MonoBehaviour
+namespace Inventory
 {
-    public UnityEvent OnInventoryChanged;
-
-    public int Capacity = 9;
-    private ActorHand hand;
-
-    private int selectedItemIndex;
-    public static InventorySystem Instance { get; private set; }
-    public List<InventoryItem> Inventory { get; private set; }
-    public InventoryItem SelectedItem { get; private set; }
-
-    [UsedImplicitly]
-    private void Awake()
+    public class InventorySystem : MonoBehaviour
     {
-        Inventory = new List<InventoryItem>();
-        SelectedItem = null;
-        selectedItemIndex = -1;
+        public UnityEvent OnInventoryChanged;
 
-        if (Instance != null && Instance != this)
-            Destroy(gameObject);
-        else
-            Instance = this;
+        public int Capacity = 9;
+        private Hand hand;
 
-        OnInventoryChanged ??= new UnityEvent();
-    }
+        private int selectedItemIndex;
+        public static InventorySystem Instance { get; private set; }
+        public List<InventoryItem> Inventory { get; private set; }
+        public InventoryItem SelectedItem { get; private set; }
 
-    [UsedImplicitly]
-    private void Update()
-    {
-        if (hand == null)
-            hand = GetComponentInChildren<ActorHand>();
-    }
-
-    // Adds an item to inventory and invokes OnInventoryChanged
-    public bool Add(InventoryItemData itemData)
-    {
-        var success = true;
-        var newItem = new InventoryItem(itemData);
-        var existingItem =
-            Inventory.Find(item =>
-                item.Data.Id == itemData.Id &&
-                item.StackSize < item.Data.MaxStackSize); // Item of same type but not full
-        if (existingItem == null) // Non-full stackable item doesn't exist
+        [UsedImplicitly]
+        private void Awake()
         {
-            if (Inventory.Count < Capacity)
-                Inventory.Add(newItem);
+            Inventory = new List<InventoryItem>();
+            SelectedItem = null;
+            selectedItemIndex = -1;
+
+            if (Instance != null && Instance != this)
+                Destroy(gameObject);
             else
-                success = false;
-        }
-        else // Non-full stackable item exists
-        {
-            existingItem.AddToStack();
+                Instance = this;
+
+            OnInventoryChanged ??= new UnityEvent();
         }
 
-        // First pickup is selected automatically
-        if (SelectedItem == null)
+        [UsedImplicitly]
+        private void Update()
         {
-            SelectedItem = newItem;
-            selectedItemIndex = 0;
-
-            hand.SetHeldItem(SelectedItem);
+            if (hand == null)
+                hand = GetComponentInChildren<Hand>();
         }
 
-        OnInventoryChanged.Invoke();
-        return success;
-    }
-
-    // Removes an item from inventory and invokes OnInventoryChanged
-    public void Remove(InventoryItemData itemData)
-    {
-        SelectedItem.RemoveFromStack();
-        if (SelectedItem.StackSize == 0) // If last item dropped
+        // Adds an item to inventory and invokes OnInventoryChanged
+        public bool Add(InventoryItemData itemData)
         {
-            Inventory.RemoveAt(selectedItemIndex);
-
-            if (Inventory.Count != 0) // If more items remain
+            var success = true;
+            var newItem = new InventoryItem(itemData);
+            var existingItem =
+                Inventory.Find(item =>
+                    item.Data.Id == itemData.Id &&
+                    item.StackSize < item.Data.MaxStackSize); // Item of same type but not full
+            if (existingItem == null) // Non-full stackable item doesn't exist
             {
-                if (selectedItemIndex != 0) selectedItemIndex--;
-                SelectedItem = Inventory[selectedItemIndex];
+                if (Inventory.Count < Capacity)
+                    Inventory.Add(newItem);
+                else
+                    success = false;
+            }
+            else // Non-full stackable item exists
+            {
+                existingItem.AddToStack();
+            }
+
+            // First pickup is selected automatically
+            if (SelectedItem == null)
+            {
+                SelectedItem = newItem;
+                selectedItemIndex = 0;
+
                 hand.SetHeldItem(SelectedItem);
             }
-            else // If no items remain
-            {
-                SelectedItem = null;
-                selectedItemIndex = -1;
 
-                hand.ClearHeldItem();
-            }
+            OnInventoryChanged.Invoke();
+            return success;
         }
 
-        OnInventoryChanged.Invoke();
-    }
+        // Removes an item from inventory and invokes OnInventoryChanged
+        public void Remove(InventoryItemData itemData)
+        {
+            SelectedItem.RemoveFromStack();
+            if (SelectedItem.StackSize == 0) // If last item dropped
+            {
+                Inventory.RemoveAt(selectedItemIndex);
 
-    // Drops an item
-    public void Drop()
-    {
-        if (SelectedItem == null) return;
+                if (Inventory.Count != 0) // If more items remain
+                {
+                    if (selectedItemIndex != 0) selectedItemIndex--;
+                    SelectedItem = Inventory[selectedItemIndex];
+                    hand.SetHeldItem(SelectedItem);
+                }
+                else // If no items remain
+                {
+                    SelectedItem = null;
+                    selectedItemIndex = -1;
 
-        // Drop the actual item in the world
-        var itemObject = Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
-        LevelManager.Instance.AddItem(itemObject);
+                    hand.ClearHeldItem();
+                }
+            }
 
-        // Remove the item from inventory
-        Remove(SelectedItem.Data);
-    }
+            OnInventoryChanged.Invoke();
+        }
 
-    // Select next item
-    public void Next()
-    {
-        // If inventory has a single item
-        // or next item is out of bounds return
-        if (Inventory.Count == 1 || selectedItemIndex + 1 == Inventory.Count)
-            return;
+        // Drops an item
+        public void Drop()
+        {
+            if (SelectedItem == null) return;
 
-        if (selectedItemIndex + 1 < Inventory.Count)
-            selectedItemIndex++;
+            // Drop the actual item in the world
+            var itemObject = Instantiate(SelectedItem.Data.Prefab, hand.transform.position, Quaternion.identity);
+            LevelManager.Instance.AddItem(itemObject);
 
-        SelectedItem = Inventory[selectedItemIndex];
+            // Remove the item from inventory
+            Remove(SelectedItem.Data);
+        }
 
-        // Set the selected item in the hand
-        hand.SetHeldItem(SelectedItem);
-        OnInventoryChanged.Invoke();
-    }
+        // Select next item
+        public void Next()
+        {
+            // If inventory has a single item
+            // or next item is out of bounds return
+            if (Inventory.Count == 1 || selectedItemIndex + 1 == Inventory.Count)
+                return;
 
-    // Select previous item
-    public void Previous()
-    {
-        // If inventory has a single item
-        // or previous is nonexistant return
-        if (Inventory.Count == 1 || selectedItemIndex <= 0)
-            return;
+            if (selectedItemIndex + 1 < Inventory.Count)
+                selectedItemIndex++;
 
-        if (selectedItemIndex - 1 >= 0)
-            selectedItemIndex--;
+            SelectedItem = Inventory[selectedItemIndex];
 
-        SelectedItem = Inventory[selectedItemIndex];
+            // Set the selected item in the hand
+            hand.SetHeldItem(SelectedItem);
+            OnInventoryChanged.Invoke();
+        }
 
-        // Set the selected item in the hand
-        hand.SetHeldItem(SelectedItem);
-        OnInventoryChanged.Invoke();
+        // Select previous item
+        public void Previous()
+        {
+            // If inventory has a single item
+            // or previous is nonexistant return
+            if (Inventory.Count == 1 || selectedItemIndex <= 0)
+                return;
+
+            if (selectedItemIndex - 1 >= 0)
+                selectedItemIndex--;
+
+            SelectedItem = Inventory[selectedItemIndex];
+
+            // Set the selected item in the hand
+            hand.SetHeldItem(SelectedItem);
+            OnInventoryChanged.Invoke();
+        }
     }
 }

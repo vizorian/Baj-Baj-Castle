@@ -1,26 +1,29 @@
-namespace Inventory;
+using System;
 
-[Serializable]
-public class InventoryItem
+namespace Inventory
 {
-    public InventoryItem(InventoryItemData data)
+    [Serializable]
+    public class InventoryItem
     {
-        Data = data;
-        AddToStack();
-    }
+        public InventoryItem(InventoryItemData data)
+        {
+            Data = data;
+            AddToStack();
+        }
 
-    public InventoryItemData Data { get; private set; }
-    public int StackSize { get; private set; }
+        public InventoryItemData Data { get; private set; }
+        public int StackSize { get; private set; }
 
-    // Add to stack
-    public void AddToStack()
-    {
-        StackSize++;
-    }
+        // Add to stack
+        public void AddToStack()
+        {
+            StackSize++;
+        }
 
-    // Remove from stack
-    public void RemoveFromStack()
-    {
-        StackSize--;
+        // Remove from stack
+        public void RemoveFromStack()
+        {
+            StackSize--;
+        }
     }
 }

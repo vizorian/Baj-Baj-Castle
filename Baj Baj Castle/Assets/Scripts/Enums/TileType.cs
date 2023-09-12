@@ -1,9 +1,10 @@
-namespace Enums;
-
-public enum TileType
+namespace Enums
 {
-    None,
-    Floor,
-    Wall,
-    Door
+    public enum TileType
+    {
+        None,
+        Floor,
+        Wall,
+        Door
+    }
 }

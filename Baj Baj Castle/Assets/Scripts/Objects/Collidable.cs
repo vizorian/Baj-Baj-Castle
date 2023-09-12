@@ -1,31 +1,35 @@
-namespace Objects;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class Collidable : MonoBehaviour
+namespace Objects
 {
-    private protected BoxCollider2D BoxCollider;
-    private protected ContactFilter2D ContactFilter;
-    private protected List<Collider2D> Hits = new();
-
-    private protected virtual void Awake()
+    public class Collidable : MonoBehaviour
     {
-        BoxCollider = GetComponent<BoxCollider2D>();
-        ContactFilter = new ContactFilter2D();
-    }
+        private protected BoxCollider2D BoxCollider;
+        private protected ContactFilter2D ContactFilter;
+        private protected List<Collider2D> Hits = new();
 
-    private protected virtual void FixedUpdate()
-    {
-        // Handling collisions
-        BoxCollider.OverlapCollider(ContactFilter, Hits);
-        for (var i = 0; i < Hits.Count; i++)
+        private protected virtual void Awake()
         {
-            OnCollide(Hits[i]);
-            Hits[i] = null;
+            BoxCollider = GetComponent<BoxCollider2D>();
+            ContactFilter = new ContactFilter2D();
         }
-    }
 
-    // Handle collision
-    private protected virtual void OnCollide(Collider2D otherCollider)
-    {
-        Debug.Log(otherCollider.name);
+        private protected virtual void FixedUpdate()
+        {
+            // Handling collisions
+            BoxCollider.OverlapCollider(ContactFilter, Hits);
+            for (var i = 0; i < Hits.Count; i++)
+            {
+                OnCollide(Hits[i]);
+                Hits[i] = null;
+            }
+        }
+
+        // Handle collision
+        private protected virtual void OnCollide(Collider2D otherCollider)
+        {
+            Debug.Log(otherCollider.name);
+        }
     }
 }

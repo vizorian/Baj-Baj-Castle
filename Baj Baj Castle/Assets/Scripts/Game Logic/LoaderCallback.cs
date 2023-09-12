@@ -1,17 +1,21 @@
-namespace Game_Logic;
+using JetBrains.Annotations;
+using UnityEngine;
 
-[UsedImplicitly]
-public class LoaderCallback : MonoBehaviour
+namespace Game_Logic
 {
-    private bool isFirstUpdate = true;
-
     [UsedImplicitly]
-    private void Update()
+    public class LoaderCallback : MonoBehaviour
     {
-        if (isFirstUpdate)
+        private bool isFirstUpdate = true;
+
+        [UsedImplicitly]
+        private void Update()
         {
-            isFirstUpdate = false;
-            Loader.LoaderCallback(Loader.LoadState);
+            if (isFirstUpdate)
+            {
+                isFirstUpdate = false;
+                Loader.LoaderCallback(Loader.LoadState);
+            }
         }
     }
 }

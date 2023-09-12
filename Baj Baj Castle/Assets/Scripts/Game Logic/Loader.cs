@@ -1,40 +1,45 @@
-namespace Game_Logic;
+using System;
+using Enums;
+using UnityEngine.SceneManagement;
 
-public static class Loader
+namespace Game_Logic
 {
-    public enum Scene
+    public static class Loader
     {
-        Menu,
-        Game,
-        GameOver,
-        Loading
-    }
-
-    public static GlobalGameState LoadState;
-
-    private static Action<GlobalGameState> onLoaderCallback;
-
-    // Loads the specified scene and sets desired game state after loading
-    public static void Load(Scene scene, GlobalGameState state)
-    {
-        LoadState = state;
-        GameManager.Instance.CurrentGlobalGameState = GlobalGameState.Loading;
-
-        // Sets the callback to be called after loading
-        onLoaderCallback = gameState => { SceneManager.LoadScene(scene.ToString()); };
-
-        // Loads loading scene
-        SceneManager.LoadScene(Scene.Loading.ToString());
-    }
-
-    // Callback function
-    public static void LoaderCallback(GlobalGameState state)
-    {
-        if (onLoaderCallback != null)
+        public enum Scene
         {
-            GameManager.Instance.CurrentGlobalGameState = state;
-            onLoaderCallback(state);
-            onLoaderCallback = null;
+            Menu,
+            Game,
+            GameOver,
+            Loading
+        }
+
+        public static GlobalGameState LoadState;
+
+        private static Action<GlobalGameState> onLoaderCallback;
+
+        // Loads the specified scene and sets desired game state after loading
+        public static void Load(Scene scene, GlobalGameState state)
+        {
+            LoadState = state;
+            GameManager.Instance.CurrentGlobalGameState = GlobalGameState.Loading;
+
+            // Sets the callback to be called after loading
+            onLoaderCallback = gameState => { SceneManager.LoadScene(scene.ToString()); };
+
+            // Loads loading scene
+            SceneManager.LoadScene(Scene.Loading.ToString());
+        }
+
+        // Callback function
+        public static void LoaderCallback(GlobalGameState state)
+        {
+            if (onLoaderCallback != null)
+            {
+                GameManager.Instance.CurrentGlobalGameState = state;
+                onLoaderCallback(state);
+                onLoaderCallback = null;
+            }
         }
     }
 }
