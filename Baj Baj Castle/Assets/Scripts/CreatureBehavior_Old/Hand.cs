@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Objects;
 using UnityEngine;
 
-namespace CreatureBehavior
+namespace CreatureBehavior_Old
 {
     public class Hand : MonoBehaviour
     {

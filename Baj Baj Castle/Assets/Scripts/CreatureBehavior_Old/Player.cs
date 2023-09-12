@@ -2,13 +2,20 @@ using System.Linq;
 using Enums;
 using Game_Logic;
 using Inventory;
-using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace CreatureBehavior
+namespace CreatureBehavior_Old
 {
     public class Player : CreatureOld
     {
+        // inputs
+
+        private Keyboard _keyboard;
+        private Mouse _mouse;
+
+        // other shit
+
         public int AgilityUpgradeLevel { get; set; }
         public int DefenseUpgradeLevel { get; set; }
         public int Gold { get; set; }
@@ -17,25 +24,42 @@ namespace CreatureBehavior
         public int LuckUpgradeLevel { get; set; }
         public int StrengthUpgradeLevel { get; set; }
 
-        [UsedImplicitly]
+        private protected override void Awake()
+        {
+            _keyboard = Keyboard.current;
+            _mouse = Mouse.current;
+
+            base.Awake();
+        }
+
         private void Update()
         {
-            ProcessInputs();
-            CalculateMovement();
-            Move();
-            LookAt(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
+            // ProcessInputs();
+            LookAt(Camera.main!.ScreenToWorldPoint(new Vector3(_mouse.position.x.value, _mouse.position.y.value)));
 
             FindInteractable();
             if (InteractionObject != null)
                 InteractionObject.SendMessage("OnCollide", BoxCollider);
         }
 
+        public void Move(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("action: move");
+            CalculateMovement();
+            Move();
+        }
+
+        public void Look(InputAction.CallbackContext ctx)
+        {
+            
+        }
+
         private protected override void FixedUpdate()
         {
             base.FixedUpdate();
-
+        
             Hand.UpdateCenterPosition(transform.position);
-            Hand.LookTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            Hand.LookTowards(Camera.main.ScreenToWorldPoint(new Vector3(_mouse.position.x.value, _mouse.position.y.value)));
         }
 
         // Processes player inputs
@@ -50,7 +74,7 @@ namespace CreatureBehavior
                     return;
                 case GlobalGameState.Escape:
                     // Getting inputs
-                    var scrollWheelDelta = Input.GetAxisRaw("Mouse ScrollWheel");
+                    var scrollWheelDelta = _mouse.scroll.y.magnitude;
 
                     // Scroll wheel
                     if (scrollWheelDelta != 0)
@@ -62,7 +86,7 @@ namespace CreatureBehavior
                     }
 
                     // Left click
-                    if (Input.GetKey(KeyCode.Mouse0))
+                    if (_mouse.leftButton.wasPressedThisFrame)
                     {
                         if (Hand.HoldingItem)
                             if (Hand.HeldItemType == ItemType.Consumable)
@@ -70,17 +94,17 @@ namespace CreatureBehavior
                         Hand.IsFreezingHand = true;
                     }
 
-                    if (Input.GetKeyUp(KeyCode.Mouse0)) Hand.IsFreezingHand = false;
+                    if (_mouse.leftButton.wasReleasedThisFrame) Hand.IsFreezingHand = false;
 
                     // Interaction button
-                    if (Input.GetKeyDown(KeyCode.E) && InteractionObject != null)
+                    if (_keyboard.eKey.wasPressedThisFrame && InteractionObject != null)
                         InteractionObject.SendMessage("OnInteraction");
 
                     // Drop button
-                    if (Input.GetKeyDown(KeyCode.G)) InventorySystem.Instance.Drop();
+                    if (_keyboard.gKey.wasPressedThisFrame) InventorySystem.Instance.Drop();
 
                     // Flip button
-                    if (Input.GetKeyDown(KeyCode.F)) Hand.TurnHeldItem();
+                    if (_keyboard.fKey.wasPressedThisFrame) Hand.TurnHeldItem();
                     break;
                 case GlobalGameState.Tutorial:
                     break;
@@ -147,8 +171,8 @@ namespace CreatureBehavior
         // Player movement calculation
         private protected override void CalculateMovement()
         {
-            var x = Input.GetAxisRaw("Horizontal");
-            var y = Input.GetAxisRaw("Vertical");
+            var x = _keyboard.dKey.magnitude - _keyboard.aKey.magnitude;
+            var y = _keyboard.wKey.magnitude - _keyboard.sKey.magnitude;
 
             MoveDelta = new Vector2(x, y);
             MoveDelta.Normalize();
@@ -166,7 +190,8 @@ namespace CreatureBehavior
                 .Where(o => Vector3.Distance(transform.position,
                     o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)) <= InteractionRange)
                 .OrderBy(o =>
-                    Vector3.Distance(transform.position, o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
+                    Vector3.Distance(transform.position,
+                        o.GetComponent<BoxCollider2D>().ClosestPoint(transform.position)))
                 .FirstOrDefault();
         }
     }

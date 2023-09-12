@@ -5,13 +5,13 @@ using JetBrains.Annotations;
 using UI;
 using UnityEngine;
 
-namespace CreatureBehavior
+namespace CreatureBehavior_Old
 {
     public class CreatureOld : MonoBehaviour
     {
         // Attributes
-        public float MaxHealth { get; set; }
-        public float Health { get; set; }
+        public float MaxHealth;
+        public float Health;
         public int Defense { get; set; }
         public int Strength { get; set; }
         public int Agility { get; set; }
@@ -20,19 +20,19 @@ namespace CreatureBehavior
         public int Resistance { get; set; }
 
         // Graphics
-        public Sprite SideSprite { get; }
-        public Sprite FrontSprite { get; set; }
-        public Sprite BackSprite { get; set; }
+        public Sprite SideSprite;
+        public Sprite FrontSprite;
+        public Sprite BackSprite;
 
         // Metadata
         public ActorType ActorType { get; }
     
         // Environmental
-        public Hand Hand { get; set; }
+        public Hand Hand;
         private GameObject HandPrefab { get; set; }
-        public float InteractionRange { get; set; }
-        public float MovementSpeed { get; set; }
-        public float ReachRange { get; set; }
+        public float InteractionRange;
+        public float MovementSpeed;
+        public float ReachRange;
         public bool IsActive { get; set; }
         private readonly List<Collider2D> _hits = new();
         private protected BoxCollider2D BoxCollider;

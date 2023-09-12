@@ -8,13 +8,13 @@ namespace UI
     [UsedImplicitly]
     public class HealthBar : MonoBehaviour
     {
-        public Player Player;
+        public CreatureBehavior_Old.Player Player;
         private Slider slider;
 
         [UsedImplicitly]
         private void Awake()
         {
-            Player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            Player = GameObject.FindGameObjectWithTag("Player").GetComponent<CreatureBehavior_Old.Player>();
             slider = GetComponent<Slider>();
             slider.maxValue = Player.MaxHealth;
             slider.value = Player.Health;

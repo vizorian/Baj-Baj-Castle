@@ -14,7 +14,7 @@ namespace Game_Logic
     public class GameManager : MonoBehaviour
     {
         // Resources
-        public Player Player;
+        public CreatureBehavior_Old.Player Player;
         public SaveData SaveData;
         public GameObject PauseMenuPrefab;
         public GameObject TutorialScreenPrefab;
@@ -125,7 +125,7 @@ namespace Game_Logic
                     }
                     else if (Instance.levelManager.IsPopulated) // if population is complete
                     {
-                        Instance.Player = Instance.levelManager.Player.GetComponent<Player>();
+                        Instance.Player = Instance.levelManager.Player.GetComponent<CreatureBehavior_Old.Player>();
 
                         if (!Instance.isSaveLoaded)
                         {

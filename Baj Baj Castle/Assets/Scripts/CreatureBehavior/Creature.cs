@@ -8,18 +8,15 @@ namespace CreatureBehavior
     [RequireComponent(typeof(Rigidbody2D))]
     public class Creature : MonoBehaviour
     {
-        public readonly Stats Stats;
-        public readonly Attributes Attributes;
+        // TODO figure out fields
         private readonly EntityGraphics _graphics;
 
         private Rigidbody2D _rigidbody;
         private BoxCollider2D _collider;
         private SpriteRenderer _renderer;
 
-        public Creature(Stats stats, Attributes attributes, EntityGraphics graphics)
+        public Creature(EntityGraphics graphics)
         {
-            Stats = stats;
-            Attributes = attributes;
             _graphics = graphics;
         }
 

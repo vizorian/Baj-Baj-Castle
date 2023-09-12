@@ -1,4 +1,5 @@
 using CreatureBehavior;
+using CreatureBehavior_Old;
 using Enums;
 
 namespace Combat

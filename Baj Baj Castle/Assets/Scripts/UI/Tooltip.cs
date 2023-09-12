@@ -32,7 +32,7 @@ namespace UI
         [UsedImplicitly]
         private void Update()
         {
-            UpdatePosition();
+            // UpdatePosition();
         }
 
         // Update the position of the tooltip

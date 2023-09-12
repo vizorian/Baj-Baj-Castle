@@ -3,7 +3,7 @@ using Enums;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace CreatureBehavior
+namespace CreatureBehavior_Old
 {
     [UsedImplicitly]
     public class Rusher : CreatureOld
